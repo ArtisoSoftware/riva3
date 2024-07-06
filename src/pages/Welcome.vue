@@ -38,7 +38,40 @@
         <footerMain />
       </div>
     </div>
-    <div class="lt-lg gt-xs">Tablet</div>
+    <!-- For Tablet -->
+    <div class="lt-lg gt-xs tabletBG">
+      <div class="q-pa-md">
+        <img
+          src="../../public/images/unescaplogo.svg"
+          alt=""
+          style="height: 60px"
+        />
+      </div>
+      <div class="text-center q-pa-md">
+        <img src="../../public/images/logobig2.png" alt="" style="width: 80%" />
+      </div>
+      <div>
+        <div class="text-center">
+          <q-btn
+            label="Regional Integration Analyzer"
+            outline
+            rounded
+            class="btnMainTablet"
+            no-caps
+          />
+        </div>
+        <div class="text-center q-pt-md">
+          <q-btn
+            label="Value Chain Analyzer"
+            outline
+            rounded
+            class="btnMainTablet"
+            no-caps
+          />
+        </div>
+      </div>
+      <footerMain />
+    </div>
     <!-- For Mobile -->
     <div class="lt-sm mobileBG">
       <div class="q-pa-sm">
@@ -122,5 +155,18 @@ import footerMain from "../components/footer.vue";
 .btnMainMobile {
   color: white;
   width: 250px;
+}
+
+// For Tablet
+.tabletBG {
+  background-color: #161616;
+  height: 100dvh;
+  background-image: url("../../public/images/bgTablet.jpg");
+  background-size: cover;
+}
+.btnMainTablet {
+  color: white;
+  width: 450px;
+  font-size: 24px;
 }
 </style>

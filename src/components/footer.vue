@@ -178,7 +178,131 @@
         </q-card>
       </q-dialog>
     </div>
-    <div class="lt-lg gt-xs">Tablet</div>
+    <!-- For Tablet -->
+    <div class="lt-lg gt-xs">
+      <div style="position: fixed; bottom: 0px">
+        <div class="row justify-between">
+          <div>
+            <img
+              src="../../public/images/footerRIVA.svg"
+              alt=""
+              style="height: 50px"
+            />
+          </div>
+          <div class="row justify-between q-px-md" style="width: 180px">
+            <!-- Facebook Share -->
+            <div style="padding-top: 7px">
+              <ShareNetwork
+                network="facebook"
+                url="https://riva.negotiatetrade.org"
+                title="RIVA - A Revolutionary Platform"
+                description="Discover the RIVA platform by the United Nations"
+                quote="RIVA: Revolutionizing International Trade"
+                hashtag="#RIVA"
+              >
+                <img
+                  src="../../public/images/facebook.svg"
+                  alt="Facebook Share"
+                  style="height: 35px"
+                  class="cursor-pointer"
+                />
+              </ShareNetwork>
+            </div>
+            <!-- Twitter Share -->
+            <div style="padding-top: 7px">
+              <ShareNetwork
+                network="twitter"
+                url="https://riva.negotiatetrade.org"
+                title="RIVA - A Revolutionary Platform"
+                description="Discover the RIVA platform by the United Nations"
+                hashtag="#RIVA"
+              >
+                <img
+                  src="../../public/images/x.svg"
+                  alt="Twitter Share"
+                  style="height: 35px"
+                  class="cursor-pointer"
+                />
+              </ShareNetwork>
+            </div>
+            <!-- LinkedIn Share -->
+            <div style="padding-top: 7px">
+              <ShareNetwork
+                network="linkedin"
+                url="https://riva.negotiatetrade.org"
+                title="RIVA - A Revolutionary Platform"
+                description="Discover the RIVA platform by the United Nations"
+                source="https://riva.negotiatetrade.org"
+              >
+                <img
+                  src="../../public/images/in.svg"
+                  alt="LinkedIn Share"
+                  style="height: 35px"
+                  class="cursor-pointer"
+                />
+              </ShareNetwork>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row justify-between q-px-sm q-py-md">
+          <div class="row">
+            <div class="cursor-pointer" @click="goToFealac()">
+              <img
+                src="../../public/images/fealac.svg"
+                alt=""
+                style="height: 50px"
+              />
+            </div>
+            <div class="q-px-md">
+              <img
+                src="../../public/images/12x.png"
+                alt=""
+                style="height: 50px"
+              />
+            </div>
+            <div>
+              <img
+                src="../../public/images/adb.svg"
+                alt=""
+                style="height: 50px"
+              />
+            </div>
+          </div>
+          <div class="row text-white q-pt-md" style="font-size: 18px">
+            <div class="q-pr-sm" @click="isShowAboutDia = true">
+              <u>About</u>
+            </div>
+            <div @click="isShowTermDia = true"><u>Terms of use</u></div>
+          </div>
+        </div>
+        <div style="font-size: 14px" class="text-white q-px-md">
+          <div>ABOUT RIVA</div>
+          <div>
+            RIVA is developed by the Trade, Investment and Innovation Division
+            of the United Nations Economic and Social Commission for Asia and
+            the Pacific, in collaboration with the Asian Development Bank,
+            Economic Commission for Latin America and the Caribbean, Economic
+            Commission for Africa, and Forum for East Asia-Latin America
+            Cooperation. For questions, please contact us at
+            <a
+              href="mailto: escap-tiid@un.org"
+              style="text-decoration: underline; color: white"
+              >escap-tiid@un.org</a
+            >
+          </div>
+        </div>
+        <div style="font-size: 14px" class="text-white q-pa-md">
+          <div>DISCLAIMER</div>
+          <div>
+            ESCAP gratefully acknowledges use of data from the ADB MRIO database
+            to analyze value chains, and databases from Europa World Plus, FDi
+            Markets, ILO, IMF, ITU, OECD, UNESCAP, UN Comtrade, UNCTAD and World
+            Bank to analyze regional integration
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- For Mobile -->
     <div class="lt-sm">
       <div style="position: fixed; bottom: 0px">
@@ -274,7 +398,7 @@
             <div class="q-pr-sm" @click="isShowAboutDia = true">
               <u>About</u>
             </div>
-            <div><u>Terms of use</u></div>
+            <div @click="isShowTermDia = true"><u>Terms of use</u></div>
           </div>
         </div>
         <div style="font-size: 11px" class="text-white q-px-sm">
