@@ -6,16 +6,16 @@
       <div class="menuMain row">
         <div style="width: 450px">
           <div style="font-size: 24px" class="q-px-xl">
-            <div class="q-pt-md selectedMenu">GVC relationships</div>
+            <div class="q-pt-md cursor-pointer" @click="goToStep1">
+              GVC relationships
+            </div>
             <div class="q-pt-md cursor-pointer" @click="goToStep2">
               Structure of value added
             </div>
             <div class="q-pt-md cursor-pointer" @click="goToStep3">
               Participation in GVCs
             </div>
-            <div class="q-pt-md cursor-pointer" @click="goToStep4">
-              Backward linkages
-            </div>
+            <div class="q-pt-md selectedMenu">Backward linkages</div>
             <div class="q-pt-md cursor-pointer" @click="goToStep5">
               Forward linkages
             </div>
@@ -49,29 +49,14 @@
         <div>
           <div>Key policy questions</div>
           <ul>
+            <li>How is an economy's gross exports produced and utilised?</li>
             <li>
-              How much do imports from abroad play a role in an economy's export
-              production? (backward linkages)
+              How does this economy's value-added trade balance differ from its
+              gross trade balance?
             </li>
             <li>
-              Which exporting sectors in this economy rely the most on imported
-              content from other economies? (backward linkages)
-            </li>
-            <li>
-              Which economies contribute the most towards this economy's
-              exports? (backward linkages)
-            </li>
-            <li>
-              How much does an economy's value-added in exports contribute to
-              export production in other economies? (forward linkages)
-            </li>
-            <li>
-              Which exporting sectors is this economy contribute the most to
-              export production in other economies? (forward linkages)
-            </li>
-            <li>
-              Which economies are most dependent on this economy's exports for
-              their own export production? (forward linkages)
+              How are gross exports produced and consumed across other economies
+              in the same region?
             </li>
           </ul>
         </div>
@@ -94,27 +79,14 @@ const inputData = ref({
   exportingISO: "",
   year: "",
 });
-const router = useRouter();
 const showInputText = ref(true);
+const router = useRouter();
 const getYear = (value) => {
   inputData.value.year = value;
 };
 const handleSelected = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
-};
-
-const goToStep2 = () => {
-  router.push("/structureofvalueadded");
-};
-const goToStep3 = () => {
-  router.push("/participationingvcs");
-};
-const goToStep4 = () => {
-  router.push("/backwardlinkages");
-};
-const goToStep5 = () => {
-  router.push("/forwardlinkages");
 };
 
 watch(
@@ -128,6 +100,21 @@ watch(
   },
   { deep: true }
 );
+const goToStep1 = () => {
+  router.push("/gvcrelationships");
+};
+const goToStep2 = () => {
+  router.push("/structureofvalueadded");
+};
+const goToStep3 = () => {
+  router.push("/participationingvcs");
+};
+// const goToStep4 = () => {
+//   router.push("/backwardlinkages");
+// };
+const goToStep5 = () => {
+  router.push("/forwardlinkages");
+};
 </script>
 
 <style lang="scss" scoped>

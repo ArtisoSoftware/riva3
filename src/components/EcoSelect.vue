@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div style="font-size: 12px">{{ label }}</div>
+  <div style="height: 90px">
+    <div style="font-size: 14px">{{ label }}</div>
     <div class="q-pt-xs">
       <q-select
         v-model="selectedValue"
@@ -12,7 +12,7 @@
         style="width: 350px"
         @update:model-value="updateValue"
         dark
-        outlined
+        filled
       >
         <template v-slot:option="scope">
           <q-item v-bind="scope.itemProps">
@@ -73,7 +73,7 @@ const props = defineProps({
     required: true,
   },
 });
-
+const emit = defineEmits(["update:selected"]);
 const options = ref([]);
 const formattedOptions = ref([]);
 const loadOption = async () => {
@@ -99,8 +99,12 @@ onMounted(() => {
 const selectedValue = ref(null);
 const updateValue = (value) => {
   const selectedOption = options.value.find((option) => option.iso === value);
-  console.log("Selected Name:", selectedOption?.name);
-  console.log("Selected ISO:", selectedOption?.iso);
+  if (selectedOption) {
+    emit("update:selected", {
+      name: selectedOption.name,
+      iso: selectedOption.iso,
+    }); // Emit the selected option's name and iso
+  }
 };
 
 const getFlagUrl = (iso) => {

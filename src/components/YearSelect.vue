@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <div style="font-size: 12px">Year</div>
+  <div style="height: 90px">
+    <div style="font-size: 14px">Year</div>
     <div class="q-pt-xs">
       <q-select
         v-model="yearSelect"
         :options="yearList"
         dark
-        outlined
+        filled
         color="white"
         class="selectShow"
         @update:model-value="updateYear"
@@ -44,6 +44,6 @@ const updateYear = () => {
 
 <style lang="scss" scoped>
 .selectShow {
-  width: 200px;
+  width: 350px;
 }
 </style>

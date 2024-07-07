@@ -15,6 +15,22 @@ const routes = [
     path: "/gvcrelationships",
     component: () => import("pages/GVCrelationships.vue"),
   },
+  {
+    path: "/structureofvalueadded",
+    component: () => import("pages/StructureOfValueAdded.vue"),
+  },
+  {
+    path: "/participationingvcs",
+    component: () => import("pages/ParticipationInGVCs.vue"),
+  },
+  {
+    path: "/backwardlinkages",
+    component: () => import("pages/BackwardLinkages.vue"),
+  },
+  {
+    path: "/forwardlinkages",
+    component: () => import("pages/ForwardLinkages.vue"),
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
