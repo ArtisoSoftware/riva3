@@ -11,6 +11,10 @@ const routes = [
     path: "/",
     component: () => import("pages/Welcome.vue"),
   },
+  {
+    path: "/gvcrelationships",
+    component: () => import("pages/GVCrelationships.vue"),
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

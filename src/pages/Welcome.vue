@@ -9,7 +9,7 @@
         <img
           src="../../public/images/unescaplogo.svg"
           alt=""
-          style="height: 70px"
+          style="height: 90px"
         />
       </div>
       <div class="boxCenter">
@@ -30,7 +30,12 @@
           </div>
           <div style="width: 30px"></div>
           <div>
-            <q-btn label="VALUE CHAIN ANALYZER" outline class="btnMain" />
+            <q-btn
+              label="VALUE CHAIN ANALYZER"
+              outline
+              class="btnMain"
+              @click="goToVA()"
+            />
           </div>
         </div>
       </div>
@@ -44,7 +49,7 @@
         <img
           src="../../public/images/unescaplogo.svg"
           alt=""
-          style="height: 60px"
+          style="height: 80px"
         />
       </div>
       <div class="text-center q-pa-md">
@@ -78,7 +83,7 @@
         <img
           src="../../public/images/unescaplogo.svg"
           alt=""
-          style="height: 40px"
+          style="height: 50px"
         />
       </div>
       <div class="text-center q-pa-md">
@@ -111,6 +116,11 @@
 
 <script setup>
 import footerMain from "../components/footer.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const goToVA = () => {
+  router.push("/gvcrelationships");
+};
 </script>
 
 <style lang="scss" scoped>
