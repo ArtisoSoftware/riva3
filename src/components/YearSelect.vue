@@ -7,7 +7,6 @@
         :options="yearList"
         dark
         outlined
-        dense
         color="white"
         class="selectShow"
         @update:model-value="updateYear"

@@ -5,7 +5,6 @@
       <q-select
         v-model="selectedValue"
         :options="formattedOptions"
-        dense
         map-options
         emit-value
         option-label="label"
@@ -19,7 +18,11 @@
           <q-item v-bind="scope.itemProps">
             <q-item-section
               avatar
-              v-if="!scope.opt.disable && scope.opt.id !== 0"
+              v-if="
+                !scope.opt.disable &&
+                scope.opt.id !== 0 &&
+                !['RoW', 'RoLAC', 'TWN'].includes(scope.opt.value)
+              "
             >
               <img
                 :src="getFlagUrl(scope.opt.value)"
@@ -32,6 +35,27 @@
             </q-item-section></q-item
           ></template
         >
+        <template v-slot:selected-item="scope">
+          <q-item v-if="scope.opt">
+            <q-item-section
+              avatar
+              v-if="
+                !scope.opt.disable &&
+                scope.opt.id !== 0 &&
+                !['RoW', 'RoLAC', 'TWN'].includes(scope.opt.value)
+              "
+            >
+              <img
+                :src="getFlagUrl(scope.opt.value)"
+                alt="flag"
+                style="width: 24px; height: 16px"
+              />
+            </q-item-section>
+            <q-item-section>
+              {{ scope.opt.label }}
+            </q-item-section>
+          </q-item>
+        </template>
       </q-select>
     </div>
   </div>
