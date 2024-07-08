@@ -1,6 +1,29 @@
 <template>
   <div style="height: 90px">
     <div style="font-size: 14px">Exporting sector</div>
+    <div class="q-pt-xs">
+      <q-select
+        v-model="sectorSelected"
+        :options="formattedOptions"
+        map-options
+        emit-value
+        dark
+        filled
+        option-label="label"
+        option-value="value"
+        color="white"
+        class="selectShow"
+        @update:model-value="updateSector"
+      >
+        <template v-slot:option="scope">
+          <q-item v-bind="scope.itemProps">
+            <q-item-section>
+              {{ scope.opt.label }}
+            </q-item-section></q-item
+          ></template
+        >
+      </q-select>
+    </div>
   </div>
 </template>
 
@@ -11,6 +34,7 @@ import { serverSetup } from "../pages/server.js";
 
 const { serverData } = serverSetup();
 const emit = defineEmits(["update:selected"]);
+const sectorSelected = ref("");
 const options = ref([]);
 const formattedOptions = ref([]);
 const loadOption = async () => {
@@ -32,6 +56,19 @@ const loadOption = async () => {
 onMounted(() => {
   loadOption();
 });
+
+const updateSector = (value) => {
+  const selectedOption = options.value.filter((x) => x.id == value);
+
+  emit("update:selected", {
+    name: selectedOption[0].name,
+    id: selectedOption[0].id,
+  }); // Emit the select
+};
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.selectShow {
+  width: 350px;
+}
+</style>

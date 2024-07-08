@@ -62,7 +62,13 @@
             />
 
             <div style="width: 30px"></div>
-            <div><SectorSelect @update:selected="getSectorInput" /></div>
+            <div>
+              <EcoSelect
+                label="Source economy"
+                @update:selected="getSourceInput"
+                class=""
+              />
+            </div>
           </div>
           <div
             class="text-white text-center q-pt-md"
@@ -77,12 +83,12 @@
       <div class="q-pa-lg">
         <div>
           <div style="font-size: 20px">
-            Key policy questions (select by exporting sector)
+            Key policy questions (select by source economy)
           </div>
           <ul>
             <li>
-              Where does Argentina's imported content used in its exports come
-              from?
+              How is foreign value-added distributed across Australia's
+              exporting sectors?
             </li>
             <li>How does this compare across economies in the same region?</li>
           </ul>
@@ -128,15 +134,15 @@
           </div>
         </div>
         <div style="height: 60px" class="row justify-center">
-          <div style="width: 200px"></div>
+          <div class="text-center" style="width: 200px">
+            {{ inputData.sourceName }}
+          </div>
           <div style="width: 50px"></div>
           <div class="text-center" style="width: 200px">
             {{ inputData.exportingName }}
           </div>
           <div style="width: 70px"></div>
-          <div class="text-center" style="width: 200px">
-            {{ inputData.sectorName }}
-          </div>
+          <div class="text-center" style="width: 200px">All sectors</div>
           <div class="" style="width: 50px"></div>
           <div class="text-center" style="width: 200px">
             {{ inputData.importingName }}
@@ -152,21 +158,20 @@
 import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
-import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
 
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-// input
-const modeCal = ref("1");
+//input
+const modeCal = ref("2");
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
   year: "",
   importingName: "",
   importingISO: "",
-  sectorName: "",
-  sectorID: "",
+  sourceName: "",
+  sourceISO: "",
 });
 const showInputText = ref(true);
 const router = useRouter();
@@ -177,13 +182,15 @@ const getExportInput = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
 };
+
 const getImportInput = (selected) => {
   inputData.value.importingName = selected.name;
   inputData.value.importingISO = selected.iso;
 };
-const getSectorInput = (selected) => {
-  inputData.value.sectorName = selected.name;
-  inputData.value.sectorID = selected.id;
+
+const getSourceInput = (selected) => {
+  inputData.value.sourceName = selected.name;
+  inputData.value.sourceISO = selected.iso;
 };
 watch(
   () => inputData.value,
@@ -193,8 +200,8 @@ watch(
       newValue.exportingISO &&
       newValue.importingName &&
       newValue.importingISO &&
-      newValue.sectorID &&
-      newValue.sectorName
+      newValue.sourceName &&
+      newValue.sourceISO
     ) {
       showInputText.value = false;
       console.log(inputData.value);
@@ -205,7 +212,7 @@ watch(
   { deep: true }
 );
 
-// Menu
+//Menu
 const goToStep1 = () => {
   router.push("/gvcrelationships");
 };
@@ -223,8 +230,8 @@ const goToStep5 = () => {
 };
 
 const changeMode = () => {
-  if (modeCal.value == 2) {
-    router.push("/backwardlinkagessource");
+  if (modeCal.value == 1) {
+    router.push("/backwardlinkages");
   }
 };
 

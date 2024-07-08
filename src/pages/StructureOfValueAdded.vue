@@ -5,7 +5,7 @@
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
-          <div style="font-size: 24px" class="q-px-xl">
+          <div style="font-size: 24px; padding-top: 14px" class="q-px-xl">
             <div class="q-pt-md cursor-pointer" @click="goToStep1">
               GVC relationships
             </div>
@@ -25,15 +25,25 @@
           <div class="vl"></div>
         </div>
         <div class="col">
-          <div class="row justify-center" style="padding-top: 50px">
+          <div class="row justify-center" style="padding-top: 35px">
             <EcoSelect
               label="Exporting economy"
-              @update:selected="handleSelected"
+              @update:selected="getExportEco"
               class=""
             />
 
             <div style="width: 30px"></div>
             <div><yearSelect @update="getYear" /></div>
+          </div>
+          <div class="row justify-center" style="padding-top: 10px">
+            <EcoSelect
+              label="importing economy"
+              @update:selected="getImportEco"
+              class=""
+            />
+
+            <div style="width: 30px"></div>
+            <div><SectorSelect @update:selected="getSector" /></div>
           </div>
           <div
             class="text-white text-center q-pt-md"
@@ -70,29 +80,50 @@
 import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
+import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
 import { useRouter } from "vue-router";
 import { ref, watch } from "vue";
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
+  importingName: "",
+  importingISO: "",
   year: "",
+  sectorName: "",
+  sectorID: "",
 });
 const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
 };
-const handleSelected = (selected) => {
+const getExportEco = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
+};
+const getImportEco = (selected) => {
+  inputData.value.importingName = selected.name;
+  inputData.value.importingISO = selected.iso;
+};
+const getSector = (selected) => {
+  inputData.value.sectorID = selected.id;
+  inputData.value.sectorName = selected.name;
 };
 const router = useRouter();
 
 watch(
   () => inputData.value,
   (newValue) => {
-    if (newValue.exportingName && newValue.exportingISO) {
+    if (
+      newValue.exportingName &&
+      newValue.exportingISO &&
+      newValue.importingISO &&
+      newValue.importingName &&
+      newValue.sectorName &&
+      newValue.sectorID
+    ) {
       showInputText.value = false;
+      console.log(inputData.value);
     } else {
       showInputText.value = true;
     }
@@ -123,12 +154,12 @@ const goToStep5 = () => {
 }
 .menuMain {
   background-color: #16222d;
-  height: 280px;
+  height: 310px;
   color: white;
 }
 .vl {
   width: 1px;
-  height: 240px;
+  height: 260px;
   border-left: 2px solid white;
   margin-top: 20px;
 }

@@ -28,8 +28,17 @@ const routes = [
     component: () => import("pages/BackwardLinkages.vue"),
   },
   {
+    path: "/backwardlinkagessource",
+    component: () => import("pages/BackwardLinkagesSource.vue"),
+  },
+
+  {
     path: "/forwardlinkages",
     component: () => import("pages/ForwardLinkages.vue"),
+  },
+  {
+    path: "/forwardlinkagesimport",
+    component: () => import("pages/ForwardLinkagesImport.vue"),
   },
   // Always leave this as last one,
   // but you can also remove it

@@ -5,7 +5,7 @@
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
-          <div style="font-size: 24px" class="q-px-xl">
+          <div style="font-size: 24px; padding-top: 14px" class="q-px-xl">
             <div class="q-pt-md cursor-pointer" @click="goToStep1">
               GVC relationships
             </div>
@@ -25,15 +25,25 @@
           <div class="vl"></div>
         </div>
         <div class="col">
-          <div class="row justify-center" style="padding-top: 50px">
+          <div class="row justify-center" style="padding-top: 35px">
             <EcoSelect
               label="Exporting economy"
-              @update:selected="handleSelected"
+              @update:selected="getExportEco"
               class=""
             />
 
             <div style="width: 30px"></div>
             <div><yearSelect @update="getYear" /></div>
+          </div>
+          <div class="row justify-center" style="padding-top: 10px">
+            <EcoSelect
+              label="importing economy"
+              @update:selected="getImportEco"
+              class=""
+            />
+
+            <div style="width: 30px"></div>
+            <div><SectorSelect @update:selected="getSector" /></div>
           </div>
           <div
             class="text-white text-center q-pt-md"
@@ -47,18 +57,20 @@
       <!-- Key question -->
       <div style="font-size: 20px" class="q-pa-lg">
         <div>
-          <div>Key policy questions</div>
-          <ul>
-            <li>How is an economy's gross exports produced and utilised?</li>
-            <li>
-              How does this economy's value-added trade balance differ from its
-              gross trade balance?
-            </li>
-            <li>
-              How are gross exports produced and consumed across other economies
-              in the same region?
-            </li>
-          </ul>
+          <div style="font-size: 24px">
+            <b>Why does GVC participation matter?</b>
+          </div>
+          <div>
+            GVC participation matters for development. GVCs support efficient
+            production and technology diffusion, and access to capital and
+            inputs thereby increasing productivity and income growth, and
+            reducing poverty.
+          </div>
+          <div>
+            In addition, recent developments in digital technology are set to
+            support integration of SMEs into GVCs, further amplifying
+            sustainable outcomes from participation.
+          </div>
         </div>
       </div>
       <footerMain />
@@ -70,30 +82,51 @@
 import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
+import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
-
-import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { ref, watch } from "vue";
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
+  importingName: "",
+  importingISO: "",
   year: "",
+  sectorName: "",
+  sectorID: "",
 });
-const router = useRouter();
 const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
 };
-const handleSelected = (selected) => {
+const getExportEco = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
 };
+const getImportEco = (selected) => {
+  inputData.value.importingName = selected.name;
+  inputData.value.importingISO = selected.iso;
+};
+
+const getSector = (selected) => {
+  inputData.value.sectorName = selected.name;
+  inputData.value.sectorID = selected.id;
+};
+const router = useRouter();
 
 watch(
   () => inputData.value,
   (newValue) => {
-    if (newValue.exportingName && newValue.exportingISO) {
+    if (
+      newValue.exportingName &&
+      newValue.exportingISO &&
+      newValue.importingISO &&
+      newValue.importingName &&
+      newValue.sectorID &&
+      newValue.sectorName
+    ) {
       showInputText.value = false;
+      console.log(inputData.value);
     } else {
       showInputText.value = true;
     }
@@ -127,12 +160,12 @@ const goToStep5 = () => {
 }
 .menuMain {
   background-color: #16222d;
-  height: 280px;
+  height: 310px;
   color: white;
 }
 .vl {
   width: 1px;
-  height: 240px;
+  height: 260px;
   border-left: 2px solid white;
   margin-top: 20px;
 }

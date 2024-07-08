@@ -5,7 +5,7 @@
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
-          <div style="font-size: 24px" class="q-px-xl">
+          <div style="font-size: 24px; padding-top: 14px" class="q-px-xl">
             <div class="q-pt-md selectedMenu">GVC relationships</div>
             <div class="q-pt-md cursor-pointer" @click="goToStep2">
               Structure of value added
@@ -45,9 +45,9 @@
         </div>
       </div>
       <!-- Key question -->
-      <div style="font-size: 20px" class="q-pa-lg">
+      <div class="q-pa-lg">
         <div>
-          <div>Key policy questions</div>
+          <div style="font-size: 20px">Key policy questions</div>
           <ul>
             <li>
               How much do imports from abroad play a role in an economy's export
@@ -139,12 +139,12 @@ watch(
 }
 .menuMain {
   background-color: #16222d;
-  height: 280px;
+  height: 310px;
   color: white;
 }
 .vl {
   width: 1px;
-  height: 240px;
+  height: 260px;
   border-left: 2px solid white;
   margin-top: 20px;
 }

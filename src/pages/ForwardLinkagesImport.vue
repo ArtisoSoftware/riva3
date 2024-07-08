@@ -15,10 +15,10 @@
             <div class="q-pt-md cursor-pointer" @click="goToStep3">
               Participation in GVCs
             </div>
-            <div class="q-pt-md selectedMenu">Backward linkages</div>
-            <div class="q-pt-md cursor-pointer" @click="goToStep5">
-              Forward linkages
+            <div class="q-pt-md cursor-pointer" @click="goToStep4">
+              Backward linkages
             </div>
+            <div class="q-pt-md selectedMenu">Forward linkages</div>
           </div>
         </div>
         <div style="width: 5px">
@@ -38,31 +38,21 @@
             <q-radio
               v-model="modeCal"
               val="2"
-              label="Select by source economy"
+              label="Select by importing economy"
               color="yellow-8"
               @update:model-value="changeMode"
               dark
             />
           </div>
           <div class="row justify-center" style="padding-top: 10px">
-            <EcoSelect
-              label="Exporting economy"
-              @update:selected="getExportInput"
-              class=""
-            />
+            <EcoSelect label="Exporting economy" @update:selected="getExport" />
 
             <div style="width: 30px"></div>
             <div><yearSelect @update="getYear" /></div>
           </div>
           <div class="row justify-center" style="padding-top: 5px">
-            <EcoSelect
-              label="Importing economy"
-              @update:selected="getImportInput"
-              class=""
-            />
-
-            <div style="width: 30px"></div>
-            <div><SectorSelect @update:selected="getSectorInput" /></div>
+            <EcoSelect label="Importing economy" @update:selected="getImport" />
+            <div style="width: 380px"></div>
           </div>
           <div
             class="text-white text-center q-pt-md"
@@ -77,12 +67,11 @@
       <div class="q-pa-lg">
         <div>
           <div style="font-size: 20px">
-            Key policy questions (select by exporting sector)
+            Key policy questions (Select by importing economy)
           </div>
           <ul>
             <li>
-              Where does Argentina's imported content used in its exports come
-              from?
+              Which sectors in Argentina are most reliant on export production?
             </li>
             <li>How does this compare across economies in the same region?</li>
           </ul>
@@ -92,15 +81,16 @@
       <!-- FlowChart -->
       <div>
         <div class="text-center q-pt-md" style="font-size: 20px">
-          Where does imported content come from?
+          Where does {{ showExportText }} contribute towards export production?
         </div>
         <div class="text-center">
-          Some part of an {{ showExportText }}'s gross exports consist of
-          imported inputs that originate in other source economies.
+          Some part of {{ showExportText }}'s gross exports consist of
+          intermediate inputs that are used by the direct importer to produce
+          exports for third economies.
         </div>
         <div class="row justify-center q-pt-md">
           <div class="q-pt-sm text-center" style="width: 200px">
-            Source economy
+            Exporting economy
           </div>
           <div style="width: 50px" class="text-center">
             <img
@@ -109,13 +99,13 @@
               style="width: 40px"
             />
           </div>
-          <div class="q-pt-sm text-center" style="width: 200px">
-            Exporting economy
-          </div>
-          <div class="q-pt-sm text-center" style="width: 70px">:</div>
           <div class="q-pt-sm text-center" style="width: 200px">
             Exporting sector
           </div>
+          <div class="q-pt-sm text-center" style="width: 70px">:</div>
+          <div class="q-pt-sm text-center" style="width: 200px">
+            Importing economy
+          </div>
           <div style="width: 50px" class="text-center">
             <img
               src="../../public/images/right-arrow.svg"
@@ -124,23 +114,21 @@
             />
           </div>
           <div class="q-pt-sm text-center" style="width: 200px">
-            Importing economy
+            Third economies
           </div>
         </div>
         <div style="height: 60px" class="row justify-center">
-          <div style="width: 200px"></div>
-          <div style="width: 50px"></div>
-          <div class="text-center" style="width: 200px">
+          <div style="width: 200px" class="text-center">
             {{ inputData.exportingName }}
           </div>
+          <div style="width: 50px"></div>
+          <div class="text-center" style="width: 200px">All</div>
           <div style="width: 70px"></div>
-          <div class="text-center" style="width: 200px">
-            {{ inputData.sectorName }}
-          </div>
-          <div class="" style="width: 50px"></div>
           <div class="text-center" style="width: 200px">
             {{ inputData.importingName }}
           </div>
+          <div class="" style="width: 50px"></div>
+          <div class="text-center" style="width: 200px"></div>
         </div>
       </div>
       <footerMain />
@@ -152,12 +140,12 @@
 import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
-import SectorSelect from "../components/SectorSelect.vue";
+
 import footerMain from "../components/footer.vue";
 
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-// input
+//input
 const modeCal = ref("1");
 const inputData = ref({
   exportingName: "",
@@ -165,26 +153,21 @@ const inputData = ref({
   year: "",
   importingName: "",
   importingISO: "",
-  sectorName: "",
-  sectorID: "",
 });
-const showInputText = ref(true);
 const router = useRouter();
+const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
 };
-const getExportInput = (selected) => {
+const getExport = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
 };
-const getImportInput = (selected) => {
+const getImport = (selected) => {
   inputData.value.importingName = selected.name;
   inputData.value.importingISO = selected.iso;
 };
-const getSectorInput = (selected) => {
-  inputData.value.sectorName = selected.name;
-  inputData.value.sectorID = selected.id;
-};
+
 watch(
   () => inputData.value,
   (newValue) => {
@@ -192,9 +175,7 @@ watch(
       newValue.exportingName &&
       newValue.exportingISO &&
       newValue.importingName &&
-      newValue.importingISO &&
-      newValue.sectorID &&
-      newValue.sectorName
+      newValue.importingISO
     ) {
       showInputText.value = false;
       console.log(inputData.value);
@@ -205,7 +186,7 @@ watch(
   { deep: true }
 );
 
-// Menu
+//Menu
 const goToStep1 = () => {
   router.push("/gvcrelationships");
 };
@@ -215,21 +196,18 @@ const goToStep2 = () => {
 const goToStep3 = () => {
   router.push("/participationingvcs");
 };
-// const goToStep4 = () => {
-//   router.push("/backwardlinkages");
-// };
-const goToStep5 = () => {
-  router.push("/forwardlinkages");
+const goToStep4 = () => {
+  router.push("/backwardlinkages");
 };
 
 const changeMode = () => {
-  if (modeCal.value == 2) {
-    router.push("/backwardlinkagessource");
+  if (modeCal.value == 1) {
+    router.push("/forwardlinkages");
   }
 };
 
 //Chart
-const showExportText = ref("economy");
+const showExportText = ref("an economy");
 watch(
   () => inputData.value.exportingName,
   (newValue) => {
@@ -256,7 +234,7 @@ watch(
 }
 .vl {
   width: 1px;
-  height: 260px;
+  height: 240px;
   border-left: 2px solid white;
   margin-top: 20px;
 }
