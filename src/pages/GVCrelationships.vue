@@ -1,7 +1,9 @@
 <template>
   <div style="background-color: #7a7a7a">
     <div class="mainApp">
-      <div><VAHeader /></div>
+      <div>
+        <VAHeader :shareContent="shareContent" :tinaLink="tinaLinkURL" />
+      </div>
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
@@ -28,12 +30,12 @@
           <div class="row justify-center" style="padding-top: 50px">
             <EcoSelect
               label="Exporting economy"
-              @update:selected="handleSelected"
-              class=""
+              @update:selected="getExport"
+              :initialValue="exportingISO"
             />
 
             <div style="width: 30px"></div>
-            <div><yearSelect @update="getYear" /></div>
+            <div><yearSelect @update="getYear" :initialValue="year" /></div>
           </div>
           <div
             class="text-white text-center q-pt-md"
@@ -85,21 +87,27 @@
 import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
-import footerMain from "../components/footer.vue";
+import footerMain from "../components/footer2.vue";
 
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
   year: "",
 });
 const router = useRouter();
+const route = useRoute();
 const showInputText = ref(true);
+
+// Get initial values from route params
+const exportingISO = ref(route.params.iso || "");
+const year = ref(route.params.year || "");
+
 const getYear = (value) => {
   inputData.value.year = value;
 };
-const handleSelected = (selected) => {
+const getExport = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
 };
@@ -116,18 +124,54 @@ const goToStep4 = () => {
 const goToStep5 = () => {
   router.push("/forwardlinkages");
 };
+//Share
+const shareContent = ref("");
+const tinaLinkURL = ref("");
 
 watch(
   () => inputData.value,
   (newValue) => {
     if (newValue.exportingName && newValue.exportingISO) {
       showInputText.value = false;
+      shareContent.value =
+        "https://riva.negotiatetrade.org/#/gvcrelationships/" +
+        inputData.value.exportingISO +
+        "/" +
+        inputData.value.year;
+      console.log(inputData.value);
     } else {
       showInputText.value = true;
     }
   },
   { deep: true }
 );
+
+// Watch route params to update inputData
+watch(route, (newRoute) => {
+  if (newRoute.params.iso) {
+    exportingISO.value = newRoute.params.iso;
+    getExport({ name: "", iso: newRoute.params.iso });
+  }
+  if (newRoute.params.year) {
+    year.value = newRoute.params.year;
+    getYear(newRoute.params.year);
+  }
+});
+
+onMounted(() => {
+  if (exportingISO.value) {
+    getExport({ name: "", iso: exportingISO.value });
+  }
+  if (year.value) {
+    getYear(year.value);
+  }
+  // Refresh the page on first load to ensure meta tag change
+  sessionStorage.removeItem("reloaded2");
+  if (!sessionStorage.getItem("reloaded")) {
+    sessionStorage.setItem("reloaded", "true");
+    location.reload();
+  }
+});
 </script>
 
 <style lang="scss" scoped>

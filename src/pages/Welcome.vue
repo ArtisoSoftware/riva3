@@ -72,6 +72,7 @@
             rounded
             class="btnMainTablet"
             no-caps
+            @click="goToVA()"
           />
         </div>
       </div>
@@ -106,6 +107,7 @@
             rounded
             class="btnMainMobile"
             no-caps
+            @click="goToVA()"
           />
         </div>
       </div>
@@ -117,10 +119,19 @@
 <script setup>
 import footerMain from "../components/footer.vue";
 import { useRouter } from "vue-router";
+import { onMounted } from "vue";
 const router = useRouter();
 const goToVA = () => {
   router.push("/gvcrelationships");
 };
+onMounted(() => {
+  // Clear sessionStorage key "reloaded"
+  sessionStorage.removeItem("reloaded");
+  if (!sessionStorage.getItem("reloaded2")) {
+    sessionStorage.setItem("reloaded2", "true");
+    location.reload();
+  }
+});
 </script>
 
 <style lang="scss" scoped>

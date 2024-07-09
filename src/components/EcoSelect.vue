@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { serverSetup } from "../pages/server.js";
 
@@ -71,6 +71,11 @@ const props = defineProps({
   label: {
     type: String,
     required: true,
+  },
+  initialValue: {
+    type: String,
+    required: false,
+    default: "",
   },
 });
 const emit = defineEmits(["update:selected"]);
@@ -92,13 +97,28 @@ const loadOption = async () => {
   }
 };
 
-onMounted(() => {
-  loadOption();
+onMounted(async () => {
+  await loadOption();
+  if (props.initialValue) {
+    selectedValue.value = props.initialValue;
+    updateValue(props.initialValue);
+  }
 });
+
+watch(
+  () => props.initialValue,
+  (newValue) => {
+    if (newValue) {
+      selectedValue.value = newValue;
+      updateValue(newValue);
+    }
+  }
+);
 
 const selectedValue = ref(null);
 const updateValue = (value) => {
   const selectedOption = options.value.find((option) => option.iso === value);
+
   if (selectedOption) {
     emit("update:selected", {
       name: selectedOption.name,
@@ -106,6 +126,9 @@ const updateValue = (value) => {
     }); // Emit the selected option's name and iso
   }
 };
+if (props.initialValue) {
+  updateValue(props.initialValue);
+}
 
 const getFlagUrl = (iso) => {
   return `images/flags/${iso}.png`;

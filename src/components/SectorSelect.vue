@@ -28,11 +28,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { serverSetup } from "../pages/server.js";
 
 const { serverData } = serverSetup();
+const props = defineProps({
+  initialValue: {
+    type: String,
+    required: false,
+    default: "",
+  },
+});
 const emit = defineEmits(["update:selected"]);
 const sectorSelected = ref("");
 const options = ref([]);
@@ -48,6 +55,10 @@ const loadOption = async () => {
       value: option.id,
       disable: option.disable,
     }));
+    if (props.initialValue) {
+      sectorSelected.value = props.initialValue;
+      updateSector(props.initialValue);
+    }
   } catch (error) {
     console.error("Error loading options:", error);
   }
@@ -56,6 +67,16 @@ const loadOption = async () => {
 onMounted(() => {
   loadOption();
 });
+
+watch(
+  () => props.initialValue,
+  (newValue) => {
+    if (newValue) {
+      sectorSelected.value = newValue;
+      updateSector(newValue);
+    }
+  }
+);
 
 const updateSector = (value) => {
   const selectedOption = options.value.filter((x) => x.id == value);

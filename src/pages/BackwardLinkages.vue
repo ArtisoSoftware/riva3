@@ -1,7 +1,9 @@
 <template>
   <div style="background-color: #7a7a7a">
     <div class="mainApp">
-      <div><VAHeader /></div>
+      <div>
+        <VAHeader :shareContent="shareContent" :tinaLink="tinaLinkURL" />
+      </div>
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
@@ -48,21 +50,26 @@
             <EcoSelect
               label="Exporting economy"
               @update:selected="getExportInput"
-              class=""
+              :initialValue="exportingISO"
             />
 
             <div style="width: 30px"></div>
-            <div><yearSelect @update="getYear" /></div>
+            <div><yearSelect @update="getYear" :initialValue="year" /></div>
           </div>
           <div class="row justify-center" style="padding-top: 5px">
             <EcoSelect
               label="Importing economy"
               @update:selected="getImportInput"
-              class=""
+              :initialValue="importingISO"
             />
 
             <div style="width: 30px"></div>
-            <div><SectorSelect @update:selected="getSectorInput" /></div>
+            <div>
+              <SectorSelect
+                @update:selected="getSectorInput"
+                :initialValue="sector"
+              />
+            </div>
           </div>
           <div
             class="text-white text-center q-pt-md"
@@ -155,8 +162,8 @@ import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
 
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 // input
 const modeCal = ref("1");
 const inputData = ref({
@@ -169,7 +176,16 @@ const inputData = ref({
   sectorID: "",
 });
 const showInputText = ref(true);
+const tinaLinkURL = ref("");
 const router = useRouter();
+const route = useRoute();
+
+// Get initial values from route params
+const exportingISO = ref(route.params.exp || "");
+const importingISO = ref(route.params.imp || "");
+const year = ref(route.params.year || "");
+const sector = ref(route.params.sector || "");
+
 const getYear = (value) => {
   inputData.value.year = value;
 };
@@ -185,6 +201,9 @@ const getSectorInput = (selected) => {
   inputData.value.sectorName = selected.name;
   inputData.value.sectorID = selected.id;
 };
+
+//Share
+const shareContent = ref("");
 watch(
   () => inputData.value,
   (newValue) => {
@@ -197,6 +216,21 @@ watch(
       newValue.sectorName
     ) {
       showInputText.value = false;
+      shareContent.value =
+        "https://riva.negotiatetrade.org/#/backwardlinkages/" +
+        inputData.value.exportingISO +
+        "/" +
+        inputData.value.importingISO +
+        "/" +
+        inputData.value.sectorID +
+        "/" +
+        inputData.value.year;
+      tinaLinkURL.value =
+        "https://tina.trade/app/dashboard/" +
+        inputData.value.exportingISO +
+        "-" +
+        inputData.value.importingISO +
+        "/current-trade";
       console.log(inputData.value);
     } else {
       showInputText.value = true;
@@ -204,7 +238,39 @@ watch(
   },
   { deep: true }
 );
-
+// Watch route params to update inputData
+watch(route, (newRoute) => {
+  if (newRoute.params.exp) {
+    exportingISO.value = newRoute.params.exp;
+    getExportInput({ name: "", iso: newRoute.params.exp });
+  }
+  if (newRoute.params.imp) {
+    importingISO.value = newRoute.params.imp;
+    getImportInput({ name: "", iso: newRoute.params.imp });
+  }
+  if (newRoute.params.sector) {
+    sectorID.value = newRoute.params.sector;
+    getSectorInput({ sectorName: "", sectorID: newRoute.params.sector });
+  }
+  if (newRoute.params.year) {
+    year.value = newRoute.params.year;
+    getYear(newRoute.params.year);
+  }
+});
+onMounted(() => {
+  if (exportingISO.value) {
+    getExportInput({ name: "", iso: exportingISO.value });
+  }
+  if (importingISO.value) {
+    getImportInput({ name: "", iso: importingISO.value });
+  }
+  if (sector.value) {
+    getSectorInput({ sectorName: "", sectorID: sector.value });
+  }
+  if (year.value) {
+    getYear(year.value);
+  }
+});
 // Menu
 const goToStep1 = () => {
   router.push("/gvcrelationships");

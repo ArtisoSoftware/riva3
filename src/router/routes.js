@@ -1,30 +1,22 @@
 const routes = [
-  // {
-  //   path: '/',
-  //   component: () => import('layouts/MainLayout.vue'),
-  //   children: [
-  //     { path: '', component: () => import('pages/IndexPage.vue') }
-  //   ]
-  // },
-
   {
     path: "/",
     component: () => import("pages/Welcome.vue"),
   },
   {
-    path: "/gvcrelationships",
+    path: "/gvcrelationships/:iso?/:year?",
     component: () => import("pages/GVCrelationships.vue"),
   },
   {
-    path: "/structureofvalueadded",
+    path: "/structureofvalueadded/:exp?/:imp?/:sector?/:year?",
     component: () => import("pages/StructureOfValueAdded.vue"),
   },
   {
-    path: "/participationingvcs",
+    path: "/participationingvcs/:exp?/:imp?/:sector?/:year?",
     component: () => import("pages/ParticipationInGVCs.vue"),
   },
   {
-    path: "/backwardlinkages",
+    path: "/backwardlinkages/:exp?/:imp?/:sector?/:year?",
     component: () => import("pages/BackwardLinkages.vue"),
   },
   {
