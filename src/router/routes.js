@@ -20,7 +20,7 @@ const routes = [
     component: () => import("pages/BackwardLinkages.vue"),
   },
   {
-    path: "/backwardlinkagessource",
+    path: "/backwardlinkagessource/:exp?/:imp?/:source?/:year?",
     component: () => import("pages/BackwardLinkagesSource.vue"),
   },
 
