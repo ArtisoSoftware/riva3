@@ -26,6 +26,7 @@
               label="REGIONAL INTEGRATION ANALYZER"
               outline
               class="btnMain"
+              @click="goToRI()"
             />
           </div>
           <div style="width: 30px"></div>
@@ -63,6 +64,7 @@
             rounded
             class="btnMainTablet"
             no-caps
+            @click="goToRI()"
           />
         </div>
         <div class="text-center q-pt-md">
@@ -98,6 +100,7 @@
             rounded
             class="btnMainMobile"
             no-caps
+            @click="goToRI()"
           />
         </div>
         <div class="text-center q-pt-md">
@@ -123,6 +126,9 @@ import { onMounted } from "vue";
 const router = useRouter();
 const goToVA = () => {
   router.push("/gvcrelationships");
+};
+const goToRI = () => {
+  router.push("/rioverview");
 };
 onMounted(() => {
   // Clear sessionStorage key "reloaded"

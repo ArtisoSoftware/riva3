@@ -62,9 +62,9 @@
         </div>
       </div>
       <!-- Key question -->
-      <div style="font-size: 20px" class="q-pa-lg">
+      <div class="q-pa-lg">
         <div>
-          <div>Key policy questions</div>
+          <div style="font-size: 20px">Key policy questions</div>
           <ul>
             <li>How is an economy's gross exports produced and utilised?</li>
             <li>

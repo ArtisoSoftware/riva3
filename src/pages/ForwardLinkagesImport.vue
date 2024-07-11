@@ -1,7 +1,9 @@
 <template>
   <div style="background-color: #7a7a7a">
     <div class="mainApp">
-      <div><VAHeader /></div>
+      <div>
+        <VAHeader :shareContent="shareContent" :tinaLink="tinaLinkURL" />
+      </div>
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
@@ -45,13 +47,21 @@
             />
           </div>
           <div class="row justify-center" style="padding-top: 10px">
-            <EcoSelect label="Exporting economy" @update:selected="getExport" />
+            <EcoSelect
+              label="Exporting economy"
+              @update:selected="getExport"
+              :initialValue="exportingISO"
+            />
 
             <div style="width: 30px"></div>
-            <div><yearSelect @update="getYear" /></div>
+            <div><yearSelect @update="getYear" :initialValue="year" /></div>
           </div>
           <div class="row justify-center" style="padding-top: 5px">
-            <EcoSelect label="Importing economy" @update:selected="getImport" />
+            <EcoSelect
+              label="Importing economy"
+              @update:selected="getImport"
+              :initialValue="importingISO"
+            />
             <div style="width: 380px"></div>
           </div>
           <div
@@ -143,10 +153,10 @@ import EcoSelect from "../components/EcoSelect.vue";
 
 import footerMain from "../components/footer.vue";
 
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 //input
-const modeCal = ref("1");
+const modeCal = ref("2");
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
@@ -155,6 +165,13 @@ const inputData = ref({
   importingISO: "",
 });
 const router = useRouter();
+const route = useRoute();
+
+// Get initial values from route params
+const exportingISO = ref(route.params.exp || "");
+const year = ref(route.params.year || "");
+const importingISO = ref(route.params.imp || "");
+
 const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
@@ -168,6 +185,9 @@ const getImport = (selected) => {
   inputData.value.importingISO = selected.iso;
 };
 
+//Share
+const shareContent = ref("");
+const tinaLinkURL = ref("");
 watch(
   () => inputData.value,
   (newValue) => {
@@ -178,6 +198,19 @@ watch(
       newValue.importingISO
     ) {
       showInputText.value = false;
+      shareContent.value =
+        "https://riva.negotiatetrade.org/#/forwardlinkagesimport/" +
+        inputData.value.exportingISO +
+        "/" +
+        inputData.value.importingISO +
+        "/" +
+        inputData.value.year;
+      tinaLinkURL.value =
+        "https://tina.trade/app/dashboard/" +
+        inputData.value.exportingISO +
+        "-" +
+        inputData.value.importingISO +
+        "/current-trade";
       console.log(inputData.value);
     } else {
       showInputText.value = true;
@@ -185,6 +218,34 @@ watch(
   },
   { deep: true }
 );
+
+// Watch route params to update inputData
+watch(route, (newRoute) => {
+  if (newRoute.params.exp) {
+    exportingISO.value = newRoute.params.exp;
+    getExport({ name: "", iso: newRoute.params.exp });
+  }
+  if (newRoute.params.imp) {
+    importingISO.value = newRoute.params.imp;
+    getImport({ name: "", iso: newRoute.params.imp });
+  }
+  if (newRoute.params.year) {
+    year.value = newRoute.params.year;
+    getYear(newRoute.params.year);
+  }
+});
+onMounted(() => {
+  if (exportingISO.value) {
+    getExport({ name: "", iso: exportingISO.value });
+  }
+  if (importingISO.value) {
+    getImport({ name: "", iso: importingISO.value });
+  }
+
+  if (year.value) {
+    getYear(year.value);
+  }
+});
 
 //Menu
 const goToStep1 = () => {

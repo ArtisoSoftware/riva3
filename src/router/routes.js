@@ -3,6 +3,7 @@ const routes = [
     path: "/",
     component: () => import("pages/Welcome.vue"),
   },
+  // VA Page
   {
     path: "/gvcrelationships/:iso?/:year?",
     component: () => import("pages/GVCrelationships.vue"),
@@ -25,13 +26,27 @@ const routes = [
   },
 
   {
-    path: "/forwardlinkages",
+    path: "/forwardlinkages/:exp?/:sector?/:year?",
     component: () => import("pages/ForwardLinkages.vue"),
   },
   {
-    path: "/forwardlinkagesimport",
+    path: "/forwardlinkagesimport/:exp?/:imp?/:year?",
     component: () => import("pages/ForwardLinkagesImport.vue"),
   },
+  // RI Page
+  {
+    path: "/rioverview",
+    component: () => import("pages/ri_overview.vue"),
+  },
+  {
+    path: "/riintragroup",
+    component: () => import("pages/ri_intraGroup.vue"),
+  },
+  {
+    path: "/ridownload",
+    component: () => import("pages/ri_download.vue"),
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

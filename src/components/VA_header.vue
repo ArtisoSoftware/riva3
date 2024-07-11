@@ -6,7 +6,7 @@
           <img
             src="../../public/images/unescaplogo.svg"
             alt=""
-            style="height: 80px"
+            style="height: 60px"
           />
         </div>
         <div style="padding-top: 25px">
@@ -259,7 +259,7 @@ const goToTinaLink = () => {
 <style lang="scss" scoped>
 .bgva {
   background-image: url("../../public/images/bgva.jpg");
-  height: 420px;
+  height: 400px;
 }
 .btnleft {
   width: 180px;

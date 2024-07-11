@@ -1,7 +1,9 @@
 <template>
   <div style="background-color: #7a7a7a">
     <div class="mainApp">
-      <div><VAHeader /></div>
+      <div>
+        <VAHeader :shareContent="shareContent" :tinaLink="tinaLinkURL" />
+      </div>
       <!-- Menu -->
       <div class="menuMain row">
         <div style="width: 450px">
@@ -45,13 +47,17 @@
             />
           </div>
           <div class="row justify-center" style="padding-top: 10px">
-            <EcoSelect label="Exporting economy" @update:selected="getExport" />
+            <EcoSelect
+              label="Exporting economy"
+              @update:selected="getExport"
+              :initialValue="exportingISO"
+            />
 
             <div style="width: 30px"></div>
-            <div><yearSelect @update="getYear" /></div>
+            <div><yearSelect @update="getYear" :initialValue="year" /></div>
           </div>
           <div class="row justify-center" style="padding-top: 5px">
-            <SectorSelect @update:selected="getSector" />
+            <SectorSelect @update:selected="getSector" :initialValue="sector" />
             <div style="width: 380px"></div>
           </div>
           <div
@@ -144,8 +150,8 @@ import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
 
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 //input
 const modeCal = ref("1");
 const inputData = ref({
@@ -156,6 +162,13 @@ const inputData = ref({
   sectorID: "",
 });
 const router = useRouter();
+const route = useRoute();
+
+// Get initial values from route params
+const exportingISO = ref(route.params.exp || "");
+const year = ref(route.params.year || "");
+const sector = ref(route.params.sector || "");
+
 const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
@@ -169,6 +182,9 @@ const getSector = (selected) => {
   inputData.value.sectorID = selected.id;
 };
 
+//Share
+const shareContent = ref("");
+const tinaLinkURL = ref("");
 watch(
   () => inputData.value,
   (newValue) => {
@@ -179,6 +195,13 @@ watch(
       newValue.sectorID
     ) {
       showInputText.value = false;
+      shareContent.value =
+        "https://riva.negotiatetrade.org/#/forwardlinkages/" +
+        inputData.value.exportingISO +
+        "/" +
+        inputData.value.sectorID +
+        "/" +
+        inputData.value.year;
       console.log(inputData.value);
     } else {
       showInputText.value = true;
@@ -186,6 +209,35 @@ watch(
   },
   { deep: true }
 );
+
+// Watch route params to update inputData
+watch(route, (newRoute) => {
+  if (newRoute.params.exp) {
+    exportingISO.value = newRoute.params.exp;
+    getExport({ name: "", iso: newRoute.params.exp });
+  }
+
+  if (newRoute.params.sector) {
+    sectorID.value = newRoute.params.sector;
+    getSector({ sectorName: "", sectorID: newRoute.params.sector });
+  }
+  if (newRoute.params.year) {
+    year.value = newRoute.params.year;
+    getYear(newRoute.params.year);
+  }
+});
+onMounted(() => {
+  if (exportingISO.value) {
+    getExport({ name: "", iso: exportingISO.value });
+  }
+
+  if (sector.value) {
+    getSector({ sectorName: "", sectorID: sector.value });
+  }
+  if (year.value) {
+    getYear(year.value);
+  }
+});
 
 //Menu
 const goToStep1 = () => {
