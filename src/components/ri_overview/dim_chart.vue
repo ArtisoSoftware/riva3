@@ -2,7 +2,7 @@
   <div>
     <div
       class="text-black"
-      style="font-weight: 400; font-size: 18px; width: 650px; margin: auto"
+      style="font-weight: 400; font-size: 18px; width: 600px; margin: auto"
       align="center"
     >
       <div v-if="ecoName == 'Asia-Pacific'">
@@ -19,7 +19,10 @@
       <div class="row justify-center" style="font-size: 16px">
         <div>
           <div v-for="n in 7" :key="n" style="width: 200px">
-            <div v-if="!dataCI[n * 2 - 2].score" class="row q-pt-sm">
+            <div
+              v-if="!dataCI[n * 2 - 2] || !dataCI[n * 2 - 2].score"
+              class="row q-pt-sm"
+            >
               <div class="q-px-sm">No data available</div>
               <div class="bgBlue" style="width: 8px"></div>
             </div>
@@ -40,7 +43,7 @@
               </div>
             </div>
             <div
-              v-if="!dataCI[n * 2 - 1].score"
+              v-if="!dataCI[n * 2 - 1] || !dataCI[n * 2 - 1].score"
               class="row q-pt-xs"
               style="padding-bottom: 14px"
             >
@@ -61,7 +64,7 @@
               </div>
               <div v-else class="row justify-end">
                 <div class="q-px-sm">
-                  {{ dataCI[n * 2 - 2].score.toFixed(2) }}
+                  {{ dataCI[n * 2 - 1].score.toFixed(2) }}
                 </div>
                 <div class="bgDarkBlue" style="width: 8px"></div>
               </div>
@@ -75,7 +78,10 @@
 
         <div>
           <div v-for="n in 7" :key="n" style="width: 200px">
-            <div v-if="!dataSI[n * 2 - 2].score" class="row q-pt-sm">
+            <div
+              v-if="!dataSI[n * 2 - 2] || !dataSI[n * 2 - 2].score"
+              class="row q-pt-sm"
+            >
               <div class="q-px-sm">No data available</div>
               <div class="bgOrange" style="width: 8px"></div>
             </div>
@@ -95,7 +101,7 @@
               </div>
             </div>
             <div
-              v-if="!dataSI[n * 2 - 1].score"
+              v-if="!dataSI[n * 2 - 1] || !dataSI[n * 2 - 1].score"
               class="row q-pt-xs"
               style="padding-bottom: 14px"
             >
@@ -113,7 +119,7 @@
               <div v-else class="row">
                 <div class="bgDarkOrange" style="width: 8px"></div>
                 <div class="q-px-sm">
-                  {{ dataSI[n * 2 - 2].score.toFixed(2) }}
+                  {{ dataSI[n * 2 - 1].score.toFixed(2) }}
                 </div>
               </div>
             </div>
@@ -152,11 +158,11 @@
 import { ref } from "vue";
 const props = defineProps({
   dataSI: {
-    type: Object,
+    type: Array,
     required: false,
   },
   dataCI: {
-    type: Object,
+    type: Array,
     required: false,
   },
   ecoName: {
