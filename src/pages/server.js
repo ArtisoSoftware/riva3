@@ -5,3 +5,12 @@ export function serverSetup() {
     serverData,
   };
 }
+export function yearInputShow() {
+  const yearInput = ref({
+    min: 2010,
+    max: 2021,
+  });
+  return {
+    yearInput,
+  };
+}

@@ -3,7 +3,9 @@
     <div class="mainApp">
       <div><RIHeader :menu="1" /></div>
       <div class="row">
-        <div class="col">cc</div>
+        <div class="col">
+          <inputSection @change-integration-type="changeIntegrationType" />
+        </div>
         <div style="width: 480px">
           <dimensionIcon :integrationType="input.type" />
         </div>
@@ -17,12 +19,17 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import RIHeader from "../components/RI_header.vue";
+import inputSection from "../components/ri_intragroup/InputSection.vue";
 import dimensionIcon from "../components/RI_dimension_icon.vue";
 import footerMain from "../components/footer2.vue";
 
 const input = ref({
-  type: "Conventional",
+  type: "Sustainable",
 });
+
+const changeIntegrationType = (integrationType) => {
+  input.value.type = integrationType;
+};
 onMounted(() => {
   // Refresh the page on first load to ensure meta tag change
   sessionStorage.removeItem("reloaded2");
