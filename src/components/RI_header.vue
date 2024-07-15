@@ -54,15 +54,23 @@
           </div>
         </div>
         <div style="width: 170px; padding: 10px">
-          <div class="menuBtn q-pa-sm borderWhite q-my-sm">Country brief</div>
+          <div
+            class="menuBtn q-pa-sm borderWhite q-my-sm cursor-pointer"
+            @click="goToCountryBrief()"
+          >
+            Country brief
+          </div>
           <div
             class="menuBtn q-pa-sm borderWhite q-my-sm cursor-pointer"
             @click="isDemoDia = true"
           >
             Demo videos
           </div>
-          <div class="menuBtn q-pa-sm borderWhite q-my-sm">
-            Data avalibility
+          <div
+            class="menuBtn q-pa-sm borderWhite q-my-sm cursor-pointer"
+            @click="goToData()"
+          >
+            Data availability
           </div>
           <div
             class="menuBtn q-pa-sm borderWhite q-my-sm cursor-pointer"
@@ -318,7 +326,12 @@ const gotoIntra = () => {
 const goToDownload = () => {
   router.push("/ridownload");
 };
-
+const goToData = () => {
+  router.push("/ridataavail");
+};
+const goToCountryBrief = () => {
+  router.push("/ricountrybrief");
+};
 const vdoDemo = (vdoID) => {
   return serverData.value + "ri_demo/" + vdoID + ".webm";
 };

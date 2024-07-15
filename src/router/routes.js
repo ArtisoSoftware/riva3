@@ -43,6 +43,22 @@ const routes = [
     component: () => import("pages/ri_intraGroup.vue"),
   },
   {
+    path: "/riecopartner",
+    component: () => import("pages/ri_ecopartner.vue"),
+  },
+  {
+    path: "/ribuildyourown",
+    component: () => import("pages/ri_buildYourOwn.vue"),
+  },
+  {
+    path: "/ricountrybrief",
+    component: () => import("pages/ri_countrybrief.vue"),
+  },
+  {
+    path: "/ridataavail",
+    component: () => import("pages/ri_dataAvail.vue"),
+  },
+  {
     path: "/ridownload",
     component: () => import("pages/ri_download.vue"),
   },

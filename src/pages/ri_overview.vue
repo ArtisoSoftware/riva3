@@ -2,6 +2,7 @@
   <div style="background-color: #7a7a7a">
     <div class="mainApp">
       <div><RIHeader :menu="0" /></div>
+      <!-- section 1 line chart and dim chart -->
       <div>
         <div class="row justify-center q-pt-lg">
           <div>
@@ -25,11 +26,126 @@
           </div>
         </div>
       </div>
+      <!-- tile map -->
+      <div class="text-center text-h6">
+        <div v-if="ecoName == 'Asia-Pacific'">
+          Which Asia-Pacific economies were most integrated with the rest of the
+          region in {{ input.year.max }}? - Stylized honeycomb map of the
+          Asia-Pacific region
+        </div>
+        <div v-else>
+          Which Asia-Pacific economies were most integrated with
+          {{ ecoName }} in {{ input.year.max }}? – Sylized honeycomb map of the
+          Asia-Pacific region
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-6">
+          <div class="text-h6 text-center q-pt-md">Sustainable integration</div>
+          <div class="text-center">
+            Hover to reveal the country's name and integration score
+          </div>
           <tileMap :tilemapData="tilemapData" :dataScore="tileSI" />
         </div>
-        <div class="col-6"></div>
+        <div class="col-6">
+          <div class="text-h6 text-center q-pt-md">
+            Conventional integration
+          </div>
+          <div class="text-center">
+            Hover to reveal the country's name and integration score
+          </div>
+          <tileMap :tilemapData="tilemapData" :dataScore="tileCI" />
+        </div>
+      </div>
+
+      <div class="text-h6 text-center q-pt-md">
+        Learn more about integration in Asia and the Pacific:
+      </div>
+      <div class="q-pt-md">
+        <div class="row justify-center">
+          <div style="width: 250px">
+            <q-btn
+              label="Country brief"
+              class="btn"
+              outline
+              color="secondary"
+              @click="goTOCountryBrief()"
+            />
+          </div>
+          <div style="width: 250px">
+            Eveything you need to know in<br />
+            a handy 2-page format
+          </div>
+        </div>
+        <div class="q-py-md text-center">
+          Explore integration from different prespectives with our interactive
+          web tool:
+        </div>
+        <div class="row justify-center q-pb-md">
+          <div>
+            <div
+              class="row bigBtn cursor-pointer justify-center"
+              @click="goToInra()"
+            >
+              <div style="width: 100px" class="q-pt-sm">
+                <img src="../../public/images/intra-g.svg" alt="" />
+              </div>
+              <div
+                class="text-secondary q-pt-md q-pl-md"
+                style="font-size: 16px"
+              >
+                Intra-group<br />integration
+              </div>
+            </div>
+            <div class="text-center">
+              Symmetric integration between<br />
+              a group of economies
+            </div>
+          </div>
+          <div style="width: 20px"></div>
+          <div>
+            <div
+              class="row bigBtn cursor-pointer justify-center"
+              @click="goToEco()"
+            >
+              <div style="width: 100px; padding-top: 13px">
+                <img src="../../public/images/eco-g.svg" alt="" />
+              </div>
+              <div
+                class="text-secondary q-pt-md q-pl-md"
+                style="font-size: 16px"
+              >
+                Economy-partner<br />integration
+              </div>
+            </div>
+            <div class="text-center">
+              Asymmetric integration between<br />
+              different economies
+            </div>
+          </div>
+          <div style="width: 20px"></div>
+          <div>
+            <div
+              class="row bigBtn cursor-pointer justify-center"
+              @click="goToBuild()"
+            >
+              <div style="width: 100px; padding-top: 13px">
+                <img src="../../public/images/build-g.svg" alt="" />
+              </div>
+              <div
+                class="text-secondary q-pl-md"
+                style="font-size: 16px; padding-top: 27px"
+              >
+                Build your own
+              </div>
+            </div>
+            <div class="text-center">
+              Customize your integration index —<br />
+              choose specific dimensions
+            </div>
+          </div>
+        </div>
       </div>
 
       <footerMain />
@@ -49,9 +165,11 @@ import { countryGroupListRiva2 } from "./countryGroupList.js";
 import { serverSetup, yearInputShow } from "./server";
 import { useQuasar } from "quasar";
 import { isEqual } from "lodash";
+import { useRouter } from "vue-router";
 
 import axios from "axios";
 const $q = useQuasar();
+const router = useRouter();
 const { serverData } = serverSetup();
 const { yearInput } = yearInputShow();
 const partner = ref([
@@ -1518,8 +1636,6 @@ const loadLineCal = async () => {
     ]);
     lineSI.value = resSustainable.data || [];
     lineCI.value = resConventional.data || [];
-    console.log(lineSI.value);
-    console.log(lineCI.value);
   } catch (error) {
     console.error("Error loading data:", error);
   } finally {
@@ -1549,8 +1665,6 @@ const loadTileCal = async () => {
     ]);
     tileSI.value = resSustainable.data || [];
     tileCI.value = resConventional.data || [];
-    console.log(tileSI.value);
-    console.log(tileCI.value);
   } catch (error) {
     console.error("Error loading data:", error);
   } finally {
@@ -1558,6 +1672,18 @@ const loadTileCal = async () => {
   }
 };
 
+const goToInra = () => {
+  router.push("/riintragroup");
+};
+const goToEco = () => {
+  router.push("/riecopartner");
+};
+const goToBuild = () => {
+  router.push("/ribuildyourown");
+};
+const goTOCountryBrief = () => {
+  router.push("/ricountrybrief");
+};
 onMounted(() => {
   // Refresh the page on first load to ensure meta tag change
   sessionStorage.removeItem("reloaded2");
@@ -1577,5 +1703,15 @@ onMounted(() => {
 }
 .font-20 {
   font-size: 20px;
+}
+.btn {
+  width: 240px;
+  height: 40px;
+}
+.bigBtn {
+  width: 250px;
+  height: 80px;
+  border: 1px solid #2d9687;
+  border-radius: 10px;
 }
 </style>

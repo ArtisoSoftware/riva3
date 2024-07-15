@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>{{ dataScore }}</div>
     <div
       ref="chartContainer"
       :style="{ width: '500px', height: '500px' }"
@@ -88,6 +87,12 @@ export default {
     let chart = null;
 
     const getMergedData = () => {
+      const scores = props.dataScore.map((score) =>
+        parseFloat(score.avg_score)
+      );
+      const maxScore = Math.max(...scores);
+      const interval = maxScore / 5;
+
       return props.tilemapData
         .filter((country) => partner.value.includes(country.alpha3))
         .map((country) => {
@@ -97,13 +102,15 @@ export default {
           return {
             ...country,
             value: score ? parseFloat(score.avg_score).toFixed(2) : "0",
-            color: score ? null : "#E0E0E0", // ถ้าไม่มี score ให้ใช้สีพิเศษ
+            color: score ? null : "#AB8A64", // ถ้าไม่มี score ให้ใช้สีพิเศษ
           };
         });
     };
 
     const createChart = () => {
       const mergedData = getMergedData();
+      const maxScore = Math.max(...mergedData.map((d) => parseFloat(d.value)));
+      const interval = maxScore / 5;
 
       chart = Highcharts.chart(chartContainer.value, {
         chart: {
@@ -112,8 +119,9 @@ export default {
           width: 500,
           height: 500,
         },
+
         title: {
-          text: "Average Scores by Country",
+          text: "",
         },
         xAxis: {
           visible: false,
@@ -121,36 +129,52 @@ export default {
         yAxis: {
           visible: false,
         },
+        credits: {
+          enabled: false,
+        },
+        exporting: {
+          enabled: false,
+        },
         colorAxis: {
           dataClasses: [
             {
               from: 0,
-              to: 0.2,
-              color: "#F9EDB3",
-              name: "< 0.2",
+              to: interval,
+              color: "#C25555",
+              name: `< ${interval.toFixed(2)}`,
             },
             {
-              from: 0.2,
-              to: 0.4,
-              color: "#FFC428",
-              name: "0.2 - 0.4",
+              from: interval,
+              to: 2 * interval,
+              color: "#E7A84A",
+              name: `${interval.toFixed(2)} - ${(2 * interval).toFixed(2)}`,
             },
             {
-              from: 0.4,
-              to: 0.6,
-              color: "#FF7987",
-              name: "0.4 - 0.6",
+              from: 2 * interval,
+              to: 3 * interval,
+              color: "#FBD49A",
+              name: `${(2 * interval).toFixed(2)} - ${(3 * interval).toFixed(
+                2
+              )}`,
             },
             {
-              from: 0.6,
-              to: 1,
-              color: "#FF2371",
-              name: "> 0.6",
+              from: 3 * interval,
+              to: 4 * interval,
+              color: "#D3CF5E",
+              name: `${(3 * interval).toFixed(2)} - ${(4 * interval).toFixed(
+                2
+              )}`,
+            },
+            {
+              from: 4 * interval,
+              to: maxScore,
+              color: "#65BA47",
+              name: `> ${(4 * interval).toFixed(2)}`,
             },
             {
               from: -0.1, // ข้อมูลพิเศษ
               to: 0.1,
-              color: "#E0E0E0",
+              color: "#AB8A64",
               name: "No data available",
             },
           ],
@@ -161,9 +185,7 @@ export default {
             dataLabels: {
               enabled: true,
               formatter: function () {
-                return this.point.value === "0"
-                  ? this.point.alpha3
-                  : this.point.alpha3;
+                return this.point.alpha3;
               },
             },
             name: "Average Score",
