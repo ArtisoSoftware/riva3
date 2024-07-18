@@ -55,7 +55,7 @@ const routes = [
     component: () => import("pages/ri_countrybrief.vue"),
   },
   {
-    path: "/ridataavail",
+    path: "/ridataavail/:id?",
     component: () => import("pages/ri_dataAvail.vue"),
   },
   {

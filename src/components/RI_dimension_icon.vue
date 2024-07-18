@@ -182,7 +182,6 @@
             alt=""
             class="iconDimension"
           >
-            ['', '', ''];
             <q-tooltip>
               <div>Value chains integration</div>
               <div>- Environmental goods export complementarity index</div>

@@ -332,6 +332,9 @@ const goToData = () => {
 const goToCountryBrief = () => {
   router.push("/ricountrybrief");
 };
+const gotoPartner = () => {
+  router.push("/riecopartner");
+};
 const vdoDemo = (vdoID) => {
   return serverData.value + "ri_demo/" + vdoID + ".webm";
 };
