@@ -64,7 +64,7 @@
       <!-- graph menu 1 -->
       <div v-show="menuSelectedId == 1">
         <div class="row">
-          <div style="width: 400px" class="q-pa-md borderRight">
+          <div style="width: 400px; height: 700px" class="q-pa-md borderRight">
             <div class="font-24">Select dimensions of interest</div>
             <div class="font-14">
               In parenthesis, each economy's asymmetric
@@ -139,7 +139,160 @@
               </div>
             </div>
           </div>
+          <div class="col q-px-md">
+            <div class="q-pt-md">
+              <div class="font-24">
+                How did {{ yourGroupNameSub }}'s Integration with this group
+                progress across periods?
+              </div>
+            </div>
+            <div>
+              Since {{ input.year.min }}, {{ yourGroupNameSub }}'s Integration
+              {{ ecoIntegrationPercentChange > 0 ? "increased" : "decreased" }}
+              by
+              {{ Math.abs(ecoIntegrationPercentChange) }}%. In
+              {{ input.year.max }}
+              <span v-if="ecoIntegrationChartSort.length > 1">
+                , your group was most integrated in
+                {{ ecoIntegrationChartSort[0].name.toLowerCase() }} ({{
+                  Number(ecoIntegrationChartSort[0].lastValue).toFixed(2)
+                }}) and least in
+                {{
+                  ecoIntegrationChartSort[
+                    ecoIntegrationChartSort.length - 1
+                  ].name.toLowerCase()
+                }}
+                ({{
+                  Number(
+                    ecoIntegrationChartSort[ecoIntegrationChartSort.length - 1]
+                      .lastValue
+                  ).toFixed(2)
+                }}).
+              </span>
+            </div>
+            <div
+              id="lineChartByDimension"
+              style="max-width: 1024px; width: 100%; margin: auto"
+            ></div>
+          </div>
         </div>
+      </div>
+      <!-- graph menu 2 -->
+      <div v-show="menuSelectedId == 2">
+        <div class="row">
+          <div style="width: 400px; height: 700px" class="q-pa-md borderRight">
+            <div class="font-24">Select economies of interest</div>
+            <div class="font-14">
+              In parenthesis, each economy's asymmetric
+              {{ input.type.toLowerCase() }} integration index progression with
+              this partner group across periods.
+            </div>
+            <div class="q-pt-md">
+              Click on each country to select/unselect it from the graph.
+            </div>
+            <div
+              class="row q-py-sm cursor-pointer"
+              @click="integrationProgressToggleGroupOnOff()"
+            >
+              <div
+                class="checkBoxGroup"
+                style="background-color: #f07435"
+                v-show="integrationProgressChartGroupVisible"
+              ></div>
+              <div
+                class="checkBoxGroup"
+                v-show="!integrationProgressChartGroupVisible"
+              ></div>
+              <div class="q-pl-sm">
+                Group average ({{ Number(ecoIntegrationAvg).toFixed(2) }})
+              </div>
+            </div>
+            <div><hr /></div>
+            <div class="row">
+              <div
+                v-for="(item, index) in intergrationProgressList"
+                :key="index"
+                class="col-12 row q-pb-md font-12 cursor-pointer"
+                @click="integrationProgressToggleOnOff(index)"
+              >
+                <div
+                  class="checkBox"
+                  style="background-color: #2d9687"
+                  v-show="item.visible == true"
+                ></div>
+                <div
+                  class="checkBox"
+                  style="border: 1px solid #757575"
+                  v-show="item.visible == false"
+                ></div>
+
+                <div class="q-pl-sm row">
+                  <div style="max-width: 350px; display: inline-block">
+                    {{ item.name }}
+                    <span
+                      v-if="
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ) >= 0
+                      "
+                      class="positiveText"
+                      >(+{{
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ).toFixed(2)
+                      }})</span
+                    >
+                    <span
+                      v-else-if="
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ) < 0
+                      "
+                      class="negativeText"
+                      >(-{{
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ).toFixed(2)
+                      }})</span
+                    >
+                    <span v-else>(No data available) </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col q-px-md">
+            <div class="q-pt-md">
+              <div class="font-24">
+                How did {{ yourGroupNameSub }}'s integration progress across
+                periods?
+              </div>
+              <div>{{ integrationProgressSubTitleText }}</div>
+              <div>{{ integrationProgressSubTitleText2 }}</div>
+            </div>
+            <div
+              id="container2x"
+              style="max-width: 1024px; width: 100%; margin: auto"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <!-- graph menu 3 -->
+      <div v-show="menuSelectedId == 3">
+        <div class="q-pa-md">
+          <div class="font-24">
+            How much data is available for each of the dimensions considered?
+          </div>
+          <div>{{ dataAvailable.subTitle1 }} {{ dataAvailable.subTitle2 }}</div>
+        </div>
+        <div
+          id="container3x"
+          style="max-width: 1024px; width: 100%; margin: auto"
+        ></div>
       </div>
     </div>
   </div>
@@ -215,10 +368,29 @@ const integrationProgressChartSeries2 = ref([]);
 const integrationProgressPlotChartGroup = ref([]);
 const integrationProgressYearStart = ref("");
 const integrationProgressYearEnd = ref("");
+const integrationProgressPlotChartCat = ref([]);
+const integrationProgressPlotChartSeries1 = ref([]);
+const integrationProgressPlotChartSeries2 = ref([]);
+const ecoIntegrationChartSort = ref([]);
+const yourGropuName = ref("Your group");
+const yourGroupNameSub = ref("the reporting group");
+const integrationProgressdiffValueArray = ref([]);
+const ecoIntegrationFinalChart = ref([]);
 const ecoIntegrationGroupVisible = ref(true);
+const integrationProgressSubTitleText = ref("");
+const integrationProgressSubTitleText2 = ref("");
+const integrationProgressChartGroupVisible = ref(true);
 const ecoIntegration = ref([]);
+const dimPick = ref([]);
 const reporterData = ref(props.reporting.sort());
 const partnerData = ref(props.partner.sort());
+const dataAvailable = ref({
+  rawData: [],
+  cat: [],
+  chartData: [],
+  subTitle1: "",
+  subTitle2: "",
+});
 
 const loadEcoIntegration = async () => {
   ecoIntegration.value = [];
@@ -271,11 +443,21 @@ const loadEcoIntegration = async () => {
       dataBeforePush.data[dataBeforePush.data.length - 1];
     ecoIntegrationChart.value.push(dataBeforePush);
   }
+
   ecoIntegrationChart.value.forEach((item, index) => {
     ecoIntegrationChart.value[index].visible = true;
     ecoIntegrationChart.value[index].color = colorPattern.value[index];
   });
 
+  ecoIntegrationChartSort.value = [];
+  ecoIntegrationChart.value.forEach((item) => {
+    let temp = {
+      name: item.name,
+      lastValue: item.lastValue,
+    };
+    ecoIntegrationChartSort.value.push(temp);
+    ecoIntegrationChartSort.value.sort((a, b) => b.lastValue - a.lastValue);
+  });
   let avgValue = [];
   let diffYear = props.input.year.max - props.input.year.min;
 
@@ -299,6 +481,7 @@ const loadEcoIntegration = async () => {
       });
     });
     avgValue[j] = Number((sumEachPair / countPair).toFixed(4));
+    mergeEcoIntegration();
   }
   ecoIntegrationChartGroup.value = {
     name: "Group average",
@@ -320,6 +503,7 @@ const ecoIntegrationGroupToggleOnOff = () => {
   ecoIntegrationGroupVisible.value = !ecoIntegrationGroupVisible.value;
   ecoIntegrationChartGroup.value.visible =
     !ecoIntegrationChartGroup.value.visible;
+  mergeEcoIntegration();
 };
 
 const ecoIntegrationToggleOnOff = (index) => {
@@ -327,6 +511,105 @@ const ecoIntegrationToggleOnOff = (index) => {
     !ecoIntegrationChart.value[index]["visible"];
   ecoIntegrationChart.value.push("xxx");
   ecoIntegrationChart.value.pop();
+  mergeEcoIntegration();
+};
+const mergeEcoIntegration = () => {
+  ecoIntegrationFinalChart.value = [];
+  ecoIntegrationChart.value.forEach((x) => {
+    ecoIntegrationFinalChart.value.push(x);
+  });
+  ecoIntegrationFinalChart.value.push(ecoIntegrationChartGroup.value);
+  LineChartByCountry();
+};
+
+const LineChartByCountry = () => {
+  let yAxisTitle = props.input.type + " Integration";
+  Highcharts.chart("lineChartByDimension", {
+    chart: {
+      height: 550,
+    },
+    title: {
+      text: "",
+    },
+    legend: {
+      layout: "vertical",
+      align: "right",
+      verticalAlign: "middle",
+    },
+    yAxis: {
+      // min: 0,
+
+      title: {
+        text: yAxisTitle,
+      },
+    },
+    xAxis: {
+      tickInterval: 1,
+    },
+    tooltip: {
+      useHTML: true,
+      headerFormat: "",
+      pointFormatter: function () {
+        return (
+          "<div class='font-16'><b>" +
+          this.series.name +
+          "</b></div><div>" +
+          yAxisTitle +
+          " index: " +
+          Number(this.y).toFixed(2) +
+          "</div>"
+        );
+      },
+    },
+    plotOptions: {
+      series: {
+        label: {
+          connectorAllowed: false,
+        },
+        pointStart: props.input.year.min,
+      },
+    },
+    credits: {
+      enabled: false,
+    },
+    series: ecoIntegrationFinalChart.value,
+    legend: { enabled: false },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    responsive: {
+      rules: [
+        {
+          condition: {
+            maxWidth: 500,
+          },
+          chartOptions: {
+            legend: {
+              layout: "horizontal",
+              align: "center",
+              verticalAlign: "bottom",
+            },
+          },
+        },
+      ],
+    },
+  });
 };
 
 const integrationProgressPrepareData = () => {
@@ -335,6 +618,7 @@ const integrationProgressPrepareData = () => {
   integrationProgressMakeAvgGroup();
   integrationProgressLegendChartName();
   intergrationProgressSubTitle();
+  integrationProgressMergeData();
 };
 const integrationProgressMakeEcoList = () => {
   intergrationProgressList.value = [];
@@ -392,9 +676,387 @@ const integrationProgressLegendChartName = () => {
     props.input.year.max - diffYear + "-" + props.input.year.max;
 };
 const intergrationProgressSubTitle = () => {
-  console.log("working");
+  let diffGroup =
+    integrationProgressPlotChartGroup.value[1] -
+    integrationProgressPlotChartGroup.value[0];
+  integrationProgressSubTitleText.value = `From ${
+    integrationProgressYearStart.value
+  } to ${integrationProgressYearStart.value} ${
+    yourGroupNameSub.value
+  }'s integration average ${
+    diffGroup > 0 ? "increased" : "decreased"
+  } ${Math.abs(diffGroup).toFixed(2)} from ${Number(
+    integrationProgressPlotChartGroup.value[0]
+  ).toFixed(2)} to ${Number(integrationProgressPlotChartGroup.value[1]).toFixed(
+    2
+  )} `;
+
+  let counter = 0;
+  intergrationProgressList.value.forEach((item) => {
+    let temp = {
+      name: item.name,
+      diffData: Number(
+        (
+          integrationProgressChartSeries2.value[counter] -
+          integrationProgressChartSeries1.value[counter]
+        ).toFixed(2)
+      ),
+    };
+    integrationProgressdiffValueArray.value.push(temp);
+    counter++;
+  });
+  integrationProgressdiffValueArray.value.sort(
+    (a, b) => b.diffData - a.diffData
+  );
+  if (integrationProgressdiffValueArray.value.length > 2) {
+    integrationProgressSubTitleText2.value = `${
+      integrationProgressdiffValueArray.value[0].name
+    } (${Number(integrationProgressdiffValueArray.value[0].diffData).toFixed(
+      2
+    )}) progressed the most. ${
+      integrationProgressdiffValueArray.value[
+        integrationProgressdiffValueArray.value.length - 1
+      ].name
+    } (${Number(
+      integrationProgressdiffValueArray.value[
+        integrationProgressdiffValueArray.value.length - 1
+      ].diffData
+    ).toFixed(2)}) progress the least.`;
+  }
 };
-onMounted(() => loadEcoIntegration());
+
+const integrationProgressMergeData = () => {
+  integrationProgressPlotChartCat.value = [];
+  integrationProgressPlotChartSeries1.value = [];
+  integrationProgressPlotChartSeries2.value = [];
+  if (integrationProgressChartGroupVisible.value) {
+    integrationProgressPlotChartCat.value.push("Your group");
+    integrationProgressPlotChartSeries1.value.push(
+      integrationProgressPlotChartGroup.value[0]
+    );
+    integrationProgressPlotChartSeries2.value.push(
+      integrationProgressPlotChartGroup.value[1]
+    );
+  }
+  let countInter = 0;
+  intergrationProgressList.value.forEach((item) => {
+    if (item.visible) {
+      integrationProgressPlotChartCat.value.push(item.name);
+      integrationProgressPlotChartSeries1.value.push(
+        integrationProgressChartSeries1.value[countInter]
+      );
+      integrationProgressPlotChartSeries2.value.push(
+        integrationProgressChartSeries2.value[countInter]
+      );
+      countInter++;
+    }
+  });
+  loadIntegrationPeriodsChart();
+};
+
+const loadIntegrationPeriodsChart = () => {
+  let yAxisTitle = props.input.type + " Integration";
+  Highcharts.chart("container2x", {
+    chart: {
+      type: "column",
+      height: "550px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: integrationProgressPlotChartCat.value,
+      crosshair: true,
+      labels: {
+        formatter() {
+          if (this.value == "Your group")
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 1,
+      title: {
+        text: yAxisTitle,
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2);
+          },
+        },
+      },
+    },
+    legend: {
+      align: "right",
+      verticalAlign: "top",
+      y: 50,
+      layout: "vertical",
+      floating: true,
+    },
+    series: [
+      {
+        name: integrationProgressYearStart.value,
+        data: integrationProgressPlotChartSeries1.value,
+        color: "#2381B8",
+      },
+      {
+        name: integrationProgressYearEnd.value,
+        data: integrationProgressPlotChartSeries2.value,
+        color: "#13405A",
+      },
+    ],
+  });
+};
+const checkYourName = () => {
+  if (props.input.reporting.length == 1) {
+    yourGroupNameSub.value = props.input.reporting[0].label;
+    yourGropuName.value = props.input.reporting[0].label;
+  }
+  dimPick.value = props.input.dimensionPicked;
+};
+
+const integrationProgressToggleGroupOnOff = () => {
+  integrationProgressChartGroupVisible.value =
+    !integrationProgressChartGroupVisible.value;
+  integrationProgressMergeData();
+};
+
+const integrationProgressToggleOnOff = (index) => {
+  intergrationProgressList.value[index]["visible"] =
+    !intergrationProgressList.value[index]["visible"];
+  integrationProgressMergeData();
+};
+
+const loadDataFromDatabase = async () => {
+  let data = {
+    type: props.input.type,
+    reporting: props.reporting,
+    partner: props.partner,
+    dimension: props.input.dimensionPicked,
+  };
+
+  let dimPass = props.input.dimensionPicked.length / 2;
+  let url = serverData.value + "ri/build_data_dimension.php";
+  let res = await axios.post(url, JSON.stringify(data));
+  let dataChart = [];
+
+  for (let k = 0; k < dimPick.value.length; k++) {
+    let indexDimension = dimPick.value[k];
+    let temp = {
+      name: dimensionName.value[indexDimension - 1],
+      indexDimension: indexDimension,
+      data: 0,
+    };
+
+    dataChart.push(temp);
+  }
+
+  let countPair = 0;
+
+  for (let i = 0; i < props.reporting.length; i++) {
+    for (let j = 0; j < props.partner.length; j++) {
+      let tempPairCountry = res.data.filter(
+        (x) =>
+          x.reporting == props.reporting[i] && x.partner == props.partner[j]
+      );
+
+      if (tempPairCountry.length >= dimPass) {
+        countPair++;
+        for (let k = 0; k < tempPairCountry.length; k++) {
+          let dimCheck = Number(tempPairCountry[k].dim);
+          for (let l = 0; l < dataChart.length; l++) {
+            if (dataChart[l].indexDimension == dimCheck) {
+              dataChart[l].data += 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (let i = 0; i < dataChart.length; i++) {
+    dataChart[i].data = (dataChart[i].data * 100) / countPair;
+    dataChart[i].data = Number(dataChart[i].data.toFixed(2));
+  }
+
+  for (let i = 0; i < dataChart.length; i++) {
+    dataAvailable.value.rawData.push(dataChart[i]);
+  }
+  let avgGroup = Math.round(
+    dataAvailable.value.rawData
+      .map((x) => x.data)
+      .reduce((pc, cc) => pc + cc, 0) / dataAvailable.value.rawData.length
+  );
+  let temp = {
+    name: "Your group",
+    data: avgGroup,
+  };
+  dataAvailable.value.rawData.push(temp);
+  dataAvailable.value.rawData.sort((a, b) => b.data - a.data);
+  setDataforDataAvail(avgGroup);
+};
+
+const setDataforDataAvail = (avgGroup) => {
+  dataAvailable.value.cat = dataAvailable.value.rawData.map((x) => x.name);
+  dataAvailable.value.chartData = dataAvailable.value.rawData.map(
+    (x) => x.data
+  );
+  dataAvailable.value.subTitle1 = `${
+    yourGroupNameSub.value
+  }'s has data for (${Number(avgGroup).toFixed(
+    2
+  )}%) of all possible reporter-partner pairs.`;
+
+  if (dataAvailable.value.rawData.length > 3) {
+    dataAvailable.value.subTitle2 = `${
+      dataAvailable.value.rawData[0].name
+    } (${Number(dataAvailable.value.chartData[0]).toFixed(
+      2
+    )}%) were the dimensions with the most complete data set, while ${dataAvailable.value.rawData[
+      dataAvailable.value.rawData.length - 1
+    ].name.toLowerCase()} (${Number(
+      dataAvailable.value.chartData[dataAvailable.value.chartData.length - 1]
+    ).toFixed(2)}%) were the least.`;
+  }
+  plotChartDataAvail();
+};
+
+const plotChartDataAvail = () => {
+  Highcharts.chart("container3x", {
+    chart: {
+      type: "column",
+      height: "500px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: dataAvailable.value.cat,
+      crosshair: true,
+      labels: {
+        formatter() {
+          if (this.value == "Your group")
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      title: {
+        text: "",
+      },
+      labels: {
+        format: "{value} %",
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.2f}%</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2) + "%";
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "data availability",
+        data: dataAvailable.value.chartData,
+        color: "#2381B8",
+      },
+    ],
+  });
+};
+onMounted(() => {
+  checkYourName();
+  loadEcoIntegration();
+  loadDataFromDatabase();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -411,7 +1073,7 @@ onMounted(() => loadEcoIntegration());
 }
 .borderMainBox {
   border: 1px solid #757575;
-  height: 650px;
+  height: 700px;
   width: 100%;
 }
 .borderRight {
@@ -426,5 +1088,11 @@ onMounted(() => loadEcoIntegration());
 .checkBox {
   width: 20px;
   height: 20px;
+}
+.positiveText {
+  color: #2d9687;
+}
+.negativeText {
+  color: #d85b63;
 }
 </style>
