@@ -294,6 +294,26 @@
           style="max-width: 1024px; width: 100%; margin: auto"
         ></div>
       </div>
+      <!-- graph menu4 -->
+      <div v-show="menuSelectedId == 4">
+        <div class="q-pa-md">
+          <div class="font-24">
+            How much is each dimensions contributing to the overall integration
+            index ?
+          </div>
+          <div>{{ weight.subTitle1 }}</div>
+        </div>
+        <div
+          id="container4x"
+          style="max-width: 1024px; width: 100%; margin: auto"
+        ></div>
+
+        <div align="center">
+          <div class="btn_weight" @click="showWeightDia()">
+            Change your index's dimension weights
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -390,6 +410,13 @@ const dataAvailable = ref({
   chartData: [],
   subTitle1: "",
   subTitle2: "",
+});
+const weight = ref({
+  equalWeight: 100,
+  rawData: [],
+  cat: [],
+  chartData: [],
+  subTitle1: "",
 });
 
 const loadEcoIntegration = async () => {
@@ -1052,10 +1079,188 @@ const plotChartDataAvail = () => {
     ],
   });
 };
+
+const weightLoadData = async () => {
+  let data = {
+    type: props.input.type,
+    reporting: props.reporting,
+    partner: props.partner,
+    dimension: props.input.dimensionPicked,
+  };
+
+  let dimPass = props.input.dimensionPicked.length / 2;
+  let url = serverData.value + "ri/build_data_dimension.php";
+  let res = await axios.post(url, JSON.stringify(data));
+  let dataChart = [];
+
+  for (let k = 0; k < dimPick.value.length; k++) {
+    let indexDimension = dimPick.value[k];
+    let temp = {
+      name: dimensionName.value[indexDimension - 1],
+      indexDimension: indexDimension,
+      data: 0,
+    };
+
+    dataChart.push(temp);
+  }
+
+  let countPair = 0;
+
+  for (let i = 0; i < props.reporting.length; i++) {
+    for (let j = 0; j < props.partner.length; j++) {
+      let tempPairCountry = res.data.filter(
+        (x) =>
+          x.reporting == props.reporting[i] && x.partner == props.partner[j]
+      );
+
+      if (tempPairCountry.length >= dimPass) {
+        countPair++;
+        let tempWeight = 100 / tempPairCountry.length;
+        for (let k = 0; k < tempPairCountry.length; k++) {
+          let dimCheck = Number(tempPairCountry[k].dim);
+          for (let l = 0; l < dataChart.length; l++) {
+            if (dataChart[l].indexDimension == dimCheck) {
+              dataChart[l].data += tempWeight;
+            }
+          }
+        }
+      }
+    }
+  }
+  for (let i = 0; i < dataChart.length; i++) {
+    dataChart[i].data /= countPair;
+    dataChart[i].data = Number(dataChart[i].data.toFixed(1));
+  }
+  weight.value.rawData = [];
+  for (let i = 0; i < dataChart.length; i++) {
+    weight.value.rawData[i] = dataChart[i];
+  }
+  weight.value.rawData.sort((a, b) => b.data - a.data);
+  setDataforWeight();
+};
+
+const setDataforWeight = () => {
+  weight.value.equalWeight = Number(
+    (100 / weight.value.rawData.length).toFixed(2)
+  );
+  weight.value.cat = weight.value.rawData.map((x) => x.name);
+  weight.value.chartData = weight.value.rawData.map((x) => x.data);
+
+  if (weight.value.rawData.length > 1) {
+    weight.value.subTitle1 = `${weight.value.rawData[0].name} (${Number(
+      weight.value.chartData[0]
+    ).toFixed(2)}%)
+      were the most prominent dimensions in driving ${
+        yourGroupNameSub.value
+      }’s integration, whereas ${
+      weight.value.rawData[weight.value.rawData.length - 1].name
+    } (${Number(
+      weight.value.chartData[weight.value.rawData.length - 1]
+    ).toFixed(
+      2
+    )}%) were the least. Full data availability would yield an equal weighting average across all economies, each with weighing ${
+      weight.value.equalWeight
+    }%.`;
+  }
+  plotChartDataWeight();
+};
+
+const plotChartDataWeight = () => {
+  let EQweight = weight.value.equalWeight;
+  Highcharts.chart("container4x", {
+    chart: {
+      type: "column",
+      height: "470px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: weight.value.cat,
+      crosshair: true,
+    },
+    yAxis: {
+      min: 0,
+      title: {
+        text: "",
+      },
+      plotLines: [
+        {
+          color: "red",
+          width: 1,
+          value: EQweight,
+          zIndex: 5,
+          dashStyle: "longdashdot",
+          label: {
+            text: "Equal weight: " + EQweight,
+            align: "right",
+          },
+        },
+      ],
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2);
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "weight",
+        data: weight.value.chartData,
+        color: "#2381B8",
+      },
+    ],
+  });
+};
+const showWeightDia = () => {};
+
 onMounted(() => {
   checkYourName();
   loadEcoIntegration();
   loadDataFromDatabase();
+  weightLoadData();
 });
 </script>
 
@@ -1094,5 +1299,15 @@ onMounted(() => {
 }
 .negativeText {
   color: #d85b63;
+}
+.btn_weight {
+  background-color: #2d9687;
+  color: white;
+  width: 450px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>

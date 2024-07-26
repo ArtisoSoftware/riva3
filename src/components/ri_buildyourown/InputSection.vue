@@ -648,23 +648,32 @@ const changeSelected = (index) => {
       input.value.dimensionPicked.push(index + 1);
     }
   });
+  emit("reset-start-btn");
   checkDataAvailability();
 };
 //input
 const changeInputTypeSustainable = () => {
   emit("change-integration-type", "Sustainable");
-  input.reporting.value = [];
-  input.partner.value = [];
+  input.value.reporting = [];
+  input.value.partner = [];
+  countryReportList.value = [];
+  countryPartnerList.value = [];
+  dataAvailCircleChart.value.isShowChart = false;
   selectedValueReport.value = null;
   selectedValuePartner.value = null;
+  emit("reset-start-btn");
   loadCountry();
 };
 const changeInputTypeConventional = () => {
   emit("change-integration-type", "Conventional");
-  input.reporting.value = [];
-  input.partner.value = [];
+  input.value.reporting = [];
+  input.value.partner = [];
+  countryReportList.value = [];
+  countryPartnerList.value = [];
+  dataAvailCircleChart.value.isShowChart = false;
   selectedValueReport.value = null;
   selectedValuePartner.value = null;
+  emit("reset-start-btn");
   loadCountry();
 };
 const loadCountry = async () => {
