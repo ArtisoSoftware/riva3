@@ -314,6 +314,100 @@
           </div>
         </div>
       </div>
+      <div v-show="showAdjustWeightDia" persistent class="dialogDiv">
+        <div class="weightDiv">
+          <div align="right">
+            <div class="q-pr-md q-pt-md">
+              <q-icon
+                name="fas fa-times"
+                size="24px"
+                class="cursor-pointer"
+                @click="showAdjustWeightDia = false"
+              />
+            </div>
+          </div>
+          <div class="font-24" align="center">
+            Integration score across periods - simulation
+          </div>
+          <div class="q-px-lg font-18">
+            How do dimension weights affect your group's integration score
+            across periods?
+          </div>
+          <div class="q-px-lg q-pb-sm" style="font-size: 12px">
+            WARING: This is an experimental tool designed to test the robustness
+            of the aggregate score in DigiSRII against different weighting
+            schemes. The results derived should be interpreted with caution.
+          </div>
+          <div class="row" style="width: 97%; margin: auto">
+            <div class="chartWeight col">
+              <div
+                id="weightChartShowx2"
+                style="max-width: 1024px; width: 100%; margin: auto"
+                v-show="wShowChart"
+              ></div>
+              <div v-show="!wShowChart" class="textNeedGen">
+                Please click on the generate button to update the graph
+              </div>
+            </div>
+            <div class="weightBar" style="font-size: 12px">
+              <div class="row">
+                <div class="col q-pl-sm q-pt-sm">Dimension</div>
+                <div style="width: 60px" align="center">Weights<br />input</div>
+                <div style="width: 60px" align="center">
+                  Calibrated<br />weights
+                </div>
+                <div style="width: 60px" align="center">
+                  DigiSRII<br />weights
+                </div>
+              </div>
+              <hr />
+              <div v-for="n in 7" :key="n" style="font-size: 12px">
+                <div
+                  class="row lineDim"
+                  v-show="input.dimensionPicked.includes(n)"
+                >
+                  <div class="col lineDim q-pl-sm">
+                    {{ dimensionName[n - 1] }}
+                  </div>
+                  <div style="width: 60px" class="q-pt-xs">
+                    <q-input
+                      outlined
+                      style="width: 55px; font-size: 12px"
+                      dense
+                      v-model.number="weightAdjust[n - 1]"
+                      @blur="changeWeight()"
+                    />
+                  </div>
+                  <div style="width: 60px" align="center">
+                    {{ weightReal[n - 1] }}%
+                  </div>
+                  <div style="width: 60px" align="center">
+                    {{ weightInit[n - 1] }}%
+                  </div>
+                </div>
+              </div>
+              <div align="center" class="q-pt-sm">
+                <q-btn
+                  outlined
+                  label="Generate"
+                  class="genBtn"
+                  @click="genBtn()"
+                  :disable="hideGenBtn"
+                />
+              </div>
+              <div class="q-pt-md" align="center">
+                <div
+                  class="cursor-pointer"
+                  style="width: 130px"
+                  @click="resetWeight()"
+                >
+                  <u> Reset weights</u>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -418,6 +512,18 @@ const weight = ref({
   chartData: [],
   subTitle1: "",
 });
+
+//weight
+const showAdjustWeightDia = ref(false);
+const weightAdjust = ref([]);
+const weightReal = ref([]);
+const weightInit = ref([0, 0, 0, 0, 0, 0, 0]);
+const wCat = ref([]);
+const wS1 = ref([]);
+const wS2 = ref([]);
+const wFullData = ref([]);
+const wShowChart = ref(true);
+const hideGenBtn = ref(false);
 
 const loadEcoIntegration = async () => {
   ecoIntegration.value = [];
@@ -1254,7 +1360,177 @@ const plotChartDataWeight = () => {
     ],
   });
 };
-const showWeightDia = () => {};
+const showWeightDia = () => {
+  showAdjustWeightDia.value = true;
+  let tempWeight = weight.value.rawData;
+  tempWeight.sort((a, b) => a.indexDimension - b.indexDimension);
+  for (let i = 0; i < 7; i++) {
+    weightAdjust.value[i] = 0;
+    weightReal.value[i] = 0;
+  }
+  let groupScore = integrationProgressPlotChartGroup.value;
+  wCat.value = ["Your group<br/>Simulation", "Your group<br/>DigiSRII score"];
+  wS1.value = [groupScore[0], groupScore[0]];
+  wS2.value = [groupScore[1], groupScore[1]];
+  for (let i = 0; i < tempWeight.length; i++) {
+    tempWeight[i].series1 = integrationProgressChartSeries1.value[i];
+    tempWeight[i].series2 = integrationProgressChartSeries2.value[i];
+    weightAdjust.value[tempWeight[i].indexDimension - 1] = tempWeight[i].data;
+    weightReal.value[tempWeight[i].indexDimension - 1] = tempWeight[i].data;
+    weightInit.value[tempWeight[i].indexDimension - 1] = tempWeight[i].data;
+    wCat.value.push(tempWeight[i].name);
+    wS1.value.push(integrationProgressChartSeries1.value[i]);
+    wS2.value.push(integrationProgressChartSeries2.value[i]);
+  }
+  wFullData.value = tempWeight;
+  genWeightChart();
+};
+
+const genWeightChart = () => {
+  let yAxisTitle = props.input.type + " integration score";
+
+  Highcharts.chart("weightChartShowx2", {
+    chart: {
+      type: "column",
+      height: "470px",
+    },
+    title: {
+      text: null,
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: wCat.value,
+      crosshair: true,
+      labels: {
+        formatter() {
+          if (this.value == "Your group<br/>Simulation")
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 1,
+      title: {
+        text: yAxisTitle,
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:14px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          style: {
+            fontSize: "10px",
+          },
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2);
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "2010-2014",
+        data: wS1.value,
+        color: "#2381B8",
+      },
+      {
+        name: "2015-2019",
+        data: wS2.value,
+        color: "#13405A",
+      },
+    ],
+  });
+};
+
+const genBtn = () => {
+  let wDim = wFullData.value.map((x) => x.indexDimension);
+  // console.log(wDim);
+  let sumS1 = 0;
+  let sumS2 = 0;
+  let totalS = 0;
+  let count = 1;
+  wDim.forEach((index) => {
+    sumS1 += wS1.value[count + 1] * weightReal.value[index - 1];
+    sumS2 += wS2.value[count + 1] * weightReal.value[index - 1];
+    totalS += weightReal.value[index - 1];
+    count++;
+  });
+
+  wS1.value[0] = Number((sumS1 / totalS).toFixed(2));
+  wS2.value[0] = Number((sumS2 / totalS).toFixed(2));
+  genWeightChart();
+  wShowChart.value = true;
+};
+
+const changeWeight = () => {
+  let totalW = weightAdjust.value.reduce((a, b) => Number(a) + b, 0);
+  for (let i = 0; i < 7; i++) {
+    weightReal.value[i] = Number(
+      ((weightAdjust.value[i] / totalW) * 100).toFixed(1)
+    );
+  }
+  weightReal.value.push(22);
+  weightReal.value.pop();
+  wShowChart.value = false;
+
+  if (isNaN(weightReal.value[0])) {
+    hideGenBtn.value = true;
+  } else {
+    hideGenBtn.value = false;
+  }
+};
+
+const resetWeight = () => {
+  weightReal.value = [0, 0, 0, 0, 0, 0, 0];
+  weightAdjust.value = [0, 0, 0, 0, 0, 0, 0];
+  weight.value.rawData.forEach((x) => {
+    weightReal.value[x.indexDimension - 1] = x.data;
+    weightAdjust.value[x.indexDimension - 1] = x.data;
+  });
+  wS1.value[0] = wS1.value[1];
+  wS2.value[0] = wS2.value[1];
+  genWeightChart();
+  wShowChart.value = true;
+};
 
 onMounted(() => {
   checkYourName();
@@ -1309,5 +1585,50 @@ onMounted(() => {
   font-size: 20px;
   border-radius: 5px;
   cursor: pointer;
+}
+.weightDiv {
+  width: 1100px;
+  max-width: 1100px;
+  height: 630px;
+  background-color: #fefefe;
+  margin: auto;
+
+  border: 1px solid #888;
+}
+.chartWeight {
+  height: 450px;
+  margin: auto;
+}
+.textNeedGen {
+  font-size: 20px;
+  text-align: center;
+  position: relative;
+  top: 150px;
+  color: #c25555;
+}
+.weightBar {
+  width: 360px;
+  height: 450px;
+  border-left: 1px solid #757575;
+}
+.lineDim {
+  line-height: 50px;
+  height: 50px;
+}
+.genBtn {
+  width: 200px;
+  background-color: #2d9687;
+  color: white;
+}
+.dialogDiv {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 </style>

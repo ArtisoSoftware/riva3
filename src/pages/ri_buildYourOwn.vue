@@ -32,6 +32,12 @@
               :reporting="countryReportList"
               :localID="localID"
             />
+            <dimension-tab
+              :input="input2"
+              :partner="countryPartnerList"
+              :reporting="countryReportList"
+              :localID="localID"
+            ></dimension-tab>
           </div>
         </div>
       </div>
@@ -46,6 +52,7 @@ import RIHeader from "../components/RI_header.vue";
 import inputSection from "../components/ri_buildyourown/InputSection.vue";
 import RI_disaggregation from "../components/RI_disaggregation.vue";
 import LineChartDimension from "../components/ri_buildyourown/LineChartDimension.vue";
+import dimensionTab from "../components/ri_buildyourown/Datatab_dimension.vue";
 import footerMain from "../components/footer2.vue";
 import { serverSetup } from "./server";
 import axios from "axios";

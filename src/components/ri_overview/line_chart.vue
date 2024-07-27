@@ -37,7 +37,7 @@ const yearList = ref([]);
 for (let i = 0; i < props.lineSI.length; i++) {
   yearList.value.push(props.yearStart + i);
 }
-console.log(yearList.value);
+// console.log(yearList.value);
 
 // สร้าง reference สำหรับ container ของกราฟ
 const chartContainer = ref(null);
