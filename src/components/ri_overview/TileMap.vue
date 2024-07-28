@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="row justify-center">
     <div
       ref="chartContainer"
       :style="{ width: '500px', height: '500px' }"
