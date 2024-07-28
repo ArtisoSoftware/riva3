@@ -23,18 +23,18 @@
             :data4="dimYearCI2"
           />
         </div>
-        <div class="col-6 q-pa-md">Dim Chart</div>
       </div>
-    </div>
-    <div class="text-h6" align="center">
-      <div v-if="ecoName == 'Asia-Pacific'">
-        Which Asia-Pacific economies were most integrated with the rest of the
-        region in {{ yearEnd }}? - Stylized honeycomb map of the Asia-Pacific
-        region
-      </div>
-      <div v-if="ecoName != 'Asia-Pacific'">
-        Which Asia-Pacific economies were most integrated with {{ ecoName }} in
-        {{ yearEnd }}? – Sylized honeycomb map of the Asia-Pacific region
+      <div class="text-h6" align="center">
+        <div v-if="ecoName == 'Asia-Pacific'">
+          Which Asia-Pacific economies were most integrated with the rest of the
+          region in {{ yearEnd }}? - Stylized honeycomb map of the Asia-Pacific
+          region
+        </div>
+        <div v-if="ecoName != 'Asia-Pacific'">
+          Which Asia-Pacific economies were most integrated with
+          {{ ecoName }} in {{ yearEnd }}? – Sylized honeycomb map of the
+          Asia-Pacific region
+        </div>
       </div>
     </div>
   </div>
