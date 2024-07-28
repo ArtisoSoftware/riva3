@@ -26,6 +26,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { serverSetup } from "../../pages/server";
+
 import axios from "axios";
 
 const router = useRouter();
@@ -81,6 +82,7 @@ const partner = ref([]);
 const selected = ref(0);
 const colorSelected = ref("");
 const dimensionIndex = ref(0);
+const allDimensionData = ref([]);
 
 const indicatorStr = ref([]);
 
@@ -115,6 +117,13 @@ const loadData = async () => {
   dimPick.value.forEach((x) => {
     dimensionOptions.value.push(dimensionName.value[x - 1]);
   });
+  allDimensionData.value = [];
+  let data = {
+    type: props.input.type,
+  };
+  let url = serverData.value + "ri/dimension_data.php";
+  let res = await axios.post(url, JSON.stringify(data));
+  allDimensionData.value = res.data;
   countAllPair.value = 0;
   report.value.forEach((report) => {
     partner.value.forEach((partner) => {
@@ -142,6 +151,19 @@ const loadAllChart = () => {
 
 const setIndexChart = async () => {
   indicatorStr.value =
+    allDimensionData.value[dimensionIndex.value - 1].indicator;
+  let dataTemp = {
+    input: props.input,
+    partner: partner.value,
+    reporting: report.value,
+    index: dimensionIndex.value,
+    indicator: indicatorStr.value,
+  };
+  console.log(dataTemp);
+  let url = serverData.value + "ri/build_index_datatab.php";
+  let res = await axios.post(url, JSON.stringify(dataTemp));
+  let result = res.data;
+  console.log(result);
 };
 </script>
 

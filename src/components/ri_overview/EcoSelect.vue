@@ -112,10 +112,12 @@ const updateValue = (value) => {
   const selectedOption = options.value.find((option) => option.iso === value);
 
   if (selectedOption) {
-    emit("update:selected", {
-      name: selectedOption.name,
-      iso: selectedOption.iso,
-    }); // Emit the selected option's name and iso
+    if (selectedOption.iso.length > 0) {
+      emit("update:selected", {
+        name: selectedOption.name,
+        iso: selectedOption.iso,
+      }); // Emit the selected option's name and iso
+    }
   }
 };
 if (props.initialValue) {
