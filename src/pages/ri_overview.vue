@@ -13,7 +13,28 @@
             :ci="lineCI"
           />
         </div>
+        <div class="col-6 q-pa-md">
+          <dim-chart
+            :data="input"
+            :ecoName="ecoName"
+            :data1="dimYearSI1"
+            :data2="dimYearSI2"
+            :data3="dimYearCI1"
+            :data4="dimYearCI2"
+          />
+        </div>
         <div class="col-6 q-pa-md">Dim Chart</div>
+      </div>
+    </div>
+    <div class="text-h6" align="center">
+      <div v-if="ecoName == 'Asia-Pacific'">
+        Which Asia-Pacific economies were most integrated with the rest of the
+        region in {{ yearEnd }}? - Stylized honeycomb map of the Asia-Pacific
+        region
+      </div>
+      <div v-if="ecoName != 'Asia-Pacific'">
+        Which Asia-Pacific economies were most integrated with {{ ecoName }} in
+        {{ yearEnd }}? – Sylized honeycomb map of the Asia-Pacific region
       </div>
     </div>
   </div>
@@ -23,6 +44,7 @@
 import riHeader from "../components/RI_header.vue";
 import inputRep from "../components/ri_overview/select_reporter.vue";
 import lineChart from "../components/ri_overview/line_chart.vue";
+import dimChart from "../components/ri_overview/dim_chart.vue";
 
 import { ref, onMounted } from "vue";
 import { serverSetup, yearInputShow } from "./server";

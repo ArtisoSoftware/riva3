@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { yearInputShow } from "../../pages/server.js";
 
 const props = defineProps({
@@ -33,14 +33,25 @@ const title = ref("");
 const yearStart = ref("");
 const yearEnd = ref("");
 
+// ฟังก์ชัน debounce
+const debounce = (fn, delay) => {
+  let timeoutID;
+  return function (...args) {
+    if (timeoutID) clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+};
+
 const regenChart = () => {
-  console.log("test");
+  // console.log("regenChart called");
 
   if (props.ecoName.length > 0) {
     if (props.ecoName == "Asia-Pacific") {
       title.value = `How has ${props.ecoName}'s integration changed over the years?<br> Conventional and sustainable integration (${yearStart.value}-${yearEnd.value})`;
     } else {
-      title.value = `How has ${props.ecoName}'s integration  with Asia-Pacific changed over the years?<br> Conventional and sustainable integration (${yearStart.value}-${yearEnd.value})`;
+      title.value = `How has ${props.ecoName}'s integration with Asia-Pacific changed over the years?<br> Conventional and sustainable integration (${yearStart.value}-${yearEnd.value})`;
     }
     Highcharts.chart("lineChart", {
       chart: {
@@ -49,19 +60,17 @@ const regenChart = () => {
       title: {
         text: title.value,
       },
-
       yAxis: {
         title: {
           text: "Integration index",
         },
       },
-
       xAxis: {
         accessibility: {
-          rangeDescription: "Range: " + yearStart.value + "to" + yearEnd.value,
+          rangeDescription:
+            "Range: " + yearStart.value + " to " + yearEnd.value,
         },
       },
-
       plotOptions: {
         series: {
           dataLabels: {
@@ -76,7 +85,6 @@ const regenChart = () => {
       credits: {
         enabled: false,
       },
-
       exporting: {
         buttons: {
           contextButton: {
@@ -112,22 +120,27 @@ const regenChart = () => {
   }
 };
 
+const debouncedRegenChart = debounce(regenChart, 200);
+
 onMounted(async () => {
   yearStart.value = yearInput.value.min;
   yearEnd.value = yearInput.value.max;
-  await nextTick();
-  console.log("mount");
-  if (props.ecoName.length > 0) {
-    regenChart();
-  }
 });
 
 // ใช้ watch เฉพาะเมื่อ props ที่สำคัญมีการเปลี่ยนแปลง
 watch(
-  () => [props.ci, props.si, props.ecoName],
-  () => {
-    regenChart();
-  }
+  () => ({ ci: props.ci, si: props.si, ecoName: props.ecoName }),
+  (newVal, oldVal) => {
+    if (
+      newVal.ci.length > 0 &&
+      newVal.si.length > 0 &&
+      newVal.ecoName.length > 0
+    ) {
+      // console.log("watch");
+      debouncedRegenChart();
+    }
+  },
+  { deep: true, immediate: true }
 );
 </script>
 
