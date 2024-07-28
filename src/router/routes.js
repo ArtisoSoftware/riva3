@@ -41,6 +41,12 @@ const routes = [
   {
     path: "/riintragroup",
     component: () => import("pages/ri_intraGroup.vue"),
+    name: "riintragroup",
+  },
+  {
+    path: "/riintragroup_clear",
+    component: () => import("pages/ri_intraGroup.vue"),
+    name: "riintragroup_clear",
   },
   {
     path: "/riecopartner",
