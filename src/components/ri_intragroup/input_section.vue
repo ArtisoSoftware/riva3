@@ -11,7 +11,7 @@
           val="Sustainable"
           label="Sustainable integration"
           color="secondary"
-          @input="changeInputTypeSustainable()"
+          @update:model-value="changeInputTypeSustainable()"
         />
       </div>
       <div class="col">
@@ -20,7 +20,7 @@
           val="Conventional"
           label="Conventional integration"
           color="secondary"
-          @input="changeInputTypeConventional()"
+          @update:model-value="changeInputTypeConventional()"
         />
       </div>
     </div>
@@ -37,7 +37,7 @@
         markers
         style="width: 95%"
         color="secondary"
-        @input="changeYear()"
+        @update:model-value="changeYear()"
       />
     </div>
     <div class="q-pt-md font-16"><b>Economies</b></div>

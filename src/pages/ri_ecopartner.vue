@@ -26,7 +26,7 @@
 import { ref, onMounted } from "vue";
 import RIHeader from "../components/RI_header.vue";
 import inputSection from "../components/ri_eco_partner/InputSection.vue";
-import dimensionIcon from "../components/RI_dimension_icon.vue";
+import dimensionIcon from "../components/ri_dimension_icon.vue";
 import dataAvail from "../components/ri_intragroup/DataAvail.vue";
 import footerMain from "../components/footer2.vue";
 

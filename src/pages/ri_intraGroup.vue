@@ -22,6 +22,33 @@
           ></circle-avail>
         </div>
       </div>
+      <div v-if="showResultAfterStartBtn">
+        <div>
+          <hr />
+          <div>
+            <!-- four bar chart`` -->
+            <four-bar
+              :type="input.type"
+              :year="input.year.max"
+              :name="fourBarName"
+              :data="fourBarData"
+            ></four-bar>
+          </div>
+          <hr />
+          <!-- by country / by dimension btn -->
+          <select-desired
+            :input="input.disaggregation"
+            @change-disaggregation="changeDisaggraegation"
+          ></select-desired>
+        </div>
+        <!-- Result of bydimension`` -->
+        <div v-show="input.disaggregation == 'dimension'">
+          <line-chart-dimension
+            :data="countryFullList"
+            :input="input"
+          ></line-chart-dimension>
+        </div>
+      </div>
       <footerMain />
     </div>
   </div>
@@ -34,6 +61,9 @@ import footerMain from "../components/footer2.vue";
 import inputSection from "../components/ri_intragroup/input_section.vue";
 import dimensionsIcon from "../components/ri_dimension_icon.vue";
 import circleAvail from "../components/ri_economy_circle.vue";
+import fourBar from "../components/ri_fourbar.vue";
+import selectDesired from "../components/ri_select_desired_level.vue";
+import lineChartDimension from "../components/ri_intragroup/linechart_by_dimension.vue";
 import { serverSetup, yearInputShow } from "./server";
 import axios from "axios";
 
@@ -73,7 +103,7 @@ const startBtn = (inputSend) => {
   showResultAfterStartBtn.value = true;
   countryFullList.value = inputSend.countryFullList;
   input.value = inputSend.input;
-  console.log("work here");
+  calFourBarChart();
 };
 
 const changeIntegrationType = (integrationType) => {
@@ -90,6 +120,28 @@ const calScoreInDataAvail = async () => {
   let res = await axios.post(url, JSON.stringify(data));
 
   dataAvailCircleChart.value.score = Number(res.data);
+};
+
+const calFourBarChart = async () => {
+  fourBarData.value = [];
+  let labelName = "Your group";
+  if (input.value.partner.length == 1) {
+    labelName = input.value.partner[0].label;
+  }
+  fourBarName.value = labelName;
+  let data = {
+    name: labelName,
+    economic: countryFullList.value.map((x) => x.iso),
+    year: input.value.year.max,
+    type: input.value.type,
+  };
+  let url = serverData.value + "ri/intra_fivebar_onlyyourgroup_intra.php";
+  let res = await axios.post(url, JSON.stringify(data));
+  fourBarData.value.push(res.data[0]);
+};
+
+const changeDisaggraegation = (type) => {
+  input.value.disaggregation = type;
 };
 </script>
 
