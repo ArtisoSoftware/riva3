@@ -93,6 +93,45 @@
       <div class="clearAllBtnDiv" @click="clearAllBtn()">Clear all</div>
       <div class="startBtnDiv" @click="startBtn()">Start</div>
     </div>
+
+    <q-dialog v-model="warnDialog.show">
+      <q-card class="warnBox">
+        <div class="font-24 text-grey-7 text-bold q-pt-sm" align="center">
+          Missing data
+          <q-icon
+            class="fas fa-exclamation-circle"
+            color="grey-7"
+            size="28px"
+          />
+        </div>
+        <hr />
+
+        <div style="width: 650px; margin: auto">
+          <div class="font-18 text-grey-7">
+            The following economies were excluded from your selection due to
+            lack of data:
+          </div>
+          <div class="font-14 text-grey-7">Economy(ies):</div>
+          <div class="row q-py-sm" v-if="warnDialog.economic.length != 0">
+            <div v-for="(item, i) in warnDialog.economic" :key="i">
+              <div class="countryTag q-mr-sm q-px-md q-mb-sm">
+                {{ item.label }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="q-pt-lg row justify-evenly"
+          align="center"
+          style="width: 100%"
+        >
+          <div class="clearAllBtnDiv" @click="doNotThing()">Back</div>
+          <div class="startBtnDiv" @click="okInWarnDialog()">Start</div>
+        </div>
+        <div class="q-pa-sm"></div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -102,13 +141,14 @@ import { serverSetup, yearInputShow } from "../../pages/server.js";
 import { countryGroupListRiva2 } from "../../pages/countryGroupList";
 import countryAllWorld from "../../assets/countryAll.json";
 import axios from "axios";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
-import { LocalStorage } from "quasar";
+import { LocalStorage, Notify } from "quasar";
 
 const { yearInput } = yearInputShow();
 const { serverData } = serverSetup();
 const route = useRoute();
+const router = useRouter();
 const input = ref({
   partner: [],
   year: {
@@ -125,6 +165,7 @@ const periodSetup = ref({
 });
 const countryIntraOption = ref([]);
 const countryFullList = ref([]);
+const dataTemp = ref([]);
 
 const emit = defineEmits([
   "change-integration-type",
@@ -132,6 +173,10 @@ const emit = defineEmits([
   "get-input",
   "start-btn",
 ]);
+const warnDialog = ref({
+  show: false,
+  economic: [],
+});
 
 onMounted(() => {
   periodSetup.value.min = yearInput.value.min;
@@ -179,7 +224,7 @@ const preLoad = () => {
   };
   input.value.partner.push(partnerInput);
   showSelectedPartnerList();
-  console.log("Work here");
+  startBtn();
 };
 
 const showSelectedPartnerList = () => {
@@ -266,10 +311,106 @@ const getFlagUrl = (iso) => {
 };
 
 const clearAllBtn = () => {
-  console.log("work here");
+  router.push("/reloadpage/riintragroup_clear");
 };
 const startBtn = () => {
-  console.log("work here");
+  if (input.value.year.min == input.value.year.max) {
+    Notify.create({
+      message: "Start and end year can not be the same.",
+      color: "negative",
+      icon: "fa-solid fa-circle-exclamation",
+      position: "top",
+    });
+  }
+
+  if (countryFullList.value.length >= 2) {
+    loadDataTemp();
+  } else {
+    Notify.create({
+      message:
+        "Please select at least one bilateral relationship with valid data.",
+      color: "negative",
+      icon: "fa-solid fa-circle-exclamation",
+      position: "top",
+    });
+  }
+};
+
+const loadDataTemp = async () => {
+  let data = {
+    economic: countryFullList.value.map((x) => x.iso),
+    type: input.value.type,
+  };
+  let url = serverData.value + "ri/intra_circle_loaddata.php";
+  let res = await axios.post(url, JSON.stringify(data));
+  dataTemp.value = res.data;
+  checkCountryNodata();
+};
+
+const checkCountryNodata = () => {
+  let countTemp = 0;
+  let countAlert = 0;
+  warnDialog.value.economic = [];
+  for (let j = 0; j < countryFullList.value.length; j++) {
+    countTemp = 0;
+    dataTemp.value.forEach((x) => {
+      if (
+        x.partner == countryFullList.value[j].iso ||
+        x.reporting == countryFullList.value[j].iso
+      ) {
+        countTemp++;
+      }
+    });
+    if (countTemp == 0) {
+      countAlert++;
+      warnDialog.value.economic.push(countryFullList.value[j]);
+    }
+  }
+  if (countAlert == 0) {
+    ///////
+    emit("start-btn", {
+      input: input.value,
+      countryFullList: countryFullList.value,
+    });
+  } else {
+    warnDialog.value.show = true;
+  }
+};
+
+const doNotThing = () => {
+  warnDialog.value.show = false;
+};
+
+const okInWarnDialog = () => {
+  for (let j = 0; j < countryFullList.value.length; j++) {
+    let checkEconomic = false;
+    warnDialog.value.economic.forEach((partner) => {
+      if (partner.iso == countryFullList.value[j].iso) {
+        countryFullList.value.splice(j, 1);
+        checkEconomic = true;
+      }
+    });
+    if (checkEconomic) {
+      j--;
+    }
+  }
+  if (countryFullList.value.length < 2) {
+    Notify.create({
+      message:
+        "Please select at least one bilateral relationship with valid data.",
+      color: "negative",
+      icon: "fa-solid fa-circle-exclamation",
+      position: "top",
+    });
+    warnDialog.value.show = false;
+    return;
+  }
+  checkDataAvailability();
+  warnDialog.value.show = false;
+  emit("start-btn", {
+    input: input.value,
+    countryFullList: countryFullList.value,
+  });
 };
 </script>
 

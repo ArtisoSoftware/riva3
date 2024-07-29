@@ -15,11 +15,11 @@
         <!-- dimension icon / data available circle -->
 
         <div style="background: #ededed; width: 480px">
-          <!-- <dimensions-icon :type="input.type"></dimensions-icon> -->
-          <!-- <circle-avail
+          <dimensions-icon :type="input.type"></dimensions-icon>
+          <circle-avail
             :score="dataAvailCircleChart.score"
             :isShowChart="dataAvailCircleChart.showChart"
-          ></circle-avail> -->
+          ></circle-avail>
         </div>
       </div>
       <footerMain />
@@ -32,7 +32,13 @@ import { ref, onMounted } from "vue";
 import RIHeader from "../components/RI_header.vue";
 import footerMain from "../components/footer2.vue";
 import inputSection from "../components/ri_intragroup/input_section.vue";
-import circleAvail from "../components/ri_intragroup/ri_economy_circle.vue";
+import dimensionsIcon from "../components/ri_dimension_icon.vue";
+import circleAvail from "../components/ri_economy_circle.vue";
+import { serverSetup, yearInputShow } from "./server";
+import axios from "axios";
+
+const { serverData } = serverSetup();
+const { yearInput } = yearInputShow();
 
 const countryFullList = ref([]);
 const input = ref({
@@ -52,13 +58,39 @@ const dataAvailCircleChart = ref({
 const fourBarName = ref("Your game");
 const fourBarData = ref([]);
 
-const resetStartBtn = () => {};
+const resetStartBtn = () => {
+  showResultAfterStartBtn.value = false;
+};
 
-const showDataAvailChart = () => {};
+const showDataAvailChart = (data) => {
+  dataAvailCircleChart.value.showChart = data.showDataAvailChart;
+  countryFullList.value = data.countryFullList;
+  input.value = data.input;
+  calScoreInDataAvail();
+};
 
-const startBtn = () => {};
+const startBtn = (inputSend) => {
+  showResultAfterStartBtn.value = true;
+  countryFullList.value = inputSend.countryFullList;
+  input.value = inputSend.input;
+  console.log("work here");
+};
 
-const changeIntegrationType = () => {};
+const changeIntegrationType = (integrationType) => {
+  input.value.type = integrationType;
+};
+
+const calScoreInDataAvail = async () => {
+  let data = {
+    type: input.value.type,
+    economic: countryFullList.value.map((x) => x.iso),
+  };
+
+  let url = serverData.value + "ri/intra_circle_intra.php";
+  let res = await axios.post(url, JSON.stringify(data));
+
+  dataAvailCircleChart.value.score = Number(res.data);
+};
 </script>
 
 <style lang="scss" scoped>

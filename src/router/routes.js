@@ -68,6 +68,11 @@ const routes = [
     path: "/ridownload",
     component: () => import("pages/ri_download.vue"),
   },
+  {
+    path: "/reloadpage/:page",
+    component: () => import("pages/ri_reloadpage.vue"),
+    name: "reloadpage",
+  },
 
   // Always leave this as last one,
   // but you can also remove it
