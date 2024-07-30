@@ -55,7 +55,6 @@ const selectedDimension = () => {
 
 onMounted(() => {
   selected.value = props.input ? props.input : "dimension";
-  console.log(selected.value);
 });
 </script>
 

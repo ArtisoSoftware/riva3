@@ -4,6 +4,10 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { serverSetup } from "../../pages/server.js";
+
+import axios from "axios";
+const { serverData } = serverSetup();
 const props = defineProps({
   data: {
     data: Array,
@@ -14,6 +18,38 @@ const props = defineProps({
     required: false,
   },
 });
+
+const menuSelectedId = ref(1);
+const dimensionAll = ref([]);
+const yourGroupName = ref("");
+const ecoIntegrationChart = ref([]);
+
+onMounted(async () => {
+  let dataSend = {
+    type: props.input.type,
+  };
+  let url2 = serverData.value + "ri/dimension_icon.php";
+  let res2 = await axios.post(url2, JSON.stringify(dataSend));
+  dimensionAll.value = res2.data;
+  checkYourName();
+  loadEcoIntegration();
+  console.log("Work here");
+});
+
+const checkYourName = () => {
+  if (props.input.partner.length == 1) {
+    yourGroupName.value = props.input.partner[0].label;
+  }
+};
+
+const loadEcoIntegration = async () => {
+  ecoIntegrationChart.value = [];
+  let data = {
+    input: props.input,
+    countryFullList: props.data,
+    countryMap: props.data.map((x) => x.iso_),
+  };
+};
 </script>
 
 <style lang="scss" scoped>
