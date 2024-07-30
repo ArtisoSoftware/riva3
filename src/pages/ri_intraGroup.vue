@@ -43,10 +43,7 @@
         </div>
         <!-- Result of bydimension`` -->
         <div v-show="input.disaggregation == 'dimension'">
-          <line-chart-dimension
-            :data="countryFullList"
-            :input="input"
-          ></line-chart-dimension>
+          <line-chart-dimension :dataGet="dataLinesend"></line-chart-dimension>
         </div>
       </div>
       <footerMain />
@@ -87,7 +84,7 @@ const dataAvailCircleChart = ref({
 });
 const fourBarName = ref("Your game");
 const fourBarData = ref([]);
-
+const dataLinesend = ref({});
 const resetStartBtn = () => {
   showResultAfterStartBtn.value = false;
 };
@@ -96,6 +93,10 @@ const showDataAvailChart = (data) => {
   dataAvailCircleChart.value.showChart = data.showDataAvailChart;
   countryFullList.value = data.countryFullList;
   input.value = data.input;
+  dataLinesend.value = {
+    countryFullList: countryFullList.value,
+    input: input.value,
+  };
   calScoreInDataAvail();
 };
 
@@ -103,6 +104,10 @@ const startBtn = (inputSend) => {
   showResultAfterStartBtn.value = true;
   countryFullList.value = inputSend.countryFullList;
   input.value = inputSend.input;
+  dataLinesend.value = {
+    countryFullList: countryFullList.value,
+    input: input.value,
+  };
   calFourBarChart();
 };
 
