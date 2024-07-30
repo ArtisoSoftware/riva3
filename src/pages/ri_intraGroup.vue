@@ -44,6 +44,8 @@
         <!-- Result of bydimension`` -->
         <div v-show="input.disaggregation == 'dimension'">
           <line-chart-dimension :dataGet="dataLinesend"></line-chart-dimension>
+          <dimension-tab :dataGet="dataLinesend" @go-to-eco="gotoEco">
+          </dimension-tab>
         </div>
       </div>
       <footerMain />
@@ -61,6 +63,7 @@ import circleAvail from "../components/ri_economy_circle.vue";
 import fourBar from "../components/ri_fourbar.vue";
 import selectDesired from "../components/ri_select_desired_level.vue";
 import lineChartDimension from "../components/ri_intragroup/linechart_by_dimension.vue";
+import dimensionTab from "../components/ri_intragroup/datatab_dimension.vue";
 import { serverSetup, yearInputShow } from "./server";
 import axios from "axios";
 
@@ -85,6 +88,11 @@ const dataAvailCircleChart = ref({
 const fourBarName = ref("Your game");
 const fourBarData = ref([]);
 const dataLinesend = ref({});
+
+const gotoEco = () => {
+  console.log("work here");
+};
+
 const resetStartBtn = () => {
   showResultAfterStartBtn.value = false;
 };
