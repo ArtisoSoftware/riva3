@@ -59,50 +59,167 @@
       </div>
     </div>
     <div class="borderMainBox">
-      <div class="row">
-        <div style="width: 400px" class="q-pa-md borderRight">
-          <div class="font-24">Select dimensions of interest</div>
-          <div class="q-pt-md">
-            In parenthesis, each dimension's symmetric
-            {{ input.type }} integration index with the group in
-            {{ input.year.max }}
-          </div>
-          <div class="q-pt-md">
-            Click on each dimension to select/unselect it from the graph.
-          </div>
-          <div
-            class="row q-py-sm cursor-pointer"
-            @click="ecoIntegrationGroupToggleOnOff()"
-          >
-            <div
-              class="checkBoxGroup"
-              style="background-color: #f07435"
-              v-show="ecoIntegrationGroupVisible"
-            ></div>
-            <div
-              class="checkBoxGroup"
-              v-show="!ecoIntegrationGroupVisible"
-            ></div>
-            <div class="q-pl-sm">
-              Group average ({{ Number(ecoIntegrationAvg).toFixed(2) }})
+      <!-- menu#1 -->
+      <div v-show="menuSelectedId == 1">
+        <div class="row">
+          <div style="width: 400px" class="q-pa-md borderRight">
+            <div class="font-24">Select dimensions of interest</div>
+            <div class="q-pt-md">
+              In parenthesis, each dimension's symmetric
+              {{ input.type }} integration index with the group in
+              {{ input.year.max }}
             </div>
-          </div>
-          <div><hr /></div>
-          <div class="row">
+            <div class="q-pt-md">
+              Click on each dimension to select/unselect it from the graph.
+            </div>
             <div
-              v-for="(item, index) in ecoIntegrationChart"
-              :key="index"
-              class="col-12 row q-pb-md font-12"
+              class="row q-py-sm cursor-pointer"
+              @click="ecoIntegrationGroupToggleOnOff()"
             >
               <div
-                @click="ecoIntegrationToggleOnOff(index)"
-                class="cursor-pointer row"
-                style="width: 340px"
-                v-if="item.lastValue >= 0"
+                class="checkBoxGroup"
+                style="background-color: #f07435"
+                v-show="ecoIntegrationGroupVisible"
+              ></div>
+              <div
+                class="checkBoxGroup"
+                v-show="!ecoIntegrationGroupVisible"
+              ></div>
+              <div class="q-pl-sm">
+                Group average ({{ Number(ecoIntegrationAvg).toFixed(2) }})
+              </div>
+            </div>
+            <div><hr /></div>
+            <div class="row">
+              <div
+                v-for="(item, index) in ecoIntegrationChart"
+                :key="index"
+                class="col-12 row q-pb-md font-12"
+              >
+                <div
+                  @click="ecoIntegrationToggleOnOff(index)"
+                  class="cursor-pointer row"
+                  style="width: 340px"
+                  v-if="item.lastValue >= 0"
+                >
+                  <div
+                    class="checkBox"
+                    :style="{ backgroundColor: item.color }"
+                    v-show="item.visible == true"
+                  ></div>
+                  <div
+                    class="checkBox"
+                    style="border: 1px solid #757575"
+                    v-show="item.visible == false"
+                  ></div>
+
+                  <div class="q-pl-sm row">
+                    <div style="max-width: 250px; display: inline-block">
+                      {{ capitalize(item.name) }} ({{
+                        Number(item.lastValue).toFixed(2)
+                      }})
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="row">
+                  <div
+                    class="checkBox"
+                    :style="{ backgroundColor: 'grey' }"
+                    v-show="item.visible == true"
+                  ></div>
+                  <div class="q-pl-sm row">
+                    <div style="max-width: 250px; display: inline-block">
+                      {{ capitalize(item.name) }} (No data available)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col q-px-md">
+            <div class="q-pt-md">
+              <div class="font-24">
+                How did Integration progress across years?
+              </div>
+            </div>
+            <div>
+              Since {{ input.year.min }}, your group's Integration
+              {{ ecoIntegrationPercentChange > 0 ? "increased" : "decreased" }}
+              by
+              {{ Math.abs(ecoIntegrationPercentChange) }}%. In
+              {{ input.year.max }}, your group was most integrated in
+              {{ ecoIntegrationChartSort[0].name }} ({{
+                Number(ecoIntegrationChartSort[0].lastValue).toFixed(2)
+              }}) and {{ ecoIntegrationChartSort[1].name }} ({{
+                Number(ecoIntegrationChartSort[1].lastValue).toFixed(2)
+              }}) and least in
+              {{
+                ecoIntegrationChartSort[ecoIntegrationChartSort.length - 1].name
+              }}
+              ({{
+                Number(
+                  ecoIntegrationChartSort[ecoIntegrationChartSort.length - 1]
+                    .lastValue
+                ).toFixed(2)
+              }}) and
+              {{
+                ecoIntegrationChartSort[ecoIntegrationChartSort.length - 2].name
+              }}
+              ({{
+                Number(
+                  ecoIntegrationChartSort[ecoIntegrationChartSort.length - 2]
+                    .lastValue
+                ).toFixed(2)
+              }}).
+            </div>
+
+            <div
+              id="lineChartByDimension"
+              style="max-width: 1024px; width: 100%; margin: auto"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <!-- menu#2 -->
+      <div v-show="menuSelectedId == 2">
+        <div class="row">
+          <div style="width: 400px" class="q-pa-md borderRight">
+            <div class="font-24">Select dimensions of interest</div>
+            <div class="q-pt-md">
+              In parenthesis, each economy's symmetric sustainable integration
+              index progression with the partner group across periods.
+            </div>
+            <div class="q-pt-md">
+              Click on each dimension to select/unselect it from the graph.
+            </div>
+            <div
+              class="row q-py-sm cursor-pointer"
+              @click="integrationProgressToggleGroupOnOff()"
+            >
+              <div
+                class="checkBoxGroup"
+                style="background-color: #f07435"
+                v-show="integrationProgressChartGroupVisible"
+              ></div>
+              <div
+                class="checkBoxGroup"
+                v-show="!integrationProgressChartGroupVisible"
+              ></div>
+              <div class="q-pl-sm">
+                Group average ({{ Number(ecoIntegrationAvg).toFixed(2) }})
+              </div>
+            </div>
+            <div><hr /></div>
+            <div class="row" style="width: 100%">
+              <div
+                v-for="(item, index) in intergrationProgressList"
+                :key="index"
+                class="col-12 row q-pb-md font-12 cursor-pointer b"
+                @click="integrationProgressToggleOnOff(index)"
               >
                 <div
                   class="checkBox"
-                  :style="{ backgroundColor: item.color }"
+                  style="background-color: #2d9687"
                   v-show="item.visible == true"
                 ></div>
                 <div
@@ -112,70 +229,118 @@
                 ></div>
 
                 <div class="q-pl-sm row">
-                  <div style="max-width: 250px; display: inline-block">
-                    {{ capitalize(item.name) }} ({{
-                      Number(item.lastValue).toFixed(2)
-                    }})
-                  </div>
-                </div>
-              </div>
-              <div v-else class="row">
-                <div
-                  class="checkBox"
-                  :style="{ backgroundColor: 'grey' }"
-                  v-show="item.visible == true"
-                ></div>
-                <div class="q-pl-sm row">
-                  <div style="max-width: 250px; display: inline-block">
-                    {{ capitalize(item.name) }} (No data available)
+                  <div style="max-width: 350px; display: inline-block">
+                    {{ capitalize(item.name) }}
+                    <span
+                      v-if="
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ) >= 0
+                      "
+                      class="positiveText"
+                      >(+{{
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ).toFixed(2)
+                      }})</span
+                    >
+                    <span
+                      class="negativeText"
+                      v-else-if="
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ) < 0
+                      "
+                      >(-{{
+                        Number(
+                          integrationProgressChartSeries2[index] -
+                            integrationProgressChartSeries1[index]
+                        ).toFixed(2)
+                      }})</span
+                    >
+                    <span v-else>(No data available) </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col q-px-md">
-          <div class="q-pt-md">
-            <div class="font-24">
-              How did Integration progress across years?
+          <div class="col q-px-md">
+            <div class="q-pt-md">
+              <div class="font-24">
+                How did integration progress across periods?
+              </div>
+              <div>
+                {{ integrationProgressSubTitleText }}
+                {{ integrationProgressSubTitleTextLine2 }}
+                {{ integrationProgressSubTitleTextLine3 }}
+              </div>
             </div>
+            <div
+              id="container2x"
+              style="max-width: 1024px; width: 100%; margin: auto"
+            ></div>
           </div>
-          <!-- <div>
-            Since {{ input.year.min }}, your group's Integration
-            {{ ecoIntegrationPercentChange > 0 ? "increased" : "decreased" }}
-            by
-            {{ Math.abs(ecoIntegrationPercentChange) }}%. In
-            {{ input.year.max }}, your group was most integrated in
-            {{ ecoIntegrationChartSort[0].name }} ({{
-              Number(ecoIntegrationChartSort[0].lastValue).toFixed(2)
-            }}) and {{ ecoIntegrationChartSort[1].name }} ({{
-              Number(ecoIntegrationChartSort[1].lastValue).toFixed(2)
-            }}) and least in
-            {{
-              ecoIntegrationChartSort[ecoIntegrationChartSort.length - 1].name
-            }}
-            ({{
-              Number(
-                ecoIntegrationChartSort[ecoIntegrationChartSort.length - 1]
-                  .lastValue
-              ).toFixed(2)
-            }}) and
-            {{
-              ecoIntegrationChartSort[ecoIntegrationChartSort.length - 2].name
-            }}
-            ({{
-              Number(
-                ecoIntegrationChartSort[ecoIntegrationChartSort.length - 2]
-                  .lastValue
-              ).toFixed(2)
-            }}).
-          </div> -->
-
-          <div
-            id="lineChartByDimension"
-            style="max-width: 1024px; width: 100%; margin: auto"
-          ></div>
         </div>
+      </div>
+      <!-- menu#3 -->
+      <div v-show="menuSelectedId == 3">
+        <div class="q-pa-md">
+          <div class="font-24">
+            How much data is available for each of the dimensions considered?
+            <q-icon name="fas fa-question-circle" size="24px">
+              <q-tooltip anchor="bottom middle" self="top middle">
+                Data availability for each dimension is calculated as the
+                ratio<br />
+                between the number of pairs with available data and all the<br />
+                possible relevant pair combinations. The higher the data<br />
+                availability the more accurate the dimension score is.<br />
+                Concomitantly, the more prominent this dimension will be in<br />
+                driving dimension and overall integration scores. <br />
+                E.g., take any dimension D and a 3 country group (X, Y and Z).
+                <br />
+                In dimension D, there are 6 possible unique pairs:(X-Y), (X-Z),
+                <br />
+                (Y-X), (Y-Z), (Z-X), (Z-Y). If data is available for 3 of these
+                <br />
+                pairs, data availability for dimension D will be set at 50%
+                (3/6).
+              </q-tooltip>
+            </q-icon>
+          </div>
+          <div>{{ dataAvailable.subTitle1 }} {{ dataAvailable.subTitle2 }}</div>
+        </div>
+        <div
+          id="container3x"
+          style="max-width: 1024px; width: 100%; margin: auto"
+        ></div>
+      </div>
+      <!-- Menu#4 -->
+      <div v-show="menuSelectedId == 4">
+        <div class="q-pa-md">
+          <div class="font-24">
+            How much is each dimensions contributing to the overall integration
+            index?
+            <q-icon name="fas fa-question-circle" size="24px">
+              <q-tooltip anchor="bottom middle" self="top middle">
+                All country pairs are weighted equally. Within a single pair,<br />
+                all available dimensions are weighted equally. As such,
+                dimension<br />
+                weights largely reflect data availability, albeit not perfectly.
+                <br />To learn more about dimensions weights please visit our<br />
+                Technical note (upper-right corner).
+              </q-tooltip>
+            </q-icon>
+          </div>
+          <div>{{ weight.subTitle1 }}</div>
+          <div>{{ weight.subTitle2 }}</div>
+        </div>
+        <div
+          id="container4x"
+          style="max-width: 1024px; width: 100%; margin: auto"
+        ></div>
       </div>
     </div>
   </div>
@@ -211,9 +376,26 @@ const ecoIntegrationAvg = ref(0);
 const ecoIntegrationChart = ref([]);
 const ecoIntegrationGroupVisible = ref(true);
 const ecoIntegrationChartGroup = ref([]);
-const ecoIntegrationChartSort = ref([]);
+const ecoIntegrationChartSort = ref([{ name: "" }, { name: "" }]);
 const ecoIntegrationPercentChange = ref(0);
 const ecoIntegrationFinalChart = ref([]);
+
+const integrationProgressChartGroupVisible = ref(true);
+const integrationProgressChartSeries1 = ref([]);
+const integrationProgressChartSeries2 = ref([]);
+const intergrationProgressList = ref([]);
+
+const integrationProgressPlotChartGroup = ref([]);
+const integrationProgressYearStart = ref("");
+const integrationProgressYearEnd = ref("");
+const integrationProgressSubTitleText = ref("");
+const integrationProgressSubTitleTextLine2 = ref("");
+const integrationProgressSubTitleTextLine3 = ref("");
+const integrationProgressdiffValueArray = ref([]);
+const integrationProgressPlotChartCat = ref([]);
+const integrationProgressPlotChartSeries1 = ref([]);
+const integrationProgressPlotChartSeries2 = ref([]);
+
 const dataAvailable = ref({
   rawData: [],
   cat: [],
@@ -249,6 +431,7 @@ onMounted(async () => {
   let url2 = serverData.value + "ri/dimension_icon.php";
   let res2 = await axios.post(url2, JSON.stringify(dataSend));
   dimensionAll.value = res2.data;
+
   checkYourName();
   loadEcoIntegration();
   loadDataFromDatabase();
@@ -330,7 +513,7 @@ const loadEcoIntegration = async () => {
   ).toFixed(0);
 
   integrationProgressPrepareData();
-  console.log("work here");
+  mergeEcoIntegration();
 };
 
 const loadDataFromDatabase = async () => {
@@ -421,7 +604,89 @@ const setDataforDataAvail = (avgGroup) => {
 };
 
 const plotChartDataAvail = () => {
-  console.log("work Here");
+  Highcharts.chart("container3x", {
+    chart: {
+      type: "column",
+      height: "500px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: dataAvailable.value.cat,
+      crosshair: true,
+      labels: {
+        formatter() {
+          if (this.value == yourGroupName.value)
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      title: {
+        text: "",
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.0f}%</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2);
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "data availability",
+        data: dataAvailable.value.chartData,
+        color: "#2381B8",
+      },
+    ],
+  });
 };
 
 const weightLoadData = async () => {
@@ -502,7 +767,96 @@ const setDataforWeight = () => {
   plotChartDataWeight();
 };
 
-const plotChartDataWeight = () => {};
+const plotChartDataWeight = () => {
+  let EQweight = weight.value.equalWeigth;
+  Highcharts.chart("container4x", {
+    chart: {
+      type: "column",
+      height: "500px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: weight.value.cat,
+      crosshair: true,
+    },
+    yAxis: {
+      min: 0,
+
+      title: {
+        text: "",
+      },
+      plotLines: [
+        {
+          color: "red",
+          width: 1,
+          value: EQweight,
+          zIndex: 5,
+          dashStyle: "longdashdot",
+          label: {
+            text: "Equal weight:" + EQweight,
+            align: "right",
+          },
+        },
+      ],
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2);
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "weight",
+        data: weight.value.chartData,
+        color: "#2381B8",
+      },
+    ],
+  });
+};
 const selectMenuId1 = () => {
   menuSelectedId.value = 1;
 };
@@ -526,7 +880,7 @@ const ecoIntegrationGroupToggleOnOff = () => {
   ecoIntegrationChartGroup.value["visible"] =
     !ecoIntegrationChartGroup.value["visible"];
   ecoIntegrationGroupVisible.value = ecoIntegrationChartGroup.value["visible"];
-  // mergeEcoIntegration();
+  mergeEcoIntegration();
 };
 
 const ecoIntegrationToggleOnOff = (index) => {
@@ -534,129 +888,446 @@ const ecoIntegrationToggleOnOff = (index) => {
     !ecoIntegrationChart.value[index]["visible"];
   ecoIntegrationChart.value.push("xxx");
   ecoIntegrationChart.value.pop();
-  // mergeEcoIntegration();
+  mergeEcoIntegration();
 };
 
 const mergeEcoIntegration = () => {
-  // ecoIntegrationFinalChart.value = [];
-  // ecoIntegrationChart.value.forEach((x) => {
-  //   ecoIntegrationFinalChart.value.push(x);
-  // });
-  // ecoIntegrationFinalChart.value.push(ecoIntegrationChartGroup.value);
-  //override color
-  // ecoIntegrationFinalChart.value.forEach((item, index) => {
-  //   if (item.name == "Trade and investment") {
-  //     ecoIntegrationFinalChart.value[index].color = "#64C1E8";
-  //   } else if (item.name == "Financial") {
-  //     ecoIntegrationFinalChart.value[index].color = "#D85B63";
-  //   } else if (item.name == "Regional value chain") {
-  //     ecoIntegrationFinalChart.value[index].color = "#D680AD";
-  //   } else if (item.name == "Infrastructure") {
-  //     ecoIntegrationFinalChart.value[index].color = "#88643A";
-  //   } else if (item.name == "Movement of people") {
-  //     ecoIntegrationFinalChart.value[index].color = "#C0BA80";
-  //   } else if (item.name == "Regulatory cooperation") {
-  //     ecoIntegrationFinalChart.value[index].color = "#FDC47D";
-  //   } else if (item.name == "Digital economy") {
-  //     ecoIntegrationFinalChart.value[index].color = "#EA3B46";
-  //   } else if (item.name == "Group average") {
-  //     ecoIntegrationFinalChart.value[index].color = "#FF9616";
-  //   }
-  // });
-  // LineChartByCountry();
+  ecoIntegrationFinalChart.value = [];
+  ecoIntegrationChart.value.forEach((x) => {
+    ecoIntegrationFinalChart.value.push(x);
+  });
+  ecoIntegrationFinalChart.value.push(ecoIntegrationChartGroup.value);
+
+  ecoIntegrationFinalChart.value.forEach((item, index) => {
+    if (item.name == "Trade and investment") {
+      ecoIntegrationFinalChart.value[index].color = "#64C1E8";
+    } else if (item.name == "Financial") {
+      ecoIntegrationFinalChart.value[index].color = "#D85B63";
+    } else if (item.name == "Regional value chain") {
+      ecoIntegrationFinalChart.value[index].color = "#D680AD";
+    } else if (item.name == "Infrastructure") {
+      ecoIntegrationFinalChart.value[index].color = "#88643A";
+    } else if (item.name == "Movement of people") {
+      ecoIntegrationFinalChart.value[index].color = "#C0BA80";
+    } else if (item.name == "Regulatory cooperation") {
+      ecoIntegrationFinalChart.value[index].color = "#FDC47D";
+    } else if (item.name == "Digital economy") {
+      ecoIntegrationFinalChart.value[index].color = "#EA3B46";
+    } else if (item.name == "Group average") {
+      ecoIntegrationFinalChart.value[index].color = "#FF9616";
+    }
+  });
+  LineChartByCountry();
 };
 
 const LineChartByCountry = () => {
-  // let yAxisTitle = input.value.type + " Integration";
-  // Highcharts.chart("lineChartByDimension", {
-  //   chart: {
-  //     height: 550,
-  //   },
-  //   title: {
-  //     text: "",
-  //   },
-  //   legend: {
-  //     layout: "vertical",
-  //     align: "right",
-  //     verticalAlign: "middle",
-  //   },
-  //   yAxis: {
-  //     // min: 0,
-  //     title: {
-  //       text: yAxisTitle,
-  //     },
-  //   },
-  //   xAxis: {
-  //     tickInterval: 1,
-  //   },
-  //   exporting: {
-  //     buttons: {
-  //       contextButton: {
-  //         menuItems: [
-  //           "viewFullscreen",
-  //           "printChart",
-  //           "separator",
-  //           "downloadPNG",
-  //           "downloadJPEG",
-  //           "downloadPDF",
-  //           "downloadSVG",
-  //           "separator",
-  //           "downloadCSV",
-  //           "downloadXLS",
-  //           //"viewData",
-  //         ],
-  //       },
-  //     },
-  //   },
-  //   tooltip: {
-  //     useHTML: true,
-  //     headerFormat: "",
-  //     pointFormatter: function () {
-  //       return (
-  //         "<div class='font-16'><b>" +
-  //         this.series.name +
-  //         "</b></div><div>" +
-  //         yAxisTitle +
-  //         " index: " +
-  //         Number(this.y).toFixed(2) +
-  //         "</div>"
-  //       );
-  //     },
-  //   },
-  //   plotOptions: {
-  //     series: {
-  //       label: {
-  //         connectorAllowed: false,
-  //       },
-  //       pointStart: input.value.year.min,
-  //     },
-  //   },
-  //   credits: {
-  //     enabled: false,
-  //   },
-  //   series: ecoIntegrationFinalChart.value,
-  //   legend: { enabled: false },
-  //   responsive: {
-  //     rules: [
-  //       {
-  //         condition: {
-  //           maxWidth: 500,
-  //         },
-  //         chartOptions: {
-  //           legend: {
-  //             layout: "horizontal",
-  //             align: "center",
-  //             verticalAlign: "bottom",
-  //           },
-  //         },
-  //       },
-  //     ],
-  //   },
-  // });
+  let yAxisTitle = input.value.type + " Integration";
+  Highcharts.chart("lineChartByDimension", {
+    chart: {
+      height: 550,
+    },
+    title: {
+      text: "",
+    },
+    legend: {
+      layout: "vertical",
+      align: "right",
+      verticalAlign: "middle",
+    },
+    yAxis: {
+      // min: 0,
+      title: {
+        text: yAxisTitle,
+      },
+    },
+    xAxis: {
+      tickInterval: 1,
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      useHTML: true,
+      headerFormat: "",
+      pointFormatter: function () {
+        return (
+          "<div class='font-16'><b>" +
+          this.series.name +
+          "</b></div><div>" +
+          yAxisTitle +
+          " index: " +
+          Number(this.y).toFixed(2) +
+          "</div>"
+        );
+      },
+    },
+    plotOptions: {
+      series: {
+        label: {
+          connectorAllowed: false,
+        },
+        pointStart: input.value.year.min,
+      },
+    },
+    credits: {
+      enabled: false,
+    },
+    series: ecoIntegrationFinalChart.value,
+    legend: { enabled: false },
+    responsive: {
+      rules: [
+        {
+          condition: {
+            maxWidth: 500,
+          },
+          chartOptions: {
+            legend: {
+              layout: "horizontal",
+              align: "center",
+              verticalAlign: "bottom",
+            },
+          },
+        },
+      ],
+    },
+  });
 };
 const integrationProgressPrepareData = () => {
-  console.log("work here");
+  integrationProgressMakeEcoList();
+  integrationProgressMakeAvg();
+  integrationProgressMakeAvgGroup();
+  integrationProgressLegendChartName();
+  intergrationProgressSubTitle();
+  integrationProgressMergeData();
 };
+
+const integrationProgressMakeEcoList = () => {
+  intergrationProgressList.value = [];
+  ecoIntegrationChart.value.forEach((item) => {
+    let temp = [];
+
+    temp = {
+      name: item.name,
+      lastValue: item.lastValue,
+      visible: true,
+    };
+
+    intergrationProgressList.value.push(temp);
+  });
+};
+
+const integrationProgressMakeAvg = () => {
+  ecoIntegrationChart.value.forEach((item) => {
+    //Find avg value in 2 series for economic (not include group)
+    let diffYearByTwo = Math.floor(
+      (input.value.year.max - input.value.year.min) / 2
+    );
+
+    let arr1 = item.data.slice(0, diffYearByTwo + 1);
+
+    let avg1 = Number(arr1.reduce((pc, cc) => pc + cc, 0)) / arr1.length;
+    let arr2 = item.data.slice(item.data.length - diffYearByTwo - 1);
+    let avg2 = Number(arr2.reduce((pc, cc) => pc + cc, 0)) / arr2.length;
+    let temp1 = {
+      name: item.name,
+      color: "#2381B8",
+      data: Number(avg1).toFixed(2),
+    };
+    let temp2 = {
+      name: item.name,
+      color: "#13405A8",
+      data: Number(avg2).toFixed(2),
+    };
+    integrationProgressChartSeries1.value.push(temp1);
+
+    integrationProgressChartSeries2.value.push(temp2);
+  });
+  integrationProgressChartSeries1.value =
+    integrationProgressChartSeries1.value.map((x) => Number(x.data));
+  integrationProgressChartSeries2.value =
+    integrationProgressChartSeries2.value.map((x) => Number(x.data));
+};
+
+const integrationProgressMakeAvgGroup = () => {
+  integrationProgressPlotChartGroup.value = [];
+
+  let diffYearByTwo = Math.floor(
+    (input.value.year.max - input.value.year.min) / 2
+  );
+  let arrGroup1 = ecoIntegrationChartGroup.value.data.slice(
+    0,
+    diffYearByTwo + 1
+  );
+  let arrGroup2 = ecoIntegrationChartGroup.value.data.slice(
+    ecoIntegrationChartGroup.value.data.length - diffYearByTwo - 1
+  );
+  let avgGroup1 =
+    Number(arrGroup1.reduce((pc, cc) => pc + cc, 0)) / arrGroup1.length;
+  let avgGroup2 =
+    Number(arrGroup2.reduce((pc, cc) => pc + cc, 0)) / arrGroup2.length;
+  integrationProgressPlotChartGroup.value.push(Number(avgGroup1.toFixed(2)));
+  integrationProgressPlotChartGroup.value.push(Number(avgGroup2.toFixed(2)));
+};
+
+const integrationProgressLegendChartName = () => {
+  let diffYear = Math.floor((input.value.year.max - input.value.year.min) / 2);
+  integrationProgressYearStart.value =
+    input.value.year.min + "-" + (input.value.year.min + diffYear);
+  integrationProgressYearEnd.value =
+    input.value.year.max - diffYear + "-" + input.value.year.max;
+};
+
+const intergrationProgressSubTitle = () => {
+  let diffGroup =
+    integrationProgressPlotChartGroup.value[1] -
+    integrationProgressPlotChartGroup.value[0];
+
+  integrationProgressSubTitleText.value = `From ${
+    integrationProgressYearStart.value
+  } to ${integrationProgressYearEnd.value}
+      ,your group’s integration average ${
+        diffGroup > 0 ? "increased" : "decreased"
+      } ${Math.abs(diffGroup).toFixed(2)} from  ${
+    integrationProgressPlotChartGroup.value[0]
+  } to ${integrationProgressPlotChartGroup.value[1]}.`;
+
+  let counter = 0;
+  intergrationProgressList.value.forEach((item) => {
+    let temp = {
+      name: item.name,
+      diffData: Number(
+        (
+          integrationProgressChartSeries2.value[counter] -
+          integrationProgressChartSeries1.value[counter]
+        ).toFixed(2)
+      ),
+    };
+
+    integrationProgressdiffValueArray.value.push(temp);
+    counter++;
+  });
+  integrationProgressdiffValueArray.value.sort(
+    (a, b) => b.diffData - a.diffData
+  );
+
+  integrationProgressSubTitleTextLine2.value = `${capitalize(
+    integrationProgressdiffValueArray.value[0].name
+  )}
+      (${Number(integrationProgressdiffValueArray.value[0].diffData).toFixed(
+        2
+      )}) and ${integrationProgressdiffValueArray.value[1].name.toLowerCase()}
+      (${Number(integrationProgressdiffValueArray.value[1].diffData).toFixed(
+        2
+      )}) progressed the most.`;
+
+  integrationProgressSubTitleTextLine3.value = `${capitalize(
+    integrationProgressdiffValueArray.value[
+      integrationProgressdiffValueArray.value.length - 1
+    ].name
+  )} (${Number(
+    integrationProgressdiffValueArray.value[
+      integrationProgressdiffValueArray.value.length - 1
+    ].diffData
+  ).toFixed(2)}) and ${integrationProgressdiffValueArray.value[
+    integrationProgressdiffValueArray.value.length - 2
+  ].name.toLowerCase()} (${Number(
+    integrationProgressdiffValueArray.value[
+      integrationProgressdiffValueArray.value.length - 2
+    ].diffData
+  ).toFixed(2)}) progressed the least.`;
+};
+
+const integrationProgressMergeData = () => {
+  integrationProgressPlotChartCat.value = [];
+  integrationProgressPlotChartSeries1.value = [];
+  integrationProgressPlotChartSeries2.value = [];
+
+  if (integrationProgressChartGroupVisible.value) {
+    integrationProgressPlotChartCat.value.push(yourGroupName.value);
+    integrationProgressPlotChartSeries1.value.push(
+      integrationProgressPlotChartGroup.value[0]
+    );
+    integrationProgressPlotChartSeries2.value.push(
+      integrationProgressPlotChartGroup.value[1]
+    );
+  }
+
+  let countInter = 0;
+  intergrationProgressList.value.forEach((item) => {
+    if (item.visible) {
+      integrationProgressPlotChartCat.value.push(item.name);
+      integrationProgressPlotChartSeries1.value.push(
+        integrationProgressChartSeries1.value[countInter]
+      );
+      integrationProgressPlotChartSeries2.value.push(
+        integrationProgressChartSeries2.value[countInter]
+      );
+    }
+    countInter++;
+  });
+  loadIntegrationPeriodsChart();
+};
+
+const loadIntegrationPeriodsChart = () => {
+  let yAxisTitle = input.value.type + " integration";
+  Highcharts.chart("container2x", {
+    chart: {
+      type: "column",
+      height: "530px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: integrationProgressPlotChartCat.value,
+      crosshair: true,
+      labels: {
+        formatter() {
+          if (this.value == yourGroupName.value)
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 1,
+      title: {
+        text: yAxisTitle,
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      formatter: function () {
+        let updown =
+          this.points[1].y - this.points[0].y >= 0
+            ? "increased by "
+            : "decreased by ";
+        let upDownSize = Number(
+          Math.abs(this.points[1].y - this.points[0].y)
+        ).toFixed(2);
+        let upDownPercent = Number(
+          (Number(upDownSize) / this.points[0].y) * 100
+        ).toFixed(2);
+
+        return (
+          "<div class='font-16'><b>" +
+          this.x +
+          "</b></div><div>" +
+          yAxisTitle +
+          " index " +
+          updown +
+          upDownSize +
+          " (" +
+          upDownPercent +
+          "%)</div>"
+        );
+      },
+      shared: true,
+      useHTML: true,
+    },
+    legend: {
+      align: "right",
+      verticalAlign: "top",
+      y: 50,
+      layout: "vertical",
+      floating: true,
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+          ],
+        },
+      },
+    },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+        },
+      },
+    },
+    series: [
+      {
+        name: integrationProgressYearStart.value,
+        data: integrationProgressPlotChartSeries1.value,
+        color: "#2381B8",
+      },
+      {
+        name: integrationProgressYearEnd.value,
+        data: integrationProgressPlotChartSeries2.value,
+        color: "#13405A",
+      },
+    ],
+  });
+};
+
+const integrationProgressToggleGroupOnOff = () => {
+  integrationProgressChartGroupVisible.value =
+    !integrationProgressChartGroupVisible.value;
+  integrationProgressMergeData();
+};
+
+const integrationProgressToggleOnOff = (index) => {
+  intergrationProgressList.value[index]["visible"] =
+    !intergrationProgressList.value[index]["visible"];
+  integrationProgressMergeData();
+};
+
 const capitalize = (s) => {
   if (s.length == 0) {
     return "";
