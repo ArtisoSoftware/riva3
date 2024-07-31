@@ -118,7 +118,7 @@
                     >
                       {{ item.name }}
                     </div>
-                    &nbsp({{ Number(item.lastValue).toFixed(2) }})
+                    &nbsp;({{ Number(item.lastValue).toFixed(2) }})
                   </div>
                   <q-tooltip>
                     {{ item.name }} ({{
@@ -151,7 +151,7 @@
                     >
                       {{ item.name }}
                     </div>
-                    &nbsp({{ Number(item.lastValue).toFixed(2) }})
+                    &nbsp;({{ Number(item.lastValue).toFixed(2) }})
                   </div>
                   <q-tooltip>
                     {{ item.name }} ({{
@@ -264,7 +264,7 @@
                     >
                       {{ item.name }}
                     </div>
-                    &nbsp
+                    &nbsp;
                     <span v-if="Number(item.diff) >= 0" class="positiveText"
                       >(+{{ Number(item.diff).toFixed(2) }})</span
                     >
@@ -299,7 +299,7 @@
                     >
                       {{ item.name }}
                     </div>
-                    &nbsp
+                    &nbsp;
                     <span v-if="Number(item.diff) >= 0" class="positiveText"
                       >(+{{ Number(item.diff).toFixed(2) }})</span
                     >
