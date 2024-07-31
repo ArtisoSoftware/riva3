@@ -49,8 +49,14 @@ const routes = [
     name: "riintragroup_clear",
   },
   {
-    path: "/riecopartner",
+    path: "/riecopartner/:key?",
     component: () => import("pages/ri_ecopartner.vue"),
+    name: "rieconomypartner",
+  },
+  {
+    path: "/riecopartner_clear",
+    component: () => import("pages/ri_ecopartner.vue"),
+    name: "rieconomypartner_clear",
   },
   {
     path: "/ribuildyourown",

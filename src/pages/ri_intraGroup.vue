@@ -50,11 +50,10 @@
         <div v-show="input.disaggregation == 'country'">
           <main-linechart :dataGet="dataLinesend"></main-linechart>
           <hr />
-          <!-- <economy-circle
-          :data="countryFullList"
-          :input="input"
-          @go-to-dimension="gotoDimension"
-        ></economy-circle> -->
+          <economy-circle
+            :dataGet="dataLinesend"
+            @go-to-dimension="gotoDimension"
+          ></economy-circle>
         </div>
       </div>
       <footerMain />
@@ -74,6 +73,7 @@ import selectDesired from "../components/ri_select_desired_level.vue";
 import lineChartDimension from "../components/ri_intragroup/linechart_by_dimension.vue";
 import dimensionTab from "../components/ri_intragroup/datatab_dimension.vue";
 import mainLinechart from "../components/ri_intragroup/linechart_by_country.vue";
+import economyCircle from "../components/ri_intragroup/ri_economuy_circle.vue";
 import { serverSetup, yearInputShow } from "./server";
 import axios from "axios";
 
@@ -98,6 +98,11 @@ const dataAvailCircleChart = ref({
 const fourBarName = ref("Your game");
 const fourBarData = ref([]);
 const dataLinesend = ref({});
+
+const gotoDimension = () => {
+  input.value.disaggregation = "dimension";
+  window.scrollTo(0, 1400);
+};
 
 const gotoEco = () => {
   input.value.disaggregation = "country";
