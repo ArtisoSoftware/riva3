@@ -47,6 +47,15 @@
           <dimension-tab :dataGet="dataLinesend" @go-to-eco="gotoEco">
           </dimension-tab>
         </div>
+        <div v-show="input.disaggregation == 'country'">
+          <main-linechart :dataGet="dataLinesend"></main-linechart>
+          <hr />
+          <!-- <economy-circle
+          :data="countryFullList"
+          :input="input"
+          @go-to-dimension="gotoDimension"
+        ></economy-circle> -->
+        </div>
       </div>
       <footerMain />
     </div>
@@ -64,6 +73,7 @@ import fourBar from "../components/ri_fourbar.vue";
 import selectDesired from "../components/ri_select_desired_level.vue";
 import lineChartDimension from "../components/ri_intragroup/linechart_by_dimension.vue";
 import dimensionTab from "../components/ri_intragroup/datatab_dimension.vue";
+import mainLinechart from "../components/ri_intragroup/linechart_by_country.vue";
 import { serverSetup, yearInputShow } from "./server";
 import axios from "axios";
 
@@ -90,7 +100,8 @@ const fourBarData = ref([]);
 const dataLinesend = ref({});
 
 const gotoEco = () => {
-  console.log("work here");
+  input.value.disaggregation = "country";
+  window.scrollTo(0, 1400);
 };
 
 const resetStartBtn = () => {

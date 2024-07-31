@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 const props = defineProps({
   input: {
@@ -56,6 +56,13 @@ const selectedDimension = () => {
 onMounted(() => {
   selected.value = props.input ? props.input : "dimension";
 });
+
+watch(
+  () => props.input,
+  (newValue) => {
+    selected.value = newValue ? newValue : "dimension";
+  }
+);
 </script>
 
 <style lang="scss" scoped>
