@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import RIHeader from "../components/RI_header.vue";
 import footerMain from "../components/footer2.vue";
 import inputSection from "../components/ri_intragroup/input_section.vue";
