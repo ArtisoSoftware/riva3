@@ -401,8 +401,6 @@ const setDataGen = () => {
   }
 };
 onMounted(() => {
-  console.log("test");
-  console.log(props.dimension, props.type);
   setDataGen();
 });
 

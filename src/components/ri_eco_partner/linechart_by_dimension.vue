@@ -306,17 +306,54 @@
           </div>
         </div>
       </div>
+      <!-- Graph menu #3 -->
+      <div v-show="menuSelectedId == 3">
+        <div class="q-pa-md">
+          <div class="font-24">
+            How much data is available for each of the dimensions considered?
+            <q-icon name="fas fa-question-circle" size="24px">
+              <q-tooltip>
+                All country pairs are weighted equally. In turn,<br />
+                all available dimensions are weighted equally<br />
+                within a single pair As such, dimension<br />
+                weights largely reflect data availability, <br />albeit not
+                perfectly. To learn more about <br />dimensions weights please
+                visit<br />
+                our Technical note (upper-right corner).
+              </q-tooltip>
+            </q-icon>
+          </div>
+          <div>{{ dataAvailable.subTitle1 }}</div>
+        </div>
+        <div
+          id="container3x"
+          style="max-width: 1024px; width: 100%; margin: auto"
+        ></div>
+      </div>
+      <!-- Graph menu  #4 -->
+      <div v-show="menuSelectedId == 4">
+        <div class="q-pa-md">
+          <div class="font-24">
+            How much is each dimensions contributing to the overall integration
+            index?
+          </div>
+          <div>{{ weight.subTitle1 }}</div>
+        </div>
+        <div
+          id="container4x"
+          style="max-width: 1024px; width: 100%; margin: auto"
+        ></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import { LocalStorage, Notify } from "quasar";
+import { ref, watch } from "vue";
+import { LocalStorage } from "quasar";
 import { serverSetup } from "../../pages/server";
-import { useRoute } from "vue-router";
 import axios from "axios";
-const route = useRoute();
+
 const props = defineProps({
   dataSend: Object,
 });
@@ -533,7 +570,95 @@ const setDataforWeight = () => {
 };
 
 const plotChartDataWeight = () => {
-  console.log("work here7: plot");
+  let EQweight = weight.value.equalWeigth;
+  Highcharts.chart("container4x", {
+    chart: {
+      type: "column",
+      height: "500px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: weight.value.cat,
+      crosshair: true,
+    },
+    yAxis: {
+      min: 0,
+
+      title: {
+        text: "",
+      },
+      plotLines: [
+        {
+          color: "red",
+          width: 1,
+          value: EQweight,
+          zIndex: 5,
+          dashStyle: "longdashdot",
+          label: {
+            text: "Equal weight:" + EQweight,
+            align: "right",
+            y: -10,
+          },
+        },
+      ],
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2);
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "weight",
+        data: weight.value.chartData,
+        color: "#2381B8",
+      },
+    ],
+  });
 };
 
 const loadDataFromDatabase = async () => {
@@ -623,7 +748,97 @@ const setDataforDataAvail = (avgGroup) => {
     dataAvailable.value.chartData[dataAvailable.value.rawData.length - 2]
   ).toFixed(2)}%) were the least.`;
 
-  console.log("work here6 : plot");
+  plotChartDataAvail();
+};
+
+const plotChartDataAvail = () => {
+  Highcharts.chart("container3x", {
+    chart: {
+      type: "column",
+      height: "500px",
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    xAxis: {
+      categories: dataAvailable.value.cat,
+      crosshair: true,
+      labels: {
+        formatter() {
+          if (this.value == yourGroupName.value)
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      title: {
+        text: "",
+      },
+      labels: {
+        format: "{value} %",
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    tooltip: {
+      headerFormat:
+        '<span style="font-size:16px"><b>{point.key}</b></span><table>',
+      pointFormat:
+        '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.0f}%</b></td></tr>',
+      footerFormat: "</table>",
+      shared: true,
+      useHTML: true,
+    },
+    legend: { enabled: false },
+    plotOptions: {
+      column: {
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+      series: {
+        dataLabels: {
+          enabled: true,
+
+          formatter: function () {
+            return Highcharts.numberFormat(this.y, 2) + "%";
+          },
+        },
+      },
+    },
+    series: [
+      {
+        name: "data availability",
+        data: dataAvailable.value.chartData,
+        color: "#2381B8",
+      },
+    ],
+  });
 };
 
 const checkYourName = () => {

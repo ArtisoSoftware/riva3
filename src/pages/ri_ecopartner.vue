@@ -55,11 +55,7 @@
 
         <div v-show="input.disaggregation == 'dimension'">
           <line-chart-dimension :dataSend="dataSend2"></line-chart-dimension>
-          <!-- <dimension-tab
-          :input="input"
-          :data="countryFullList"
-          :report="countryReportList"
-        ></dimension-tab> -->
+          <dimension-tab :dataSend="dataSend2"></dimension-tab>
           <!-- <div class="q-pb-lg" style="background: #ededed" align="center">
           <div class="btnOutGreen" @click="changeDisaggregationToEco()">
             Explore integration by economy
@@ -82,6 +78,7 @@ import circleAvail from "../components/ri_eco_partner/ri_data_avail_circle.vue";
 import fourBar from "../components/ri_eco_partner/ri_fourbar.vue";
 import selectDesired from "../components/ri_select_desired_level.vue";
 import LineChartDimension from "../components/ri_eco_partner/linechart_by_dimension.vue";
+import dimensionTab from "../components/ri_eco_partner/datatab_dimension.vue";
 import { LocalStorage } from "quasar";
 import { useRoute } from "vue-router";
 import { serverSetup, yearInputShow } from "./server";
@@ -112,6 +109,7 @@ const dataSendInput = ref({
     disaggregation: "country",
   },
 });
+
 const dataFourBar = ref({
   data: [],
   name: "",

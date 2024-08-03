@@ -56,9 +56,23 @@
 
   <body>
     <script>
+      // function updateViewport() {
+      //   const path = window.location.hash;
+      //   const viewportMeta = document.getElementById("viewportMeta");
+      //   if (path === "#/" || path === "#") {
+      //     viewportMeta.setAttribute(
+      //       "content",
+      //       "user-scalable=yes, initial-scale=1, maximum-scale=3, minimum-scale=0.5, width=device-width"
+      //     );
+      //   } else {
+      //     viewportMeta.setAttribute("content", "width=1400");
+      //   }
+      // }
+
       function updateViewport() {
         const path = window.location.hash;
         const viewportMeta = document.getElementById("viewportMeta");
+        console.log("Current path:", path); // Log current path
         if (path === "#/" || path === "#") {
           viewportMeta.setAttribute(
             "content",
@@ -67,6 +81,7 @@
         } else {
           viewportMeta.setAttribute("content", "width=1400");
         }
+        console.log("Viewport content:", viewportMeta.getAttribute("content")); // Log viewport setting
       }
 
       window.addEventListener("hashchange", updateViewport);

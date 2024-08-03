@@ -119,7 +119,7 @@
           val="Reporter"
           label="Partner"
           color="secondary"
-          @input="changeYear()"
+          @update:model-value="changeYear()"
         />
       </div>
       <q-radio
@@ -127,7 +127,7 @@
         val="Partner"
         label="Reporter"
         color="secondary"
-        @input="changeYear()"
+        @update:model-value="changeYear()"
       />
     </div>
     <br />
