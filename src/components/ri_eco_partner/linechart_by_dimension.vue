@@ -394,8 +394,6 @@ const ecoIntegrationGroupVisible = ref(true);
 const ecoIntegrationChartSort = ref([{ name: "" }, { name: "" }]);
 const ecoIntegrationFinalChart = ref([]);
 
-const integrationProgressChart = ref([{ name: "" }, { name: "" }]);
-const integrationProgressChartGroup = ref([]);
 const integrationProgressChartGroupVisible = ref(true);
 const integrationProgressChartSeries1 = ref([]);
 const integrationProgressChartSeries2 = ref([]);

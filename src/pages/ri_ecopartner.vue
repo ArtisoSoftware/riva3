@@ -36,16 +36,8 @@
         <br />
 
         <div v-show="input.disaggregation == 'country'">
-          <!-- <main-linechart
-          :report="countryReportList"
-          :data="countryPartnerList"
-          :input="input"
-        ></main-linechart>
-        <spider-web
-          :input="input"
-          :data="countryFullList"
-          :report="countryReportList"
-        ></spider-web> -->
+          <main-linechart :dataSend="dataSend2"></main-linechart>
+          <spider-web :dataSend="dataSend2"></spider-web>
           <div class="q-py-lg" style="background: #ededed" align="center">
             <!-- <div class="btnOutGreen" @click="changeDisaggregationToDimension()">
             Explore integration by dimension
@@ -56,11 +48,11 @@
         <div v-show="input.disaggregation == 'dimension'">
           <line-chart-dimension :dataSend="dataSend2"></line-chart-dimension>
           <dimension-tab :dataSend="dataSend2"></dimension-tab>
-          <!-- <div class="q-pb-lg" style="background: #ededed" align="center">
-          <div class="btnOutGreen" @click="changeDisaggregationToEco()">
-            Explore integration by economy
+          <div class="q-pb-lg" style="background: #ededed" align="center">
+            <div class="btnOutGreen" @click="changeDisaggregationToEco()">
+              Explore integration by economy
+            </div>
           </div>
-        </div>  -->
         </div>
       </div>
       <footerMain />
@@ -79,6 +71,8 @@ import fourBar from "../components/ri_eco_partner/ri_fourbar.vue";
 import selectDesired from "../components/ri_select_desired_level.vue";
 import LineChartDimension from "../components/ri_eco_partner/linechart_by_dimension.vue";
 import dimensionTab from "../components/ri_eco_partner/datatab_dimension.vue";
+import mainLinechart from "../components/ri_eco_partner/linechartbycountry.vue";
+import spiderWeb from "../components/ri_eco_partner/spiderweb.vue";
 import { LocalStorage } from "quasar";
 import { useRoute } from "vue-router";
 import { serverSetup, yearInputShow } from "./server";
@@ -162,6 +156,11 @@ onMounted(() => {
     };
   }
 });
+
+const changeDisaggregationToEco = () => {
+  input.value.disaggregation = "country";
+  window.scrollTo(0, 1400);
+};
 
 const changeDisaggraegation = (type) => {
   input.value.disaggregation = type;
@@ -266,5 +265,14 @@ const calFourBarChart = async () => {
   max-width: 1400px;
   margin: auto;
   background-color: #fff;
+}
+.btnOutGreen {
+  cursor: pointer;
+  width: 340px;
+  height: 35px;
+  line-height: 30px;
+  border: 3px solid #2d9687;
+  border-radius: 5px;
+  font-size: 14px;
 }
 </style>
