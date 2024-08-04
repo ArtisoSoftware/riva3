@@ -26,11 +26,7 @@
         <!-- by dimension  -->
         <div v-show="input.disaggregation == 'dimension'">
           <line-chart-dimension :dataSend="dataSend2"></line-chart-dimension>
-          <!-- <dimension-tab
-            :input="input"
-            :data="countryFullList"
-            :report="countryReportList"
-          ></dimension-tab> -->
+          <dimension-tab :dataSend="dataSend2"></dimension-tab>
           <div class="q-pb-lg" style="background: #ededed" align="center">
             <!-- <div class="btnOutGreen" @click="changeDisaggregationToEco()">
               Explore integration by economy -->
@@ -51,6 +47,7 @@ import inputSection from "../components/ri_buildyourown/input_section.vue";
 import fourBar from "../components/ri_buildyourown/ri_fourbar.vue";
 import selectDesired from "../components/ri_select_desired_level.vue";
 import lineChartDimension from "../components/ri_buildyourown/linechart_by_dimension.vue";
+import dimensionTab from "../components/ri_buildyourown/datatab_dimension.vue";
 import { LocalStorage } from "quasar";
 import { useRoute } from "vue-router";
 import { serverSetup } from "./server";
