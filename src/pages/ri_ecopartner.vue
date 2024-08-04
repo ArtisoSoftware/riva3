@@ -75,7 +75,7 @@ import mainLinechart from "../components/ri_eco_partner/linechartbycountry.vue";
 import spiderWeb from "../components/ri_eco_partner/spiderweb.vue";
 import { LocalStorage } from "quasar";
 import { useRoute } from "vue-router";
-import { serverSetup, yearInputShow } from "./server";
+import { serverSetup } from "./server";
 import axios from "axios";
 const { serverData } = serverSetup();
 

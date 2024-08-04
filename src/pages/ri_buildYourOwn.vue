@@ -3,61 +3,79 @@
     <div class="mainApp">
       <div><RIHeader :menu="3" /></div>
       <div>
-        <input-section
-          @start-btn="startBtn"
-          @reset-start-btn="resetStartBtn"
-          @change-integration-type="changeIntegrationType"
-          @localID="getLocalID"
-        />
-      </div>
-      <div v-if="showResultAfterStartBtn">
-        <hr />
-        <div style="font-size: 24px" class="text-center q-py-md">
-          {{ fourBarName }}
-          <span class="text-green"
-            ><b>{{ scoreFinal }}</b></span
-          >
+        <div>
+          <input-section
+            @start-btn="startBtn"
+            @reset-start-btn="resetStartBtn"
+            @change-integration-type="changeIntegrationType"
+          />
         </div>
-        <hr />
-        <RI_disaggregation
-          @change-disaggregation="changeDisaggraegation"
-          :disaggregation="disaggregation"
-        />
-
-        <div v-show="disaggregation == 'dimension'">
+      </div>
+      <div v-if="showResultAfterStartBtn" class="">
+        <div>
+          <hr />
           <div>
-            <LineChartDimension
-              :input="input2"
-              :partner="countryPartnerList"
-              :reporting="countryReportList"
-              :localID="localID"
-            />
-            <dimension-tab
-              :input="input2"
-              :partner="countryPartnerList"
-              :reporting="countryReportList"
-              :localID="localID"
-            ></dimension-tab>
+            <four-bar :dataSend="dataFourBar"></four-bar>
+          </div>
+          <hr />
+          <select-desired
+            :input="input.disaggregation"
+            @change-disaggregation="changeDisaggraegation"
+          ></select-desired>
+        </div>
+        <!-- by dimension  -->
+        <div v-show="input.disaggregation == 'dimension'">
+          <line-chart-dimension :dataSend="dataSend2"></line-chart-dimension>
+          <!-- <dimension-tab
+            :input="input"
+            :data="countryFullList"
+            :report="countryReportList"
+          ></dimension-tab> -->
+          <div class="q-pb-lg" style="background: #ededed" align="center">
+            <!-- <div class="btnOutGreen" @click="changeDisaggregationToEco()">
+              Explore integration by economy -->
           </div>
         </div>
       </div>
-      <footerMain />
     </div>
+
+    <footerMain />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import RIHeader from "../components/RI_header.vue";
-import inputSection from "../components/ri_buildyourown/InputSection.vue";
-import RI_disaggregation from "../components/RI_disaggregation.vue";
-import LineChartDimension from "../components/ri_buildyourown/LineChartDimension.vue";
-import dimensionTab from "../components/ri_buildyourown/Datatab_dimension.vue";
 import footerMain from "../components/footer2.vue";
+import inputSection from "../components/ri_buildyourown/input_section.vue";
+import fourBar from "../components/ri_buildyourown/ri_fourbar.vue";
+import selectDesired from "../components/ri_select_desired_level.vue";
+import lineChartDimension from "../components/ri_buildyourown/linechart_by_dimension.vue";
+import { LocalStorage } from "quasar";
+import { useRoute } from "vue-router";
 import { serverSetup } from "./server";
 import axios from "axios";
-
 const { serverData } = serverSetup();
+
+const route = useRoute();
+
+const dataFourBar = ref({
+  data: [],
+  name: "",
+  partner: "",
+  type: "",
+  year: "",
+});
+
+const dataSend2 = ref({
+  data: [],
+  input: {},
+  report: [],
+});
+
+const countryFullList = ref([]);
+const countryReportList = ref([]);
+
 const input = ref({
   partner: [],
   reporting: [],
@@ -66,27 +84,31 @@ const input = ref({
     max: 2020,
   },
   type: "Sustainable",
-  dimensionPicked: [1, 2, 3, 4, 5, 6, 7],
+  disaggregation: "country",
+  dimensionPicked: [],
 });
-const input2 = ref({});
-const localID = ref("");
-const disaggregation = ref("dimension");
-const showResultAfterStartBtn = ref(false);
-const countryReportList = ref([]);
-const countryPartnerList = ref([]);
 
-const startBtn = (value) => {
-  countryReportList.value = value.countryReportList;
-  countryPartnerList.value = value.countryPartnerList;
-  input.value = value.input;
-  input2.value = input.value;
-  input2.value.disaggregation = disaggregation.value;
-  showResultAfterStartBtn.value = true;
-  calFourBarChart();
+const showResultAfterStartBtn = ref(false);
+
+const dataAvailCircleChart = ref({
+  showChart: false,
+  score: 0,
+});
+
+const fourBarName = ref("Your group");
+const fourBarData = ref([]);
+const fourBarNamePatner = ref("with your group of partners");
+
+const changeDisaggraegation = (type) => {
+  input.value.disaggregation = type;
 };
 
-const getLocalID = (value) => {
-  localID.value = value;
+const startBtn = (inputSend) => {
+  showResultAfterStartBtn.value = true;
+  countryFullList.value = inputSend.countryFullList;
+  countryReportList.value = inputSend.reportingList;
+  input.value = inputSend.input;
+  calFourBarChart();
 };
 
 const resetStartBtn = () => {
@@ -95,79 +117,94 @@ const resetStartBtn = () => {
 
 const changeIntegrationType = (integrationType) => {
   input.value.type = integrationType;
-  input2.value = input.value;
-  input2.value.disaggregation = disaggregation.value;
 };
 
-///integration score
-const fourBarName = ref("");
-const scoreFinal = ref(0);
-
-onMounted(() => {
-  input2.value = input.value;
-  input2.value.disaggregation = disaggregation.value;
-});
-
 const calFourBarChart = async () => {
-  let reportLabel = "Your group";
-  if (input.value.reporting.length == 1) {
-    reportLabel = input.value.reporting[0].label;
-  }
-  let partnerLabel = "with your gorup of partners";
-  if (input.value.partner.length == 1) {
-    partnerLabel = input.value.partner[0].label;
-  }
-  fourBarName.value =
-    reportLabel +
-    "'s " +
-    input.value.type.toLowerCase() +
-    " integration score with " +
-    partnerLabel +
-    " in " +
-    input.value.year.max +
-    " was ";
+  fourBarData.value = [];
+  let labelName = "Your Group";
 
-  let dataSend = {
-    reporting: countryReportList.value,
-    partner: countryPartnerList.value,
+  if (input.value.reporting.length == 1) {
+    labelName = input.value.reporting[0].label;
+  }
+
+  fourBarName.value = labelName;
+  let labelPartner = "with your group of partners";
+  if (input.value.partner.length == 1) {
+    labelPartner = "with " + input.value.partner[0].label;
+  }
+  fourBarNamePatner.value = labelPartner;
+  let dimUse = convertDimensionToArray(input.value.dimensionPicked);
+  let data = {
+    name: labelName,
+    reporting: countryReportList.value.map((x) => x.iso),
+    partner: countryFullList.value.map((x) => x.iso),
     year: input.value.year.max,
     type: input.value.type,
-    dimension: input.value.dimensionPicked,
+    dimension: dimUse,
   };
 
-  let url = serverData.value + "ri/build_score.php";
-  let res = await axios.post(url, JSON.stringify(dataSend));
+  let url = serverData.value + "ri/build_fivebar_onlyyourgroup_build.php";
+  let res = await axios.post(url, JSON.stringify(data));
+
   let rawData = res.data;
-  let dimPass = input.value.dimensionPicked.length / 2;
   let score = 0;
   let countPair = 0;
+  let pairScore = [];
+  let dimPass = data.dimension.length / 2;
 
-  dataSend.reporting.forEach((reporting) => {
-    dataSend.partner.forEach((partner) => {
+  data.reporting.forEach((reporting) => {
+    data.partner.forEach((partner) => {
       let sum = 0;
       let dataTemp = rawData.filter(
         (x) => x.reporter == reporting && x.partner == partner
       );
-
       if (dataTemp.length >= dimPass) {
-        dataTemp.forEach((eachDim) => {
-          sum += Number(eachDim.score);
-        });
+        dataTemp.forEach((eachDim) => (sum += Number(eachDim.score)));
         sum /= dataTemp.length;
         countPair++;
+        let obTemp = {
+          reporter: reporting,
+          partner: partner,
+          score: Number(sum.toFixed(2)),
+        };
+        pairScore.push(obTemp);
       } else {
         sum = 0;
       }
       score += sum;
     });
   });
+  pairScore.sort((a, b) => b.score - a.score);
   score /= countPair;
-  scoreFinal.value = score.toFixed(2);
+
+  fourBarData.value.push({
+    name: labelName,
+    value: Number(score.toFixed(2)),
+    own: true,
+  });
+  dataFourBar.value = {
+    name: fourBarData.value[0].name,
+    type: input.value.type,
+    year: input.value.year.max,
+    data: fourBarData.value,
+    partner: fourBarNamePatner.value,
+  };
+  dataSend2.value = {
+    input: input.value,
+    data: countryFullList.value,
+    report: countryReportList.value,
+  };
 };
 
-//Change disaggregation
-const changeDisaggraegation = (type) => {
-  disaggregation.value = type;
+const convertDimensionToArray = (dim) => {
+  let dimGet = dim.map((x) => x.picked);
+  let dimReturn = [];
+  dimGet.forEach((item, index) => {
+    if (item) {
+      dimReturn.push(index + 1);
+    }
+  });
+  return dimReturn;
 };
 </script>
 
@@ -177,5 +214,19 @@ const changeDisaggraegation = (type) => {
   max-width: 1400px;
   margin: auto;
   background-color: #fff;
+}
+.btnOutGreen {
+  cursor: pointer;
+  width: 340px;
+  height: 35px;
+  line-height: 30px;
+  border: 3px solid #2d9687;
+  border-radius: 5px;
+  font-size: 14px;
+}
+.footer-bg {
+  background-image: url("../../public/footer.jpg");
+  background-size: inherit;
+  background-position: bottom;
 }
 </style>

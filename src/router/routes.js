@@ -61,6 +61,12 @@ const routes = [
   {
     path: "/ribuildyourown",
     component: () => import("pages/ri_buildYourOwn.vue"),
+    name: "ribuildyourown",
+  },
+  {
+    path: "/ribuildyourown_clear",
+    component: () => import("pages/ri_buildYourOwn.vue"),
+    name: "ribuildyourown_clear",
   },
   {
     path: "/ricountrybrief",
