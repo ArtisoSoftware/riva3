@@ -48,6 +48,7 @@
 
           <q-separator />
           <q-tab-panels v-model="tab" animated style="background: #ededed">
+            <!-- Menu1 -->
             <q-tab-panel name="economy">
               <div class="q-px-xl" align="left">
                 <div class="font-24 q-py-md">
@@ -59,8 +60,196 @@
                 <div id="chartEconomy"></div>
               </div>
             </q-tab-panel>
+            <!-- Menu2 -->
+            <q-tab-panel name="index">
+              <div class="q-px-xl" align="left">
+                <div class="font-24">
+                  Which indicators are driving
+                  {{
+                    input.reporting.length > 1
+                      ? "the reporting economies"
+                      : input.reporting[0].label
+                  }}
+                  {{ selected.toLowerCase() }} integration score with
+                  {{
+                    input.partner.length > 1
+                      ? "this group of partner economies"
+                      : input.partner[0].label
+                  }}?
+                </div>
+                <p class="font-16">
+                  From {{ firstHalfPeriod }} to {{ secondHalfPeriod }}, your
+                  reporter group's integration with your partner group in
+                  {{ selected }} dimension
+                  {{
+                    indexChart.series[1].data[0] -
+                      indexChart.series[0].data[0] >
+                    0
+                      ? "increased"
+                      : "decreased"
+                  }}
+                  by
+                  {{
+                    Math.abs(
+                      indexChart.series[1].data[0] -
+                        indexChart.series[0].data[0]
+                    ).toFixed(2)
+                  }}
+                  from {{ Number(indexChart.series[0].data[0]).toFixed(2) }} to
+                  {{ Number(indexChart.series[1].data[0]).toFixed(2) }}.
+                  {{ indexChart.catName[0] }} (
+                  {{
+                    indexChart.series[1].data[0] -
+                      indexChart.series[0].data[0] >
+                    0
+                      ? "+"
+                      : "-"
+                  }}{{
+                    Math.abs(
+                      indexChart.series[1].data[0] -
+                        indexChart.series[0].data[0]
+                    ).toFixed(2)
+                  }}
+                  ) progressed the most.
+                  {{ indexChart.catName[indexChart.series[0].data.length - 1] }}
+                  ({{
+                    indexChart.catName[indexChart.series[1].data.length - 1] -
+                      indexChart.catName[indexChart.series[0].data.length - 1] >
+                    0
+                      ? "+"
+                      : "-"
+                  }}{{
+                    Math.abs(
+                      indexChart.series[1].data[
+                        indexChart.series[1].data.length - 1
+                      ] -
+                        indexChart.series[0].data[
+                          indexChart.series[0].data.length - 1
+                        ]
+                    ).toFixed(2)
+                  }}) progressed the least.
+                </p>
+                <p class="font-16">
+                  Click on any indicator to breakdown performance by individual
+                  economies.
+                </p>
+              </div>
+              <div class="economyOverflow2">
+                <div id="chartIndex"></div>
+                <div v-if="indexNoDataText != ''" class="q-py-md">
+                  {{ indexNoDataText }}
+                </div>
+                <table-tab :dimension="dimensionIndex" :type="input.type" />
+              </div>
+            </q-tab-panel>
+            <!-- Menu3 -->
+            <q-tab-panel name="data">
+              <div class="q-px-xl" align="left">
+                <div class="font-24">
+                  How much data is available for each indicator in
+                  {{ selected.toLowerCase() }}?
+                  <q-icon name="fas fa-question-circle" size="24px">
+                    <q-tooltip>
+                      Data availability for each indicator is calculated<br />
+                      as the ratio between the number of pairs with<br />
+                      available data and all the possible relevant pair<br />
+                      combinations.<br /><br />
+
+                      E.g., take any indicator A, and a group where X<br />
+                      is the reporting economy and Y and Z are the<br />
+                      partner economies. For indicator A, there are 2<br />
+                      possible unique pairs: (X-Y), (X-Z). If data is<br />
+                      available for 1 of these pairs, data availability<br />
+                      for indicator A will be set at 50% (1/2)
+                    </q-tooltip>
+                  </q-icon>
+                </div>
+                <p class="font-16">
+                  {{ dataChart.catName[0] }} has the most data available ({{
+                    dataChart.series[0].data[0]
+                  }}%), while
+                  {{
+                    dataChart.catNameLower[dataChart.series[0].data.length - 1]
+                  }}
+                  has the least ({{
+                    dataChart.series[0].data[
+                      dataChart.series[0].data.length - 1
+                    ]
+                  }}%). <br />
+                </p>
+              </div>
+              <div id="chartData"></div>
+            </q-tab-panel>
+            <!-- Menu4 -->
+            <q-tab-panel name="weight">
+              <div class="q-px-xl" align="left">
+                <div class="font-24">
+                  How much is each indicator contributing to
+                  {{ yourGroupName }}'s {{ selected.toLowerCase() }} score?
+                  <q-icon name="fas fa-question-circle" size="24px">
+                    <q-tooltip>
+                      Within a dimension and a particular pair, all<br />
+                      available indicators are weighted equally.<br />
+                      As such, indicator weights largely reflect data<br />
+                      availability, albeit not perfectly. To learn more<br />
+                      about indicator weights please visit our<br />
+                      Technical note (upper-right corner).
+                    </q-tooltip>
+                  </q-icon>
+                </div>
+                <p class="font-16">
+                  {{ weightChart.catName[0] }} ({{
+                    weightChart.series[0].data[0]
+                  }}%) was the most prominent indicator in the
+                  {{ selected.toLowerCase() }}
+                  dimension, while
+                  {{
+                    weightChart.catNameLower[
+                      weightChart.series[0].data.length - 1
+                    ]
+                  }}
+                  ({{
+                    weightChart.series[0].data[
+                      weightChart.series[0].data.length - 1
+                    ]
+                  }}%) were the least.
+                </p>
+              </div>
+              <div id="chartWeight"></div>
+            </q-tab-panel>
           </q-tab-panels>
         </q-card>
+      </div>
+    </div>
+    <!-- chart indicator  -->
+    <div v-show="showIndicatorChart" class="fullscreen bgDrop">
+      <div class="fixed-center cardIndicator q-pa-md">
+        <div class="row items-center q-pb-none">
+          <div
+            class="inputSelectClass text-h6"
+            :style="{ background: colorSelected }"
+          >
+            {{ selected }}
+          </div>
+          <q-space />
+          <q-btn
+            icon="close"
+            size="lg"
+            flat
+            round
+            dense
+            @click="showIndicatorChart = false"
+          />
+        </div>
+        <div class="q-py-md" align="left">
+          <div class="font-24">{{ indicatorName }}</div>
+          <div class="font-14">
+            This graph is sorted by the different value between
+            {{ firstHalfPeriod }} and {{ secondHalfPeriod }}.
+          </div>
+        </div>
+
+        <div class="chartincard"><div id="chartIndicator"></div></div>
       </div>
     </div>
   </div>
@@ -79,8 +268,8 @@ const props = defineProps({
 
 const input = ref({
   disaggregation: "dimension",
-  partner: [],
-  reporting: [],
+  partner: [{ label: "" }],
+  reporting: [{ label: "" }],
   type: "Sustainable",
   dimensionPicked: [
     { picked: false },
@@ -219,15 +408,473 @@ const goToURL = () => {
   window.open("#/ridataavail/" + id).focus;
 };
 const loadIndexChart = () => {
-  console.log("work2");
+  Highcharts.chart("chartIndex", {
+    chart: {
+      type: "bar",
+      backgroundColor: "#EDEDED",
+      marginLeft: 380,
+      marginBottom: 30,
+      height: 380,
+      events: {
+        load: function () {
+          var axis = this.xAxis[0];
+          var ticks = axis.ticks;
+          var points = this.series[0].points;
+          points.forEach(function (point, i) {
+            if (ticks[i]) {
+              var label = ticks[i].label.element;
+              label.onclick = function (ev) {
+                indicatorName.value = ev.target.innerHTML.replace(
+                  /<[^>]*>?/gm,
+                  ""
+                );
+                setIndicatorChart();
+              };
+            }
+          });
+        },
+      },
+    },
+    title: {
+      text: "",
+    },
+    xAxis: {
+      categories: indexChart.value.catName,
+      labels: {
+        // align: "left",
+        // x: -220,
+        align: "center",
+        style: {
+          cursor: "pointer",
+        },
+        formatter() {
+          if (this.value == yourGroupName.value)
+            return `<span style="color: #F99704; font-weight:bold;">${this.value}</span>`;
+          else {
+            return this.value;
+          }
+        },
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 1,
+      title: {
+        text: "",
+      },
+      gridLineWidth: 0,
+      minorGridLineWidth: 0,
+    },
+    tooltip: {
+      shared: true,
+      formatter: function () {
+        let points = this.points;
+        let pointsLength = points.length;
+        let tooltipMarkup = pointsLength
+          ? '<span style="font-size: 14px"><b>' +
+            points[0].key +
+            "</b></span><br/>"
+          : "";
+        let difData = Number((this.points[1].y - this.points[0].y).toFixed(2));
+        let percentDif = Number(
+          ((this.points[1].y - this.points[0].y) / this.points[0].y) * 100
+        ).toFixed(2);
+        let textDif = difData < 0 ? "decreased" : "increased";
+        tooltipMarkup +=
+          "Average index " +
+          textDif +
+          " by " +
+          Math.abs(difData).toFixed(2) +
+          " ( " +
+          Math.abs(percentDif).toFixed(2) +
+          "% )";
+        return tooltipMarkup;
+      },
+    },
+    plotOptions: {
+      bar: {
+        pointPadding: 0,
+        borderWidth: 0,
+        dataLabels: {
+          align: "right",
+          enabled: true,
+          borderWidth: 0,
+          inside: true,
+        },
+      },
+      series: {
+        pointPadding: 0,
+        borderWidth: 0,
+        events: {
+          click: function (ev) {
+            if (ev.point.category != yourGroupName.value) {
+              indicatorName.value = ev.point.category;
+              indicatorIndex.value = ev.point.index;
+              setIndicatorChart(ev.point.index);
+            }
+          },
+          legendItemClick: function (e) {
+            e.preventDefault();
+          },
+        },
+        cursor: "pointer",
+      },
+    },
+    legend: {
+      align: "right",
+      verticalAlign: "top",
+      layout: "vertical",
+      y: 50,
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    // legend: { enabled: false },
+    credits: { enabled: false },
+    series: indexChart.value.series,
+  });
+};
+
+const setIndicatorChart = async (index) => {
+  let yearMin = input.value.year.min;
+  let yearMax = input.value.year.max;
+  let diffYear = Math.floor((input.value.year.max - input.value.year.min) / 2);
+  let indexI = 0;
+  for (let i = 0; i < indicatorStr.value.length; i++) {
+    if (indicatorName.value == indicatorStr.value[i]) {
+      indexI = i + 1;
+    }
+  }
+  let sendData = {
+    input: input.value,
+    partnerMap: data.value.map((x) => x.iso),
+    reportMap: report.value.map((x) => x.iso),
+    dimension: dimensionIndex.value,
+    index: indexI,
+  };
+  let url = serverData.value + "ri/build_indicatorchart_datatab_dimension.php";
+  let res = await axios.post(url, JSON.stringify(sendData));
+  let tempTable = res.data;
+  let result = [];
+  indicatorChart.value.series[0].name = firstHalfPeriod.value;
+  indicatorChart.value.series[1].name = secondHalfPeriod.value;
+  for (let j = 0; j < sendData.partnerMap.length; j++) {
+    let eachCountry = tempTable.filter(
+      (country) =>
+        country.reporter == sendData.partnerMap[j] ||
+        country.partner == sendData.partnerMap[j]
+    );
+    if (eachCountry.length != 0) {
+      let firstHalf = eachCountry.filter((x) => x.year <= yearMin + diffYear);
+      let secondHalf = eachCountry.filter((x) => x.year >= yearMax - diffYear);
+      let firstScore =
+        firstHalf.reduce((a, b) => a + Number(b.score), 0) / firstHalf.length;
+      let secondScore =
+        secondHalf.reduce((a, b) => a + Number(b.score), 0) / secondHalf.length;
+      let tempPush = {
+        country: data.value[j].label,
+        data: [],
+        dif: Number(secondScore - firstScore),
+      };
+      tempPush.data[0] = Number(firstScore);
+      tempPush.data[1] = Number(secondScore);
+      result.push(tempPush);
+    }
+  }
+  result.sort((a, b) => b.dif - a.dif);
+  for (let k in result) {
+    indicatorChart.value.series[0].data[k] = Number(
+      result[k].data[0].toFixed(2)
+    );
+    indicatorChart.value.series[1].data[k] = Number(
+      result[k].data[1].toFixed(2)
+    );
+    indicatorChart.value.catName[k] = result[k].country;
+  }
+  loadIndicatorChart();
+  if (indicatorChart.value.catName.length != 0) {
+    showIndicatorChart.value = true;
+  }
+};
+
+const loadIndicatorChart = () => {
+  Highcharts.chart("chartIndicator", {
+    chart: {
+      type: "bar",
+      backgroundColor: "#EDEDED",
+      marginLeft: 160,
+      height:
+        indicatorChart.value.catName.length > 9
+          ? indicatorChart.value.catName.length * 60
+          : 580,
+    },
+
+    title: {
+      text: "",
+    },
+    xAxis: {
+      categories: indicatorChart.value.catName,
+      labels: {
+        align: "right",
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 1,
+      title: {
+        text: "",
+      },
+      gridLineWidth: 0,
+      minorGridLineWidth: 0,
+    },
+    tooltip: {
+      shared: true,
+      formatter: function () {
+        let points = this.points;
+        let pointsLength = points.length;
+        let tooltipMarkup = pointsLength
+          ? '<span style="font-size: 14px"><b>' +
+            points[0].key +
+            "</b></span><br/>"
+          : "";
+        let difData = Number((this.points[1].y - this.points[0].y).toFixed(2));
+        let percentDif = Number(
+          ((this.points[1].y - this.points[0].y) / this.points[0].y) * 100
+        ).toFixed(2);
+        let textDif = difData < 0 ? "decreased" : "increased";
+        tooltipMarkup +=
+          "Average index " +
+          textDif +
+          " by " +
+          Math.abs(difData).toFixed(2) +
+          " ( " +
+          Math.abs(percentDif).toFixed(2) +
+          "% )";
+
+        return tooltipMarkup;
+      },
+    },
+    plotOptions: {
+      bar: {
+        pointPadding: 0,
+        borderWidth: 0,
+        dataLabels: {
+          align: "right",
+          enabled: true,
+          borderWidth: 0,
+          inside: true,
+        },
+      },
+      series: {
+        pointPadding: 0,
+        borderWidth: 0,
+        events: {
+          legendItemClick: function (e) {
+            e.preventDefault();
+          },
+        },
+      },
+    },
+    legend: {
+      align: "right",
+      verticalAlign: "top",
+      y: 50,
+      layout: "vertical",
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    credits: { enabled: false },
+    series: indicatorChart.value.series,
+  });
 };
 
 const loadDataChart = () => {
-  console.log("work3");
+  Highcharts.chart("chartData", {
+    chart: {
+      type: "bar",
+      backgroundColor: "#EDEDED",
+      marginLeft: 230,
+      marginRight: 50,
+    },
+
+    title: {
+      text: "",
+    },
+    xAxis: {
+      categories: dataChart.value.catName,
+      labels: {
+        // align: "left",
+        // x: -220,
+        align: "center",
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      title: {
+        text: "",
+      },
+      labels: {
+        format: "{value} %",
+      },
+      gridLineWidth: 0,
+    },
+    tooltip: {
+      valueSuffix: " %",
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          align: "right",
+          enabled: true,
+          borderWidth: 0,
+          inside: true,
+          format: "{y} %",
+        },
+      },
+      series: {
+        pointWidth: 50,
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    legend: { enabled: false },
+    credits: { enabled: false },
+    series: dataChart.value.series,
+  });
 };
 
 const loadWeightChart = () => {
-  console.log("work4");
+  Highcharts.chart("chartWeight", {
+    chart: {
+      type: "bar",
+      backgroundColor: "#EDEDED",
+      marginLeft: 230,
+      marginRight: 50,
+    },
+
+    title: {
+      text: "",
+    },
+    xAxis: {
+      categories: weightChart.value.catName,
+      labels: {
+        // align: "left",
+        // x: -220,
+        align: "center",
+      },
+    },
+    yAxis: {
+      min: 0,
+      max: 100,
+      title: {
+        text: "",
+      },
+      gridLineWidth: 0,
+      plotLines: [
+        {
+          color: "#FF0000",
+          dashStyle: "dash",
+          zIndex: 5,
+          width: 2,
+          value: weightChart.value.equalWeight,
+          label: {
+            text: "Equal weighting: " + weightChart.value.equalWeight,
+            rotation: 360,
+          },
+        },
+      ],
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          align: "right",
+          enabled: true,
+          borderWidth: 0,
+          inside: true,
+        },
+      },
+      series: {
+        pointWidth: 50,
+        pointPadding: 0,
+        borderWidth: 0,
+      },
+    },
+    exporting: {
+      buttons: {
+        contextButton: {
+          menuItems: [
+            "viewFullscreen",
+            "printChart",
+            "separator",
+            "downloadPNG",
+            "downloadJPEG",
+            "downloadPDF",
+            "downloadSVG",
+            "separator",
+            "downloadCSV",
+            "downloadXLS",
+            //"viewData",
+          ],
+        },
+      },
+    },
+    legend: { enabled: false },
+    credits: { enabled: false },
+    series: weightChart.value.series,
+  });
 };
 
 const loadEconomyChart = () => {

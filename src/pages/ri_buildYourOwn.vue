@@ -28,8 +28,23 @@
           <line-chart-dimension :dataSend="dataSend2"></line-chart-dimension>
           <dimension-tab :dataSend="dataSend2"></dimension-tab>
           <div class="q-pb-lg" style="background: #ededed" align="center">
-            <!-- <div class="btnOutGreen" @click="changeDisaggregationToEco()">
-              Explore integration by economy -->
+            <div class="btnOutGreen" @click="changeDisaggregationToEco()">
+              Explore integration by economy
+            </div>
+          </div>
+        </div>
+        <!-- by Country -->
+        <div v-show="input.disaggregation == 'country'">
+          <main-linechart :dataSend="dataSend2"></main-linechart>
+          <!-- <spider-web
+          :input="input"
+          :data="countryFullList"
+          :report="countryReportList"
+        ></spider-web> -->
+          <div class="q-py-lg" style="background: #ededed" align="center">
+            <div class="btnOutGreen" @click="changeDisaggregationToDimension()">
+              Explore integration by dimension
+            </div>
           </div>
         </div>
       </div>
@@ -48,6 +63,7 @@ import fourBar from "../components/ri_buildyourown/ri_fourbar.vue";
 import selectDesired from "../components/ri_select_desired_level.vue";
 import lineChartDimension from "../components/ri_buildyourown/linechart_by_dimension.vue";
 import dimensionTab from "../components/ri_buildyourown/datatab_dimension.vue";
+import mainLinechart from "../components/ri_buildyourown/main_linechart.vue";
 import { LocalStorage } from "quasar";
 import { useRoute } from "vue-router";
 import { serverSetup } from "./server";
@@ -106,6 +122,16 @@ const startBtn = (inputSend) => {
   countryReportList.value = inputSend.reportingList;
   input.value = inputSend.input;
   calFourBarChart();
+};
+
+const changeDisaggregationToDimension = () => {
+  input.value.disaggregation = "dimension";
+  window.scrollTo(0, 1400);
+};
+
+const changeDisaggregationToEco = () => {
+  input.value.disaggregation = "country";
+  window.scrollTo(0, 1400);
 };
 
 const resetStartBtn = () => {
