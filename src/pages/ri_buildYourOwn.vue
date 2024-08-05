@@ -36,11 +36,7 @@
         <!-- by Country -->
         <div v-show="input.disaggregation == 'country'">
           <main-linechart :dataSend="dataSend2"></main-linechart>
-          <!-- <spider-web
-          :input="input"
-          :data="countryFullList"
-          :report="countryReportList"
-        ></spider-web> -->
+          <spider-web :dataSend="dataSend2"></spider-web>
           <div class="q-py-lg" style="background: #ededed" align="center">
             <div class="btnOutGreen" @click="changeDisaggregationToDimension()">
               Explore integration by dimension
@@ -64,6 +60,7 @@ import selectDesired from "../components/ri_select_desired_level.vue";
 import lineChartDimension from "../components/ri_buildyourown/linechart_by_dimension.vue";
 import dimensionTab from "../components/ri_buildyourown/datatab_dimension.vue";
 import mainLinechart from "../components/ri_buildyourown/main_linechart.vue";
+import spiderWeb from "../components/ri_buildyourown/spiderweb.vue";
 import { LocalStorage } from "quasar";
 import { useRoute } from "vue-router";
 import { serverSetup } from "./server";
