@@ -73,7 +73,7 @@ const routes = [
     component: () => import("pages/ri_countrybrief.vue"),
   },
   {
-    path: "/ridataavail/:id?",
+    path: "/ridataavail/:key?",
     component: () => import("pages/ri_dataAvail.vue"),
   },
   {
