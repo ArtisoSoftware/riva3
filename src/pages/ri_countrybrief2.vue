@@ -192,7 +192,6 @@
               )
             "
           >
-            {{ reporterISO }}
             <div
               style="background: #04284d; width: 100%; height: 140px"
               class="q-pt-md"
@@ -1817,8 +1816,8 @@ const subSentenceSI = async () => {
 .contentPage {
   background-color: white;
   color: black;
-  margin-top: -5px;
-  padding-bottom: 5px;
+  margin-top: -10px;
+  padding-bottom: 0px;
   font-size: 18px;
   font-weight: bold;
   text-align: center;
