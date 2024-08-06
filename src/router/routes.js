@@ -69,8 +69,14 @@ const routes = [
     name: "ribuildyourown_clear",
   },
   {
+    path: "/ricountrybrief2/:iso",
+    component: () => import("pages/ri_countrybrief2.vue"),
+    name: "ricountrybrief2",
+  },
+  {
     path: "/ricountrybrief",
     component: () => import("pages/ri_countrybrief.vue"),
+    name: "ricountrybrief",
   },
   {
     path: "/ridataavail/:key?",
