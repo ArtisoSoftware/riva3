@@ -202,6 +202,50 @@
                 <div class="noDataAvail">No data available</div>
               </div>
             </q-tab-panel>
+
+            <q-tab-panel name="weight">
+              <div v-if="showAvail">
+                <div class="q-px-xl" align="left">
+                  <div class="font-24">
+                    How much is each indicator contributing to this group's
+                    {{ selected.toLowerCase() }} score?
+                    <q-icon name="fas fa-question-circle" size="24px">
+                      <q-tooltip>
+                        Within a dimension and a particular pair,<br />
+                        all available indicators are weighted equally.<br />
+                        As such, indicator weights largely reflect data<br />
+                        availability, albeit not perfectly. To learn more<br />
+                        about indicator weights please visit our<br />
+                        Technical note (upper-right corner).
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <p class="font-16">
+                    {{ weightChart.catName[0] }} ({{
+                      Number(weightChart.series[0].data[0]).toFixed(2)
+                    }}) was the most prominent indicator in the
+                    {{ selected.toLowerCase() }}
+                    dimension, while
+                    {{
+                      weightChart.catNameLower[
+                        weightChart.series[0].data.length - 1
+                      ]
+                    }}
+                    ({{
+                      Number(
+                        weightChart.series[0].data[
+                          weightChart.series[0].data.length - 1
+                        ]
+                      ).toFixed(2)
+                    }}) were the least.
+                  </p>
+                </div>
+                <div id="chartWeight"></div>
+              </div>
+              <div v-else>
+                <div class="noDataAvail">No data available</div>
+              </div>
+            </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="bgva">
+  <div class="bgva" style="width: 100%; max-width: 1400px">
     <div class="row justify-between">
       <div class="row">
         <div class="q-pa-md">

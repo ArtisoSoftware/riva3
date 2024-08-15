@@ -47,7 +47,7 @@
         </div>
       </div>
       <!-- Key question -->
-      <div class="q-pa-lg">
+      <div class="q-pa-lg" v-if="!showResult">
         <div>
           <div style="font-size: 20px">Key policy questions</div>
           <ul>
@@ -78,6 +78,40 @@
           </ul>
         </div>
       </div>
+      <div v-if="showResult">
+        <div class="q-pa-lg row justify-center" style="font-size: 20px">
+          <div style="padding-top: 10px" class="q-pr-lg">Scoll to</div>
+          <div class="q-pr-lg">
+            <q-btn
+              label="Overview"
+              no-caps
+              outline
+              style="font-size: 20px; width: 260px"
+            />
+          </div>
+          <div class="q-pr-lg">
+            <q-btn
+              label="By exporting sector"
+              no-caps
+              outline
+              style="font-size: 20px; width: 260px"
+            />
+          </div>
+          <div>
+            <q-btn
+              label="By partner economy"
+              no-caps
+              outline
+              style="font-size: 20px; width: 260px"
+            />
+          </div>
+        </div>
+        <hr />
+        <GvcOverview :dataSend="dataSend" />
+
+        <hr />
+        <top5sector :dataSend="dataSend" />
+      </div>
       <footerMain />
     </div>
   </div>
@@ -88,6 +122,8 @@ import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import footerMain from "../components/footer2.vue";
+import GvcOverview from "../components/va_gvc/overview.vue";
+import top5sector from "../components/va_gvc/top5sector.vue";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -96,9 +132,15 @@ const inputData = ref({
   exportingISO: "",
   year: "",
 });
+const dataSend = ref({
+  exportingName: "",
+  exportingISO: "",
+  year: "",
+});
 const router = useRouter();
 const route = useRoute();
 const showInputText = ref(true);
+const showResult = ref(false);
 
 // Get initial values from route params
 const exportingISO = ref(route.params.iso || "");
@@ -106,10 +148,15 @@ const year = ref(route.params.year || "");
 
 const getYear = (value) => {
   inputData.value.year = value;
+  if (inputData.value.exportingISO != "") {
+    dataSend.value = inputData.value;
+  }
 };
 const getExport = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
+  dataSend.value = inputData.value;
+  showResult.value = true;
 };
 
 const goToStep2 = () => {
@@ -138,7 +185,6 @@ watch(
         inputData.value.exportingISO +
         "/" +
         inputData.value.year;
-      console.log(inputData.value);
     } else {
       showInputText.value = true;
     }
@@ -177,7 +223,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .mainApp {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1400px !important;
   margin: auto;
   background-color: #fff;
 }
