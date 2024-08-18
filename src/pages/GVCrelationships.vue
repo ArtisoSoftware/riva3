@@ -79,7 +79,7 @@
         </div>
       </div>
       <div v-if="showResult">
-        <div class="q-pa-lg row justify-center" style="font-size: 20px">
+        <!-- <div class="q-pa-lg row justify-center" style="font-size: 20px">
           <div style="padding-top: 10px" class="q-pr-lg">Scoll to</div>
           <div class="q-pr-lg">
             <q-btn
@@ -106,11 +106,20 @@
             />
           </div>
         </div>
-        <hr />
-        <GvcOverview :dataSend="dataSend" />
+        <hr /> -->
+        <div>
+          <GvcOverview :dataSend="dataSend" />
+        </div>
 
         <hr />
-        <top5sector :dataSend="dataSend" />
+        <div id="pageSector">
+          <top5sector :dataSend="dataSend" />
+        </div>
+
+        <hr />
+        <div id="pageOverview">
+          <top5Country :dataSend="dataSend" />
+        </div>
       </div>
       <footerMain />
     </div>
@@ -124,6 +133,7 @@ import EcoSelect from "../components/EcoSelect.vue";
 import footerMain from "../components/footer2.vue";
 import GvcOverview from "../components/va_gvc/overview.vue";
 import top5sector from "../components/va_gvc/top5sector.vue";
+import top5Country from "../components/va_gvc/top5partner.vue";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -174,6 +184,15 @@ const goToStep5 = () => {
 //Share
 const shareContent = ref("");
 const tinaLinkURL = ref("");
+
+// Scroll to section
+const pageOverview = ref(null);
+
+const scrollToSection = (sectionId) => {
+  if (sectionId === "pageOverview" && pageOverview.value) {
+    pageOverview.value.scrollIntoView({ behavior: "smooth" });
+  }
+};
 
 watch(
   () => inputData.value,

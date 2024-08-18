@@ -1,5 +1,5 @@
 export function countryGroupListRiva2(iso) {
-  if (iso == "apec") {
+  if (iso == "apec" || iso == "APEC") {
     return [
       "AUS",
       "BRN",
@@ -23,7 +23,7 @@ export function countryGroupListRiva2(iso) {
       "USA",
       "VNM",
     ];
-  } else if (iso == "apta") {
+  } else if (iso == "apta" || iso == "APTA") {
     return ["BGD", "IND", "LAO", "LKA", "MNG", "CHN", "KOR"];
   } else if (iso == "asean") {
     return [
@@ -38,9 +38,11 @@ export function countryGroupListRiva2(iso) {
       "VNM",
       "LAO",
     ];
-  } else if (iso == "bimstec") {
+  } else if (iso == "bimstec" || iso == "BIMSTEC") {
     return ["BTN", "NPL", "BGD", "IND", "LKA", "MMR", "THA"];
-  } else if (iso == "cptpp") {
+  } else if (iso == "ap" || iso == "AP") {
+    return ["BGD", "BTN", "IND", "NPL", "LKA", "THA"];
+  } else if (iso == "cptpp" || iso == "CPTPP") {
     return [
       "AUS",
       "CAN",
@@ -54,7 +56,7 @@ export function countryGroupListRiva2(iso) {
       "SGP",
       "VNM",
     ];
-  } else if (iso == "ene_asia") {
+  } else if (iso == "ene_asia" || iso == "ENEA") {
     return ["MAC", "PRK", "HKG", "MNG", "CHN", "KOR", "JPN"];
   } else if (iso == "escap") {
     return [
@@ -116,7 +118,7 @@ export function countryGroupListRiva2(iso) {
       "VUT",
       "WSM",
     ];
-  } else if (iso == "fealac") {
+  } else if (iso == "fealac" || iso == "FEALAC") {
     return [
       "ARG",
       "BOL",
@@ -527,9 +529,9 @@ export function countryGroupListRiva2(iso) {
       "VUT",
       "WSM",
     ];
-  } else if (iso == "nc_asia") {
+  } else if (iso == "nc_asia" || iso == "NCA") {
     return ["RUS", "AZE", "KAZ", "TKM", "TJK", "GEO", "ARM", "KGZ", "UZB"];
-  } else if (iso == "pacific") {
+  } else if (iso == "pacific" || iso == "PAC") {
     return [
       "ASM",
       "COK",
@@ -621,7 +623,7 @@ export function countryGroupListRiva2(iso) {
       "VUT",
       "WSM",
     ];
-  } else if (iso == "rcep") {
+  } else if (iso == "rcep" || iso == "RCEP") {
     return [
       "THA",
       "MYS",
@@ -639,9 +641,9 @@ export function countryGroupListRiva2(iso) {
       "AUS",
       "NZL",
     ];
-  } else if (iso == "saarc") {
+  } else if (iso == "saarc" || iso == "SAARC") {
     return ["MDV", "AFG", "NPL", "PAK", "IND", "LKA", "BGD", "BTN"];
-  } else if (iso == "se_asia") {
+  } else if (iso == "se_asia" || iso == "SEA") {
     return [
       "TLS",
       "THA",
@@ -742,7 +744,7 @@ export function countryGroupListRiva2(iso) {
     ];
   } else if (iso == "speca") {
     return ["AZE", "KAZ", "TKM", "TJK", "KGZ", "UZB", "AFG"];
-  } else if (iso == "ssw_asia") {
+  } else if (iso == "ssw_asia" || iso == "SSWA") {
     return [
       "IRN",
       "TUR",
@@ -917,7 +919,7 @@ export function countryGroupListRiva2(iso) {
       "ZMB",
       "ZWE",
     ];
-  } else if (iso == "eu") {
+  } else if (iso == "eu" || iso == "EUZ") {
     return [
       "AUT",
       "BEL",
@@ -948,7 +950,7 @@ export function countryGroupListRiva2(iso) {
       "SVN",
       "SWE",
     ];
-  } else if (iso == "europe") {
+  } else if (iso == "europe" || iso == "EUR") {
     return [
       "ALA",
       "ALB",
@@ -1006,7 +1008,7 @@ export function countryGroupListRiva2(iso) {
       "XKX",
       "YUG",
     ];
-  } else if (iso == "lac") {
+  } else if (iso == "lac" || iso == "LAC") {
     return [
       "ARG",
       "BOL",
@@ -1087,13 +1089,13 @@ export function countryGroupListRiva2(iso) {
       "URY",
       "VEN",
     ];
-  } else if (iso == "nafta") {
+  } else if (iso == "nafta" || iso == "NAFTA") {
     return ["CAN", "USA", "MEX"];
   } else if (iso == "north_america") {
     return ["BMU", "GRL", "SPM", "CAN", "USA"];
   } else if (iso == "pac_alliance") {
     return ["CHL", "COL", "PER", "MEX"];
-  } else if (iso == "wld") {
+  } else if (iso == "wld" || iso == "WLD") {
     return [
       "ABW",
       "AFG",

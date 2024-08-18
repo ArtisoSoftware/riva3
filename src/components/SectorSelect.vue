@@ -5,8 +5,6 @@
       <q-select
         v-model="sectorSelected"
         :options="formattedOptions"
-        map-options
-        emit-value
         dark
         filled
         option-label="label"
@@ -50,10 +48,7 @@ const loadOption = async () => {
     const res = await axios.get(url);
     options.value = res.data;
     formattedOptions.value = options.value.map((option) => ({
-      id: option.id,
       label: option.name,
-      value: option.id,
-      disable: option.disable,
     }));
     if (props.initialValue) {
       sectorSelected.value = props.initialValue;
@@ -79,12 +74,7 @@ watch(
 );
 
 const updateSector = (value) => {
-  const selectedOption = options.value.filter((x) => x.id == value);
-
-  emit("update:selected", {
-    name: selectedOption[0].name,
-    id: selectedOption[0].id,
-  }); // Emit the select
+  emit("update:selected", value.label); // Emit the select
 };
 </script>
 

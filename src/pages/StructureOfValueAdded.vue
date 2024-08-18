@@ -62,7 +62,7 @@
         </div>
       </div>
       <!-- Key question -->
-      <div class="q-pa-lg">
+      <div class="q-pa-lg" v-show="!isShowDup">
         <div>
           <div style="font-size: 20px">Key policy questions</div>
           <ul>
@@ -77,6 +77,43 @@
             </li>
           </ul>
         </div>
+        <hr />
+        <div class="font-20 text-center q-pt-md">
+          Exporter's gross exports to importer can be divided into 6 parts,
+        </div>
+        <div class="font-20 text-center q-pb-md">
+          depending on where they come from and how they are used:
+        </div>
+        <div class="row justify-center">
+          <img
+            src="../../public/images/strflowchart.svg"
+            alt=""
+            style="width: 80%"
+          />
+        </div>
+        <div v-if="showResult">
+          <hr />
+          <strGraph1 :dataSend="dataSend" />
+          <hr />
+          <strGraph2 :dataSend="dataSend" />
+        </div>
+      </div>
+      <div class="q-pa-lg" v-show="isShowDup">
+        <div class="sorryDiv row items-center">
+          <div class="col-4 q-pa-md text-center">
+            <q-icon
+              name="fa-solid fa-triangle-exclamation"
+              size="126px"
+              color="warning"
+            />
+          </div>
+          <div class="col">
+            <div class="text-h5">Sorry, this page isn't available</div>
+            <div>
+              The exporting economy cannot be the same as the importing economy.
+            </div>
+          </div>
+        </div>
       </div>
       <footerMain />
     </div>
@@ -89,6 +126,9 @@ import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
+import strGraph1 from "../components/va_str_value_added/va_str_graph1.vue";
+import strGraph2 from "../components/va_str_value_added/va_str_graph2.vue";
+import { countryGroupListRiva2 } from "./countryGroupList";
 import { useRouter, useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
 const inputData = ref({
@@ -98,9 +138,11 @@ const inputData = ref({
   importingISO: "",
   year: "",
   sectorName: "",
-  sectorID: "",
 });
+const exportingFullISO = ref([]);
+const importingFullISO = ref([]);
 const showInputText = ref(true);
+const showResult = ref(false);
 const tinaLinkURL = ref("");
 const getYear = (value) => {
   inputData.value.year = value;
@@ -114,17 +156,10 @@ const getImportEco = (selected) => {
   inputData.value.importingISO = selected.iso;
 };
 const getSector = (selected) => {
-  inputData.value.sectorID = selected.id;
-  inputData.value.sectorName = selected.name;
+  inputData.value.sectorName = selected;
 };
 const router = useRouter();
 const route = useRoute();
-
-// Get initial values from route params
-const exportingISO = ref(route.params.exp || "");
-const importingISO = ref(route.params.imp || "");
-const year = ref(route.params.year || "");
-const sector = ref(route.params.sector || "");
 
 //Share
 const shareContent = ref("");
@@ -137,8 +172,7 @@ watch(
       newValue.exportingISO &&
       newValue.importingISO &&
       newValue.importingName &&
-      newValue.sectorName &&
-      newValue.sectorID
+      newValue.sectorName
     ) {
       showInputText.value = false;
       shareContent.value =
@@ -147,7 +181,7 @@ watch(
         "/" +
         inputData.value.importingISO +
         "/" +
-        inputData.value.sectorID +
+        inputData.value.sectorName +
         "/" +
         inputData.value.year;
       tinaLinkURL.value =
@@ -156,7 +190,8 @@ watch(
         "-" +
         inputData.value.importingISO +
         "/current-trade";
-      console.log(inputData.value);
+
+      checkDuplicated();
     } else {
       showInputText.value = true;
     }
@@ -164,38 +199,83 @@ watch(
   { deep: true }
 );
 
-// Watch route params to update inputData
-watch(route, (newRoute) => {
-  if (newRoute.params.exp) {
-    exportingISO.value = newRoute.params.exp;
-    getExportEco({ name: "", iso: newRoute.params.exp });
+//check export & import duplicated or not
+const isShowDup = ref(false);
+const checkDuplicated = () => {
+  isShowDup.value = false;
+  exportingFullISO.value = countryGroupListRiva2(inputData.value.exportingISO);
+  importingFullISO.value = countryGroupListRiva2(inputData.value.importingISO);
+  if (
+    exportingFullISO.value.length == 1 &&
+    importingFullISO.value.length == 1
+  ) {
+    if (importingFullISO.value[0] == exportingFullISO.value[0]) {
+      isShowDup.value = true;
+      return;
+    }
   }
-  if (newRoute.params.imp) {
-    importingISO.value = newRoute.params.imp;
-    getImportEco({ name: "", iso: newRoute.params.imp });
-  }
-  if (newRoute.params.sector) {
-    sectorID.value = newRoute.params.sector;
-    getSector({ sectorName: "", sectorID: newRoute.params.sector });
-  }
-  if (newRoute.params.year) {
-    year.value = newRoute.params.year;
-    getYear(newRoute.params.year);
-  }
+
+  runGraph();
+};
+
+//run component
+const dataSend = ref({
+  exportingName: "",
+  exportingISO: "",
+  importingName: "",
+  importingISO: "",
+  year: "",
+  sectorName: "",
 });
+const runGraph = () => {
+  dataSend.value = inputData.value;
+  showResult.value = true;
+};
+// Watch route params to update inputData
+// watch(route, (newRoute) => {
+//   if (newRoute.params.exp) {
+//     exportingISO.value = newRoute.params.exp;
+//     getExportEco({ name: "", iso: newRoute.params.exp });
+//   }
+//   if (newRoute.params.imp) {
+//     importingISO.value = newRoute.params.imp;
+//     getImportEco({ name: "", iso: newRoute.params.imp });
+//   }
+//   if (newRoute.params.sector) {
+//     sector.value = newRoute.params.sector;
+//     console.log("test");
+//     getSector(newRoute.params.sector);
+//   }
+//   if (newRoute.params.year) {
+//     year.value = newRoute.params.year;
+//     getYear(newRoute.params.year);
+//   }
+// });
+// Get initial values from route params
+
+const exportingISO = ref("");
+const importingISO = ref("");
+const year = ref("");
+const sector = ref("");
+
 onMounted(() => {
-  if (exportingISO.value) {
-    getExportEco({ name: "", iso: exportingISO.value });
-  }
-  if (importingISO.value) {
-    getImportEco({ name: "", iso: importingISO.value });
-  }
-  if (sector.value) {
-    getSector({ sectorName: "", sectorID: sector.value });
-  }
-  if (year.value) {
-    getYear(year.value);
-  }
+  exportingISO.value = route.params.exp || "";
+  importingISO.value = route.params.imp || "";
+  year.value = route.params.year || "";
+  sector.value = route.params.sector || "";
+
+  // if (exportingISO.value) {
+  //   getExportEco({ name: "", iso: exportingISO.value });
+  // }
+  // if (importingISO.value) {
+  //   getImportEco({ name: "", iso: importingISO.value });
+  // }
+  // if (sector.value) {
+  //   inputData.value.sectorName = sector.value;
+  // }
+  // if (year.value) {
+  //   getYear(year.value);
+  // }
 });
 
 const goToStep1 = () => {
@@ -232,5 +312,12 @@ const goToStep5 = () => {
 }
 .selectedMenu {
   color: #e2cd11;
+}
+.sorryDiv {
+  width: 700px;
+  height: 250px;
+  margin: auto;
+  border: 2px solid #16222d;
+  border-radius: 5px;
 }
 </style>

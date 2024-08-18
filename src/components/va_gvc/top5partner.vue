@@ -1,11 +1,11 @@
 <template>
   <div>
     <div style="font-size: 35px; font-weight: 400" class="text-center q-pt-md">
-      GVC relationships: top 5 exporting sectors
+      GVC relationships: top 5 partner economies
     </div>
     <div class="text-center">
-      Click on a sector to see the top 5 partner of {{ exportingName }} in each
-      sector
+      Click on a partner economy to see the top 5 partner of
+      {{ exportingName }} associated with each partner
     </div>
     <div
       class="row justify-center q-pt-md items-center"
@@ -41,7 +41,7 @@
                 style="position: absolute"
                 @click="showDetailBack(exportingName, item)"
               >
-                {{ item.sectorName }}
+                {{ item.fullName }}
               </div>
               <div
                 class="text-right q-px-sm text-black cursor-pointer"
@@ -52,10 +52,10 @@
               </div>
             </div>
           </div>
-          <div class="text-right"><b>Sector</b></div>
+          <div class="text-right"><b>Source economy</b></div>
           <div class="text-right" style="font-size: 12px">
-            Share of foreign value-added in {{ exportingName }}'s sectoral gross
-            exports (%)
+            Share of foreign value-added in {{ exportingName }}'s gross exports
+            (%)
           </div>
           <div class="text-right" style="font-size: 12px">
             Foreign value-added ($)
@@ -73,7 +73,7 @@
               border: 1px solid black;
               border-radius: 10px;
             "
-            id="backwardEconomy"
+            id="backwardEconomyCon"
           >
             Graph
           </div>
@@ -96,7 +96,7 @@
       </div>
       <div class="col text-center">
         <div class="txtRed text-left">
-          <b>Largest forward linked sectors</b>
+          <b>Largest forward linked partners</b>
         </div>
         <div class="text-left q-mt-md" style="width: 100%; height: 430px">
           <div
@@ -125,7 +125,7 @@
                   style="position: absolute"
                   @click="showDetailForward(exportingName, item)"
                 >
-                  {{ item.sectorName }}
+                  {{ item.fullName }}
                 </div>
                 <div
                   class="text-right q-px-sm text-black cursor-pointer"
@@ -138,8 +138,8 @@
             </div>
             <div class="text-left"><b>Sector</b></div>
             <div class="text-left" style="font-size: 12px">
-              Share of {{ exportingName }}'s sectoral gross exports used in
-              further export production (%)
+              Share of foreign value-added in {{ exportingName }}'s gross
+              exports (%)
             </div>
             <div class="text-left" style="font-size: 12px">
               Contribution to partner exports ($)
@@ -157,7 +157,7 @@
                 border: 1px solid black;
                 border-radius: 10px;
               "
-              id="forwardEconomy"
+              id="forwardEconomyCon"
             >
               Graph
             </div>
@@ -181,6 +181,7 @@ import { ref, watch } from "vue";
 import axios from "axios";
 import { serverSetup } from "../../pages/server.js";
 import { countryName } from "../../pages/countryName.js";
+
 const { serverData } = serverSetup();
 
 const props = defineProps({
@@ -218,16 +219,15 @@ const loadData = async () => {
     exp_country: exportingISO.value,
     year: Number(year.value),
   };
-  let url = serverData.value + "va/gvcloaddata2.php";
+  let url = serverData.value + "va/gvcloaddata3.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
+
   let backwardData = res.data.filter((x) => x.var == "Backward linkages");
   backwardData.sort((a, b) => Number(a.value) - Number(b.value));
   backwardData.forEach((item) => {
-    let shortName = sectorList.value.filter((x) => x.name == item.exp_sector);
-
     let temp = {
-      fullName: item.exp_sector,
-      sectorName: shortName[0].shortname,
+      fullName: countryName(item.country)[0].country,
+      shortName: item.country,
       share: (Number(item.share) * 100).toFixed(2),
       value: Number(item.value / 1000).toFixed(2),
       widthRatio: (Number(item.value) / Number(backwardData[4].value)) * 100,
@@ -237,11 +237,11 @@ const loadData = async () => {
   let forwardData = res.data.filter((x) => x.var == "Forward linkages");
   forwardData.sort((a, b) => Number(a.value) - Number(b.value));
   forwardData.forEach((item) => {
-    let shortName = sectorList.value.filter((x) => x.name == item.exp_sector);
+    // let shortName = sectorList.value.filter((x) => x.name == item.exp_sector);
 
     let temp = {
-      fullName: item.exp_sector,
-      sectorName: shortName[0].shortname,
+      fullName: countryName(item.country)[0].country,
+      shortName: item.country,
       share: (Number(item.share) * 100).toFixed(2),
       value: Number(item.value / 1000).toFixed(2),
       widthRatio: (Number(item.value) / Number(forwardData[4].value)) * 100,
@@ -254,42 +254,36 @@ const showDetailBack = async (eco, item) => {
   let tempSend = {
     exp_country: eco,
     year: Number(year.value),
-    sector: item.fullName,
+    country: item.shortName,
   };
-  let url = serverData.value + "va/gvcloaddata2a.php";
+  let url = serverData.value + "va/gvcloaddata3a.php";
   let res = await axios.post(url, JSON.stringify(tempSend));
   let result = res.data
     .filter((x) => x.var == "Backward linkages")
     .sort((a, b) => Number(b.value) - Number(a.value));
+
+  let datax = [];
+  result.forEach((x) => {
+    let data = sectorList.value.filter((y) => y.name == x.exp_sector);
+    datax.push(data[0].shortname);
+  });
+
+  let datay = [];
+  result.forEach((x) => {
+    let dataValue = Number(Number(x.value).toFixed(0));
+    datay.push(dataValue);
+  });
+
   isShowGraphBack.value = true;
   let setColor = ["#E41A1C", "#377EB8", "#4DAF4A", "#FF7F00", "#984EA3"];
-  let datax = [
-    result[0].source_country,
-    result[1].source_country,
-    result[2].source_country,
-    result[3].source_country,
-    result[4].source_country,
-  ];
-  let dataxFullName = [
-    countryName(datax[0])[0].country,
-    countryName(datax[1])[0].country,
-    countryName(datax[2])[0].country,
-    countryName(datax[3])[0].country,
-    countryName(datax[4])[0].country,
-  ];
-  let datay = [];
-  for (let i = 0; i < 5; i++) {
-    let valueData = Number(Number(result[i].value).toFixed(0));
-    datay.push(valueData);
-  }
 
   setTimeout(() => {
-    Highcharts.chart("backwardEconomy", {
+    Highcharts.chart("backwardEconomyCon", {
       chart: {
         type: "column",
       },
       title: {
-        text: item.sectorName,
+        text: item.fullName,
       },
       subtitle: {
         text: `${item.share}%, $${item.value}B`,
@@ -337,7 +331,7 @@ const showDetailBack = async (eco, item) => {
         useHTML: true, // Enable HTML in the tooltip
         formatter: function () {
           return `<span style="color:${setColor[this.point.index]}"><b>${
-            dataxFullName[this.point.index]
+            datax[this.point.index]
           }</b></span>: $${Highcharts.numberFormat(this.y, 0)}M`;
         },
       },
@@ -352,43 +346,36 @@ const showDetailForward = async (eco, item) => {
   let tempSend = {
     exp_country: eco,
     year: Number(year.value),
-    sector: item.fullName,
+    country: item.shortName,
   };
-  let url = serverData.value + "va/gvcloaddata2a.php";
+  let url = serverData.value + "va/gvcloaddata3a.php";
   let res = await axios.post(url, JSON.stringify(tempSend));
   let result = res.data
     .filter((x) => x.var == "Forward linkages")
     .sort((a, b) => Number(b.value) - Number(a.value));
-  let setColor = ["#E41A1C", "#377EB8", "#4DAF4A", "#FF7F00", "#984EA3"];
-  let datax = [
-    result[0].imp_country,
-    result[1].imp_country,
-    result[2].imp_country,
-    result[3].imp_country,
-    result[4].imp_country,
-  ];
-  let dataxFullName = [
-    countryName(datax[0])[0].country,
-    countryName(datax[1])[0].country,
-    countryName(datax[2])[0].country,
-    countryName(datax[3])[0].country,
-    countryName(datax[4])[0].country,
-  ];
+
+  let datax = [];
+  result.forEach((x) => {
+    let data = sectorList.value.filter((y) => y.name == x.exp_sector);
+    datax.push(data[0].shortname);
+  });
+
   let datay = [];
-  for (let i = 0; i < 5; i++) {
-    let valueData = Number(Number(result[i].value).toFixed(0));
-    datay.push(valueData);
-  }
+  result.forEach((x) => {
+    let dataValue = Number(Number(x.value).toFixed(0));
+    datay.push(dataValue);
+  });
 
   isShowGraphForward.value = true;
+  let setColor = ["#E41A1C", "#377EB8", "#4DAF4A", "#FF7F00", "#984EA3"];
 
   setTimeout(() => {
-    Highcharts.chart("forwardEconomy", {
+    Highcharts.chart("forwardEconomyCon", {
       chart: {
         type: "column",
       },
       title: {
-        text: item.sectorName,
+        text: item.fullName,
       },
       subtitle: {
         text: `${item.share}%, $${item.value}B`,
@@ -436,7 +423,7 @@ const showDetailForward = async (eco, item) => {
         useHTML: true, // Enable HTML in the tooltip
         formatter: function () {
           return `<span style="color:${setColor[this.point.index]}"><b>${
-            dataxFullName[this.point.index]
+            datax[this.point.index]
           }</b></span>: $${Highcharts.numberFormat(this.y, 0)}M`;
         },
       },
