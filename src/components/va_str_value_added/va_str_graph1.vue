@@ -1,5 +1,30 @@
 <template>
-  <div id="container"></div>
+  <div>
+    <div v-show="!showData" class="text-center text-h5">
+      <div class="text-black q-pt-md">
+        <b
+          >How are {{ dataSend.exportingName }}'s exports to
+          {{ dataSend.importingName }} produced and utilised?</b
+        >
+      </div>
+      <div class="q-py-xl row justify-center">
+        <div>
+          <img
+            src="../../../public/images/warning.png"
+            alt=""
+            style="height: 50px"
+          />
+        </div>
+        <div style="line-height: 50px" class="q-pl-lg" v-show="showNoData">
+          No data available
+        </div>
+        <div style="line-height: 50px" class="q-pl-lg" v-show="showSmallExport">
+          Graph unavailable due to negligible export values
+        </div>
+      </div>
+    </div>
+    <div id="container" v-show="showData"></div>
+  </div>
 </template>
 
 <script setup>
@@ -33,8 +58,14 @@ const dataPercent = ref({
   orange: 0,
 });
 const dataGraph = ref([]);
+const showData = ref(true);
+const showNoData = ref(false);
+const showSmallExport = ref(false);
 
 const loadData = async () => {
+  showData.value = true;
+  showNoData.value = false;
+  showSmallExport.value = false;
   dataGraph.value = [];
   let dataTemp = {
     exp_country: dataInput.value.exportingISO,
@@ -42,11 +73,26 @@ const loadData = async () => {
     exp_sector: dataInput.value.sectorName,
     year: dataInput.value.year,
   };
+
   let url = serverData.value + "/va/strloaddata1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
 
+  if (res.data.length == 0) {
+    console.log("No data available");
+    showData.value = false;
+    showNoData.value = true;
+    return;
+  }
+  if (res.data.reduce((sum, item) => sum + parseFloat(item.value), 0) == 0) {
+    console.log("Graph unavailable due to negligible export values");
+    showData.value = false;
+    showSmallExport.value = true;
+    return;
+  }
+
   {
     let dataFinal = res.data.filter((x) => x.var == "Final_directly_consumed");
+
     let sharePercent = Number((Number(dataFinal[0].share) * 100).toFixed(2));
     dataPercent.value.blue = sharePercent;
     let nameGraph = `Final domestic production<br>consumed by the importer (${sharePercent}%)`;
@@ -153,7 +199,7 @@ const loadData = async () => {
   if (exportValue > 1000) {
     exportValue = (Number(exportValue) / 100).toFixed(2) + " billion";
   } else {
-    exportValue = exportValue + " million";
+    exportValue = Number(exportValue).toFixed(2) + " million";
   }
 
   let dataTemp2 = {
@@ -167,7 +213,7 @@ const loadData = async () => {
   if (exportValueWorld > 1000) {
     exportValueWorld = (Number(exportValueWorld) / 100).toFixed(2) + " billion";
   } else {
-    exportValueWorld = exportValueWorld + " million";
+    exportValueWorld = Number(exportValueWorld).toFixed(2) + " million";
   }
 
   setTimeout(() => {
@@ -417,7 +463,10 @@ watch(
       dataInput.value.importingName = props.dataSend.importingName;
       dataInput.value.year = props.dataSend.year;
       dataInput.value.sectorName = props.dataSend.sectorName;
+
       loadData();
+    } else {
+      showData.value = false;
     }
   },
   { deep: true, immediate: true }

@@ -62,8 +62,8 @@
         </div>
       </div>
       <!-- Key question -->
-      <div style="font-size: 20px" class="q-pa-lg">
-        <div>
+      <div style="font-size: 20px" class="q-pa-lg" v-show="!isShowDup">
+        <div v-show="!isShowDup">
           <div style="font-size: 24px">
             <b>Why does GVC participation matter?</b>
           </div>
@@ -80,6 +80,27 @@
           </div>
         </div>
       </div>
+      <div class="q-pa-lg" v-show="isShowDup">
+        <div class="sorryDiv row items-center">
+          <div class="col-4 q-pa-md text-center">
+            <q-icon
+              name="fa-solid fa-triangle-exclamation"
+              size="126px"
+              color="warning"
+            />
+          </div>
+          <div class="col">
+            <div class="text-h5">Sorry, this page isn't available</div>
+            <div>
+              The exporting economy cannot be the same as the importing economy.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showResult">
+        <hr />
+        <partGraph1 :dataSend="dataSend" />
+      </div>
       <footerMain />
     </div>
   </div>
@@ -91,7 +112,9 @@ import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
+import partGraph1 from "../components/va_participation/va_participation_graph1.vue";
 import { useRouter, useRoute } from "vue-router";
+import { countryGroupListRiva2 } from "./countryGroupList";
 import { ref, watch, onMounted } from "vue";
 const inputData = ref({
   exportingName: "",
@@ -100,9 +123,11 @@ const inputData = ref({
   importingISO: "",
   year: "",
   sectorName: "",
-  sectorID: "",
 });
+const exportingFullISO = ref([]);
+const importingFullISO = ref([]);
 const showInputText = ref(true);
+const showResult = ref(false);
 const tinaLinkURL = ref("");
 const getYear = (value) => {
   inputData.value.year = value;
@@ -117,17 +142,10 @@ const getImportEco = (selected) => {
 };
 
 const getSector = (selected) => {
-  inputData.value.sectorName = selected.name;
-  inputData.value.sectorID = selected.id;
+  inputData.value.sectorName = selected;
 };
 const router = useRouter();
 const route = useRoute();
-
-// Get initial values from route params
-const exportingISO = ref(route.params.exp || "");
-const importingISO = ref(route.params.imp || "");
-const year = ref(route.params.year || "");
-const sector = ref(route.params.sector || "");
 
 //Share
 const shareContent = ref("");
@@ -140,7 +158,6 @@ watch(
       newValue.exportingISO &&
       newValue.importingISO &&
       newValue.importingName &&
-      newValue.sectorID &&
       newValue.sectorName
     ) {
       showInputText.value = false;
@@ -150,7 +167,7 @@ watch(
         "/" +
         inputData.value.importingISO +
         "/" +
-        inputData.value.sectorID +
+        inputData.value.sectorName +
         "/" +
         inputData.value.year;
       tinaLinkURL.value =
@@ -159,45 +176,79 @@ watch(
         "-" +
         inputData.value.importingISO +
         "/current-trade";
-      console.log(inputData.value);
+      checkDuplicated();
     } else {
       showInputText.value = true;
     }
   },
   { deep: true }
 );
-// Watch route params to update inputData
-watch(route, (newRoute) => {
-  if (newRoute.params.exp) {
-    exportingISO.value = newRoute.params.exp;
-    getExportEco({ name: "", iso: newRoute.params.exp });
+
+//Check export & import duplicated or not
+const isShowDup = ref(false);
+const checkDuplicated = () => {
+  isShowDup.value = false;
+  exportingFullISO.value = countryGroupListRiva2(inputData.value.exportingISO);
+  importingFullISO.value = countryGroupListRiva2(inputData.value.importingISO);
+  if (
+    exportingFullISO.value.length == 1 &&
+    importingFullISO.value.length == 1
+  ) {
+    if (importingFullISO.value[0] == exportingFullISO.value[0]) {
+      isShowDup.value = true;
+      return;
+    }
   }
-  if (newRoute.params.imp) {
-    importingISO.value = newRoute.params.imp;
-    getImportEco({ name: "", iso: newRoute.params.imp });
-  }
-  if (newRoute.params.sector) {
-    sectorID.value = newRoute.params.sector;
-    getSector({ sectorName: "", sectorID: newRoute.params.sector });
-  }
-  if (newRoute.params.year) {
-    year.value = newRoute.params.year;
-    getYear(newRoute.params.year);
-  }
+  runGraph();
+};
+
+//run component
+const dataSend = ref({
+  exportingName: "",
+  exportingISO: "",
+  importingName: "",
+  importingISO: "",
+  year: "",
+  sectorName: "",
 });
+const runGraph = () => {
+  dataSend.value = inputData.value;
+  showResult.value = true;
+};
+watch(
+  () => route.params,
+  (newParams) => {
+    // console.log(newParams);
+    if (newParams.exp) {
+      exportingISO.value = newParams.exp;
+      // getExportEco({ name: "", iso: newParams.exp });
+    }
+    if (newParams.imp) {
+      importingISO.value = newParams.imp;
+      // getImportEco({ name: "", iso: newParams.imp });
+    }
+    if (newParams.sector) {
+      sector.value = route.params.sector;
+      // getSector(newParams.sector);
+    }
+    if (newParams.year) {
+      year.value = newParams.year;
+      // getYear(newParams.year);
+    }
+    showInputText.value = false;
+    showResult.value = true;
+  }
+);
+const exportingISO = ref("");
+const importingISO = ref("");
+const year = ref("");
+const sector = ref("");
+
 onMounted(() => {
-  if (exportingISO.value) {
-    getExportEco({ name: "", iso: exportingISO.value });
-  }
-  if (importingISO.value) {
-    getImportEco({ name: "", iso: importingISO.value });
-  }
-  if (sector.value) {
-    getSector({ sectorName: "", sectorID: sector.value });
-  }
-  if (year.value) {
-    getYear(year.value);
-  }
+  exportingISO.value = route.params.exp || "";
+  importingISO.value = route.params.imp || "";
+  year.value = route.params.year || "";
+  sector.value = route.params.sector || "";
 });
 
 const goToStep1 = () => {
@@ -206,9 +257,7 @@ const goToStep1 = () => {
 const goToStep2 = () => {
   router.push("/structureofvalueadded");
 };
-// const goToStep3 = () => {
-//   router.push("/participationingvcs");
-// };
+
 const goToStep4 = () => {
   router.push("/backwardlinkages");
 };
@@ -237,5 +286,12 @@ const goToStep5 = () => {
 }
 .selectedMenu {
   color: #e2cd11;
+}
+.sorryDiv {
+  width: 700px;
+  height: 250px;
+  margin: auto;
+  border: 2px solid #16222d;
+  border-radius: 5px;
 }
 </style>

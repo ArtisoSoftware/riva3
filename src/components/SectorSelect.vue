@@ -7,8 +7,6 @@
         :options="formattedOptions"
         dark
         filled
-        option-label="label"
-        option-value="value"
         color="white"
         class="selectShow"
         @update:model-value="updateSector"
@@ -67,14 +65,17 @@ watch(
   () => props.initialValue,
   (newValue) => {
     if (newValue) {
-      sectorSelected.value = newValue;
       updateSector(newValue);
     }
   }
 );
 
 const updateSector = (value) => {
-  emit("update:selected", value.label); // Emit the select
+  if (value.label) {
+    emit("update:selected", value.label); // Emit the select
+  } else {
+    emit("update:selected", value); // Emit the select
+  }
 };
 </script>
 

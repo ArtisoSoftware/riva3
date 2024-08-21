@@ -25,7 +25,7 @@ const dataInput = ref({
 });
 
 const loadData = () => {
-  console.log("loading");
+  console.log("loading graph2");
 };
 
 watch(

@@ -1,154 +1,89 @@
 <template>
   <div>
-    <div style="font-size: 35px; font-weight: 400" class="text-center q-pt-md">
-      GVC relationships: top 5 exporting sectors
-    </div>
-    <div class="text-center">
-      Click on a sector to see the top 5 partner of {{ exportingName }} in each
-      sector
-    </div>
-    <div
-      class="row justify-center q-pt-md items-center"
-      style="width: 1200px; margin: auto"
-    >
-      <div class="col text-center">
-        <div class="txtGreen text-right">
-          <b>Largest backward linked partners</b>
-        </div>
-        <div
-          class="q-mt-md"
-          style="width: 100%; height: 430px"
-          v-if="!isShowGraphBack"
-        >
-          <div
-            class="row q-mb-sm"
-            v-for="(item, index) in backwardFinal"
-            :key="index"
-          >
-            <div
-              style="width: 100%; position: relative"
-              class="row justify-end"
-            >
-              <div style="width: 100%" class="row justify-end">
-                <div
-                  class="barGreen cursor-pointer"
-                  :style="{ width: item.widthRatio + '%' }"
-                  @click="showDetailBack(exportingName, item)"
-                ></div>
-              </div>
-              <div
-                class="q-py-sm text-right q-px-sm text-black cursor-pointer"
-                style="position: absolute"
-                @click="showDetailBack(exportingName, item)"
-              >
-                {{ item.sectorName }}
-              </div>
-              <div
-                class="text-right q-px-sm text-black cursor-pointer"
-                style="position: absolute; top: 30px"
-                @click="showDetailBack(exportingName, item)"
-              >
-                {{ item.share }}%, ${{ item.value }}B
-              </div>
-            </div>
-          </div>
-          <div class="text-right"><b>Sector</b></div>
-          <div class="text-right" style="font-size: 12px">
-            Share of foreign value-added in {{ exportingName }}'s sectoral gross
-            exports (%)
-          </div>
-          <div class="text-right" style="font-size: 12px">
-            Foreign value-added ($)
-          </div>
-        </div>
-        <div
-          class="q-mt-md"
-          style="width: 100%; height: 430px"
-          v-if="isShowGraphBack"
-        >
-          <div
-            style="
-              width: 100%;
-              height: 345px;
-              border: 1px solid black;
-              border-radius: 10px;
-            "
-            id="backwardEconomy"
-          >
-            Graph
-          </div>
-          <div class="q-pt-md">
-            <q-btn
-              label="Back to main chart"
-              no-caps
-              outline
-              @click="isShowGraphBack = false"
-            />
-          </div>
-        </div>
+    <div v-show="!showData" class="text-center text-h5">
+      <div class="text-black q-pt-md">
+        <b>GVC relationships: top 5 exporting sectors</b>
       </div>
-
+      <div class="q-py-xl row justify-center">
+        <div>
+          <img
+            src="../../../public/images/warning.png"
+            alt=""
+            style="height: 50px"
+          />
+        </div>
+        <div style="line-height: 50px" class="q-pl-lg">No data available</div>
+      </div>
+    </div>
+    <div v-show="showData">
       <div
-        style="width: 300px; font-size: 35px; font-weight: 400"
-        class="text-center"
+        style="font-size: 35px; font-weight: 400"
+        class="text-center q-pt-md"
       >
-        {{ exportingName }}
+        GVC relationships: top 5 exporting sectors
       </div>
-      <div class="col text-center">
-        <div class="txtRed text-left">
-          <b>Largest forward linked sectors</b>
-        </div>
-        <div class="text-left q-mt-md" style="width: 100%; height: 430px">
+      <div class="text-center">
+        Click on a sector to see the top 5 partner of {{ exportingName }} in
+        each sector
+      </div>
+      <div
+        class="row justify-center q-pt-md items-center"
+        style="width: 1200px; margin: auto"
+      >
+        <div class="col text-center">
+          <div class="txtGreen text-right">
+            <b>Largest backward linked partners</b>
+          </div>
           <div
             class="q-mt-md"
             style="width: 100%; height: 430px"
-            v-if="!isShowGraphForward"
+            v-if="!isShowGraphBack"
           >
             <div
               class="row q-mb-sm"
-              v-for="(item, index) in forwardFinal"
+              v-for="(item, index) in backwardFinal"
               :key="index"
             >
               <div
                 style="width: 100%; position: relative"
-                class="row justify-start"
+                class="row justify-end"
               >
-                <div style="width: 100%" class="row justify-start">
+                <div style="width: 100%" class="row justify-end">
                   <div
-                    class="barRed cursor-pointer"
+                    class="barGreen cursor-pointer"
                     :style="{ width: item.widthRatio + '%' }"
-                    @click="showDetailForward(exportingName, item)"
+                    @click="showDetailBack(exportingISO, item)"
                   ></div>
                 </div>
                 <div
                   class="q-py-sm text-right q-px-sm text-black cursor-pointer"
                   style="position: absolute"
-                  @click="showDetailForward(exportingName, item)"
+                  @click="showDetailBack(exportingISO, item)"
                 >
                   {{ item.sectorName }}
                 </div>
                 <div
                   class="text-right q-px-sm text-black cursor-pointer"
                   style="position: absolute; top: 30px"
-                  @click="showDetailForward(exportingName, item)"
+                  @click="showDetailBack(exportingISO, item)"
                 >
                   {{ item.share }}%, ${{ item.value }}B
                 </div>
               </div>
             </div>
-            <div class="text-left"><b>Sector</b></div>
-            <div class="text-left" style="font-size: 12px">
-              Share of {{ exportingName }}'s sectoral gross exports used in
-              further export production (%)
+            <div class="text-right"><b>Sector</b></div>
+            <div class="text-right" style="font-size: 12px">
+              Share of foreign value-added in {{ exportingName }}'s sectoral
+              gross exports (%)
             </div>
-            <div class="text-left" style="font-size: 12px">
-              Contribution to partner exports ($)
+            <div class="text-right" style="font-size: 12px">
+              Foreign value-added ($)
             </div>
           </div>
           <div
             class="q-mt-md"
             style="width: 100%; height: 430px"
-            v-if="isShowGraphForward"
+            v-if="isShowGraphBack"
           >
             <div
               style="
@@ -157,17 +92,102 @@
                 border: 1px solid black;
                 border-radius: 10px;
               "
-              id="forwardEconomy"
+              id="backwardEconomy"
             >
               Graph
             </div>
-            <div class="q-pt-md text-center">
+            <div class="q-pt-md">
               <q-btn
                 label="Back to main chart"
                 no-caps
                 outline
-                @click="isShowGraphForward = false"
+                @click="isShowGraphBack = false"
               />
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="width: 300px; font-size: 35px; font-weight: 400"
+          class="text-center"
+        >
+          {{ exportingName }}
+        </div>
+        <div class="col text-center">
+          <div class="txtRed text-left">
+            <b>Largest forward linked sectors</b>
+          </div>
+          <div class="text-left q-mt-md" style="width: 100%; height: 430px">
+            <div
+              class="q-mt-md"
+              style="width: 100%; height: 430px"
+              v-if="!isShowGraphForward"
+            >
+              <div
+                class="row q-mb-sm"
+                v-for="(item, index) in forwardFinal"
+                :key="index"
+              >
+                <div
+                  style="width: 100%; position: relative"
+                  class="row justify-start"
+                >
+                  <div style="width: 100%" class="row justify-start">
+                    <div
+                      class="barRed cursor-pointer"
+                      :style="{ width: item.widthRatio + '%' }"
+                      @click="showDetailForward(exportingISO, item)"
+                    ></div>
+                  </div>
+                  <div
+                    class="q-py-sm text-right q-px-sm text-black cursor-pointer"
+                    style="position: absolute"
+                    @click="showDetailForward(exportingISO, item)"
+                  >
+                    {{ item.sectorName }}
+                  </div>
+                  <div
+                    class="text-right q-px-sm text-black cursor-pointer"
+                    style="position: absolute; top: 30px"
+                    @click="showDetailForward(exportingISO, item)"
+                  >
+                    {{ item.share }}%, ${{ item.value }}B
+                  </div>
+                </div>
+              </div>
+              <div class="text-left"><b>Sector</b></div>
+              <div class="text-left" style="font-size: 12px">
+                Share of {{ exportingName }}'s sectoral gross exports used in
+                further export production (%)
+              </div>
+              <div class="text-left" style="font-size: 12px">
+                Contribution to partner exports ($)
+              </div>
+            </div>
+            <div
+              class="q-mt-md"
+              style="width: 100%; height: 430px"
+              v-if="isShowGraphForward"
+            >
+              <div
+                style="
+                  width: 100%;
+                  height: 345px;
+                  border: 1px solid black;
+                  border-radius: 10px;
+                "
+                id="forwardEconomy"
+              >
+                Graph
+              </div>
+              <div class="q-pt-md text-center">
+                <q-btn
+                  label="Back to main chart"
+                  no-caps
+                  outline
+                  @click="isShowGraphForward = false"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -198,8 +218,10 @@ const isShowGraphBack = ref(false);
 const forwardFinal = ref([]);
 const isShowGraphForward = ref(false);
 const sectorList = ref([]);
+const showData = ref(true);
 
 const loadData = async () => {
+  showData.value = true;
   sectorList.value = [];
   let resSector = await axios.get(serverData.value + "va/getSector.php");
 
@@ -220,6 +242,11 @@ const loadData = async () => {
   };
   let url = serverData.value + "va/gvcloaddata2.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
+  if (res.data.length == 0) {
+    console.log("No data available");
+    showData.value = false;
+    return;
+  }
   let backwardData = res.data.filter((x) => x.var == "Backward linkages");
   backwardData.sort((a, b) => Number(a.value) - Number(b.value));
   backwardData.forEach((item) => {
@@ -256,8 +283,10 @@ const showDetailBack = async (eco, item) => {
     year: Number(year.value),
     sector: item.fullName,
   };
+  console.log(tempSend);
   let url = serverData.value + "va/gvcloaddata2a.php";
   let res = await axios.post(url, JSON.stringify(tempSend));
+
   let result = res.data
     .filter((x) => x.var == "Backward linkages")
     .sort((a, b) => Number(b.value) - Number(a.value));
@@ -463,6 +492,8 @@ watch(
       exportingName.value = props.dataSend.exportingName;
       year.value = props.dataSend.year;
       loadData();
+    } else {
+      showData.value = false;
     }
   },
   { deep: true, immediate: true }

@@ -96,6 +96,8 @@
           <strGraph1 :dataSend="dataSend" />
           <hr />
           <strGraph2 :dataSend="dataSend" />
+          <hr />
+          <strGraph3 :dataSend="dataSend" />
         </div>
       </div>
       <div class="q-pa-lg" v-show="isShowDup">
@@ -128,6 +130,7 @@ import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
 import strGraph1 from "../components/va_str_value_added/va_str_graph1.vue";
 import strGraph2 from "../components/va_str_value_added/va_str_graph2.vue";
+import strGraph3 from "../components/va_str_value_added/va_str_graph3.vue";
 import { countryGroupListRiva2 } from "./countryGroupList";
 import { useRouter, useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
@@ -232,25 +235,30 @@ const runGraph = () => {
   showResult.value = true;
 };
 // Watch route params to update inputData
-// watch(route, (newRoute) => {
-//   if (newRoute.params.exp) {
-//     exportingISO.value = newRoute.params.exp;
-//     getExportEco({ name: "", iso: newRoute.params.exp });
-//   }
-//   if (newRoute.params.imp) {
-//     importingISO.value = newRoute.params.imp;
-//     getImportEco({ name: "", iso: newRoute.params.imp });
-//   }
-//   if (newRoute.params.sector) {
-//     sector.value = newRoute.params.sector;
-//     console.log("test");
-//     getSector(newRoute.params.sector);
-//   }
-//   if (newRoute.params.year) {
-//     year.value = newRoute.params.year;
-//     getYear(newRoute.params.year);
-//   }
-// });
+watch(
+  () => route.params,
+  (newParams) => {
+    if (newParams.exp) {
+      exportingISO.value = newParams.exp;
+      // getExportEco({ name: "", iso: newParams.exp });
+    }
+    if (newParams.imp) {
+      importingISO.value = newParams.imp;
+      // getImportEco({ name: "", iso: newParams.imp });
+    }
+    if (newParams.sector) {
+      // inputData.value.sectorName = newParams.sector;
+      sector.value = route.params.sector;
+      // getSector(newParams.sector);
+    }
+    if (newParams.year) {
+      year.value = newParams.year;
+      // getYear(newParams.year);
+    }
+    showInputText.value = false;
+    showResult.value = true;
+  }
+);
 // Get initial values from route params
 
 const exportingISO = ref("");
@@ -262,20 +270,8 @@ onMounted(() => {
   exportingISO.value = route.params.exp || "";
   importingISO.value = route.params.imp || "";
   year.value = route.params.year || "";
+  // inputData.value.sectorName = route.params.sector || "";
   sector.value = route.params.sector || "";
-
-  // if (exportingISO.value) {
-  //   getExportEco({ name: "", iso: exportingISO.value });
-  // }
-  // if (importingISO.value) {
-  //   getImportEco({ name: "", iso: importingISO.value });
-  // }
-  // if (sector.value) {
-  //   inputData.value.sectorName = sector.value;
-  // }
-  // if (year.value) {
-  //   getYear(year.value);
-  // }
 });
 
 const goToStep1 = () => {
