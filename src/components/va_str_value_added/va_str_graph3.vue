@@ -92,7 +92,7 @@ const loadData = async () => {
     showNoData.value = true;
     return;
   }
-  if (res.data.reduce((sum, item) => sum + parseFloat(item.value), 0) == 0) {
+  if (res.data.reduce((sum, item) => sum + parseFloat(item.value), 0) < 0.01) {
     console.log("Graph unavailable due to negligible export values");
     showData.value = false;
     showSmallExport.value = true;

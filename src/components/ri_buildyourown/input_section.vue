@@ -360,14 +360,14 @@ onMounted(async () => {
     };
     input.value.partner.push(partnerTemp);
     showSelectedPartnerList();
-    toggleSelectDimension(0);
-    toggleSelectDimension(1);
-    toggleSelectDimension(2);
+    // toggleSelectDimension(0);
+    // toggleSelectDimension(1);
+    // toggleSelectDimension(2);
 
-    toggleSelectDimension(3);
-    toggleSelectDimension(4);
-    toggleSelectDimension(5);
-    toggleSelectDimension(6);
+    // toggleSelectDimension(3);
+    // toggleSelectDimension(4);
+    // toggleSelectDimension(5);
+    // toggleSelectDimension(6);
     setTimeout(() => {
       startBtn();
     }, 1000);
@@ -689,6 +689,14 @@ const loadData = async () => {
   let res = await axios.post(url, JSON.stringify(data));
   indicatorData.value = res.data;
   indicatorData.value.forEach((x) => (x.picked = false));
+  toggleSelectDimension(0);
+  toggleSelectDimension(1);
+  toggleSelectDimension(2);
+
+  toggleSelectDimension(3);
+  toggleSelectDimension(4);
+  toggleSelectDimension(5);
+  toggleSelectDimension(6);
 };
 
 const loadCountry = async () => {

@@ -76,14 +76,14 @@ const loadData = async () => {
 
   let url = serverData.value + "/va/strloaddata1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
-
+  // console.log("str1", res.data);
   if (res.data.length == 0) {
     console.log("No data available");
     showData.value = false;
     showNoData.value = true;
     return;
   }
-  if (res.data.reduce((sum, item) => sum + parseFloat(item.value), 0) == 0) {
+  if (res.data.reduce((sum, item) => sum + parseFloat(item.value), 0) < 0.01) {
     console.log("Graph unavailable due to negligible export values");
     showData.value = false;
     showSmallExport.value = true;
