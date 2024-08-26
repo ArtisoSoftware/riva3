@@ -416,7 +416,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeMount } from "vue";
 import { serverSetup } from "../../pages/server";
 import { countryGroupListRiva2 } from "../../pages/countryGroupList";
 import { useRouter } from "vue-router";
@@ -449,6 +449,12 @@ const input = ref({
 });
 
 const emit = defineEmits(["reset-start-btn", "start-btn"]);
+
+onBeforeMount(() => {
+  if (props.dataSend.length != 0) {
+    input.value = props.dataSend.input;
+  }
+});
 
 onMounted(async () => {
   await loadCountry();
@@ -512,11 +518,13 @@ const loadCountry = async () => {
         tableGroup = "ri_data_all_con";
       }
     }
+
     let dataTemp = {
       table: tableGroup,
     };
     let url = serverData.value + "ri/data_load_country.php";
     let res = await axios.post(url, JSON.stringify(dataTemp));
+
     res.data.forEach((element) => {
       let tempData = {
         label: element.country,
@@ -669,7 +677,7 @@ const loadInput = () => {
     });
 
     input.value.reporting = temp;
-    showSelectedGroupList();
+    showSelectedPartnerList();
     showSelectedReportList();
   } else if (props.dataSend.type == "SpecificAllData") {
     input.value.compareType = "specific";
@@ -677,9 +685,33 @@ const loadInput = () => {
     input.value.reporting = props.dataSend.input.reporting;
     input.value.disaggregation = "dimension";
     input.value.dataBase = "all";
-    showSelectedGroupList();
+    showSelectedPartnerList();
     showSelectedReportList();
   }
+};
+
+const showSelectedGroupList = () => {
+  resetStartBtn();
+  countryPartnerList.value = [];
+  let countryPartyTemp = [];
+  let iso = input.value.partner.map((x) => x.value);
+  iso.forEach((isoData) => {
+    let tempList = countryGroupListRiva2(isoData);
+    countryPartyTemp = countryPartyTemp.concat(tempList);
+  });
+  let test = [...new Set(countryPartyTemp)];
+
+  test.forEach((x) => {
+    let temp = countryOptions.value.filter((y) => y.value == x);
+    if (temp.length > 0) {
+      let inputCountry = {
+        label: temp[0].label,
+        iso: temp[0].value,
+      };
+      countryPartnerList.value.push(inputCountry);
+    }
+    countryPartnerList.value.sort((a, b) => (a.label > b.label ? 1 : -1));
+  });
 };
 </script>
 

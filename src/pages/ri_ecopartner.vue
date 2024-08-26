@@ -37,11 +37,11 @@
 
         <div v-show="input.disaggregation == 'country'">
           <main-linechart :dataSend="dataSend2"></main-linechart>
-          <spider-web :dataSend="dataSend2"></spider-web>
+          <spider-web :dataSend="dataSend2" style="height: auto"></spider-web>
           <div class="q-py-lg" style="background: #ededed" align="center">
-            <!-- <div class="btnOutGreen" @click="changeDisaggregationToDimension()">
-            Explore integration by dimension
-          </div> -->
+            <div class="btnOutGreen" @click="changeDisaggregationToDimension()">
+              Explore integration by dimension
+            </div>
           </div>
         </div>
 
@@ -159,6 +159,11 @@ onMounted(() => {
 
 const changeDisaggregationToEco = () => {
   input.value.disaggregation = "country";
+  window.scrollTo(0, 1400);
+};
+
+const changeDisaggregationToDimension = () => {
+  input.value.disaggregation = "dimension";
   window.scrollTo(0, 1400);
 };
 

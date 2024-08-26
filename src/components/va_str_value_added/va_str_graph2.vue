@@ -98,7 +98,7 @@ const loadData = async () => {
     showNoData.value = true;
     return;
   }
-  console.log(getData.value);
+  // console.log(getData.value);
   Highcharts.chart("container2", {
     legend: {
       useHTML: true,

@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import RIHeader from "../components/RI_header.vue";
 import footerMain from "../components/footer2.vue";
 import inputData from "../components/ri_dataavail/input_data.vue";
@@ -58,7 +58,7 @@ const partner = ref([]);
 const dataGet = ref([]);
 const dataIndi = ref({});
 
-onMounted(() => {
+onBeforeMount(() => {
   dataGet.value = [];
   let keyLocal = [];
   keyLocal = LocalStorage.getItem("dataAvail");
@@ -66,6 +66,7 @@ onMounted(() => {
   if (keyLocal != null) {
     if (keyId == keyLocal.key) {
       dataGet.value = LocalStorage.getItem("dataAvail");
+      console.log(dataGet.value);
     }
   }
 });

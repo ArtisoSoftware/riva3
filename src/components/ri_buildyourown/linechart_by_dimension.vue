@@ -143,7 +143,7 @@
                 progress across periods?
               </div>
             </div>
-            <div>
+            <div class="font-12">
               Since {{ input.year.min }}, {{ yourGroupNameSub }}'s Integration
               {{ ecoIntegrationPercentChange > 0 ? "increased" : "decreased" }}
               by
@@ -269,8 +269,8 @@
                 How did {{ yourGroupNameSub }}'s integration progress across
                 periods?
               </div>
-              <div>{{ integrationProgressSubTitleText }}</div>
-              <div>{{ integrationProgressSubTitleText2 }}</div>
+              <div class="font-12">{{ integrationProgressSubTitleText }}</div>
+              <div class="font-12">{{ integrationProgressSubTitleText2 }}</div>
             </div>
             <div
               id="container2x"
@@ -285,7 +285,9 @@
           <div class="font-24">
             How much data is available for each of the dimensions considered?
           </div>
-          <div>{{ dataAvailable.subTitle1 }} {{ dataAvailable.subTitle2 }}</div>
+          <div class="font-12">
+            {{ dataAvailable.subTitle1 }} {{ dataAvailable.subTitle2 }}
+          </div>
         </div>
         <div
           id="container3x"
@@ -299,7 +301,7 @@
             How much is each dimensions contributing to the overall integration
             index ?
           </div>
-          <div>{{ weight.subTitle1 }}</div>
+          <div class="font-12">{{ weight.subTitle1 }}</div>
         </div>
         <div
           id="container4x"

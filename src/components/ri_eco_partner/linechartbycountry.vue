@@ -177,7 +177,7 @@
                 progress across years?
               </div>
             </div>
-            <div v-if="ecoIntegrationChart.length >= 4">
+            <div v-if="ecoIntegrationChart.length >= 4" style="font-size: 12px">
               Since {{ input.year.min }}, {{ yourReportGroupName }}'s
               integration with {{ yourPartnerGroupName }}
               {{ ecoIntegrationPercentChange > 0 ? "increased" : "decreased" }}
@@ -347,7 +347,7 @@
                 }}
                 progress across periods?
               </div>
-              <div>
+              <div style="font-size: 12px">
                 {{ menu2SubtitleSentence1 }} {{ menu2SubtitleSentence2 }} From
                 left to right in descending order of score progression between
                 periods.
@@ -426,7 +426,7 @@
               </q-tooltip>
             </q-icon>
           </div>
-          <div>{{ weight.subTitle1 }}</div>
+          <div style="font-size: 12px">{{ weight.subTitle1 }}</div>
         </div>
         <div
           id="container4"
@@ -1355,7 +1355,7 @@ const menu2PlotChart = () => {
   Highcharts.chart("container2", {
     chart: {
       type: "column",
-      height: "550px",
+      height: "500px",
     },
     title: {
       text: "",
@@ -1559,7 +1559,7 @@ const LineChartByCountry = () => {
 
   Highcharts.chart("lineChartByCountry", {
     chart: {
-      height: 550,
+      height: "500px",
     },
     title: {
       text: "",

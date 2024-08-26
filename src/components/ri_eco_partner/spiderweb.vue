@@ -47,7 +47,9 @@
         class="q-py-md"
         id="dimensionChart"
       ></div>
-      <div class="q-pb-xl" v-if="noteForNoData != ''">{{ noteForNoData }}</div>
+      <div class="q-pb-xl" v-if="noteForNoData != ''">
+        {{ noteForNoData }}
+      </div>
       <div class="font-24" align="left" v-show="input.resultBy == 'Reporter'">
         How is {{ yourGroupName }} integrated with {{ selected.label }} on each
         dimension across different indicators?
@@ -82,12 +84,13 @@
         </div>
       </div>
       <div class="showBar q-pt-md" align="center">
-        <div id="barChart"></div>
+        <div id="barChart" class=""></div>
         <div class="q-pb-md font-14">{{ noIndicatorAvail }}</div>
-        {{ selectDimension }}
+
         <table-tab
           :dimension="dimShow[selectDimension].index"
           :type="input.type"
+          class=""
         />
       </div>
     </div>
@@ -651,8 +654,9 @@ const loadBarChart = () => {
   background: #dae7e5;
   width: 99.5%;
   height: 650px;
+  padding-bottom: 20px;
   border: 2px solid #2d9687;
-  overflow-y: auto;
+  // overflow-y: auto;
 }
 .legendBox {
   width: 24px;

@@ -150,6 +150,30 @@
           </div>
         </div>
       </div>
+      <!-- Show result -->
+      <div v-if="showResult">
+        <hr />
+        <backwardSector1 :dataSend="dataSend" />
+        <hr />
+        <backwardSector2 :dataSend="dataSend" />
+      </div>
+      <div class="q-pa-lg" v-show="isShowDup">
+        <div class="sorryDiv row items-center">
+          <div class="col-4 q-pa-md text-center">
+            <q-icon
+              name="fa-solid fa-triangle-exclamation"
+              size="126px"
+              color="warning"
+            />
+          </div>
+          <div class="col">
+            <div class="text-h5">Sorry, this page isn't available</div>
+            <div>
+              The exporting economy cannot be the same as the importing economy.
+            </div>
+          </div>
+        </div>
+      </div>
       <footerMain />
     </div>
   </div>
@@ -161,6 +185,9 @@ import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
 import footerMain from "../components/footer.vue";
+import backwardSector1 from "src/components/va_backward/backwardSector1.vue";
+import backwardSector2 from "src/components/va_backward/backwardSector2.vue";
+import { countryGroupListRiva2 } from "./countryGroupList";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -173,9 +200,11 @@ const inputData = ref({
   importingName: "",
   importingISO: "",
   sectorName: "",
-  sectorID: "",
 });
+const exportingFullISO = ref([]);
+const importingFullISO = ref([]);
 const showInputText = ref(true);
+const showResult = ref(false);
 const tinaLinkURL = ref("");
 const router = useRouter();
 const route = useRoute();
@@ -198,8 +227,7 @@ const getImportInput = (selected) => {
   inputData.value.importingISO = selected.iso;
 };
 const getSectorInput = (selected) => {
-  inputData.value.sectorName = selected.name;
-  inputData.value.sectorID = selected.id;
+  inputData.value.sectorName = selected;
 };
 
 //Share
@@ -212,7 +240,6 @@ watch(
       newValue.exportingISO &&
       newValue.importingName &&
       newValue.importingISO &&
-      newValue.sectorID &&
       newValue.sectorName
     ) {
       showInputText.value = false;
@@ -222,7 +249,7 @@ watch(
         "/" +
         inputData.value.importingISO +
         "/" +
-        inputData.value.sectorID +
+        inputData.value.sectorName +
         "/" +
         inputData.value.year;
       tinaLinkURL.value =
@@ -231,13 +258,46 @@ watch(
         "-" +
         inputData.value.importingISO +
         "/current-trade";
-      console.log(inputData.value);
+      checkDuplicated();
     } else {
       showInputText.value = true;
     }
   },
   { deep: true }
 );
+//check export & import duplicated or not
+const isShowDup = ref(false);
+const checkDuplicated = () => {
+  isShowDup.value = false;
+  exportingFullISO.value = countryGroupListRiva2(inputData.value.exportingISO);
+  importingFullISO.value = countryGroupListRiva2(inputData.value.importingISO);
+  if (
+    exportingFullISO.value.length == 1 &&
+    importingFullISO.value.length == 1
+  ) {
+    if (importingFullISO.value[0] == exportingFullISO.value[0]) {
+      isShowDup.value = true;
+      return;
+    }
+  }
+
+  runGraph();
+};
+
+//run component
+const dataSend = ref({
+  exportingName: "",
+  exportingISO: "",
+  importingName: "",
+  importingISO: "",
+  year: "",
+  sectorName: "",
+});
+const runGraph = () => {
+  dataSend.value = inputData.value;
+  showResult.value = true;
+};
+
 // Watch route params to update inputData
 watch(route, (newRoute) => {
   if (newRoute.params.exp) {
@@ -328,5 +388,12 @@ watch(
 }
 .selectedMenu {
   color: #e2cd11;
+}
+.sorryDiv {
+  width: 700px;
+  height: 250px;
+  margin: auto;
+  border: 2px solid #16222d;
+  border-radius: 5px;
 }
 </style>
