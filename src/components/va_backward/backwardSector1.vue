@@ -90,6 +90,8 @@ const dataInput = ref({
 const showData = ref(true);
 const showNoData = ref(false);
 const showSmallExport = ref(false);
+const totalSmall = ref("");
+const totalLarge = ref("");
 
 const loadData = async () => {
   showData.value = true;
@@ -108,18 +110,37 @@ const loadData = async () => {
   let url = serverData.value + "/va/backwardSector1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
   let dataResult = res.data;
+  console.log(dataResult);
   if (dataResult.length == 0) {
     showNoData.value = true;
     showData.value = false;
     console.log("No data avaialble");
     return;
   }
-  // let exportValue = Number(dataResult[0].total_backwards)
-  // if(exportValue > 1000){
-  //     exportValue = (exportValue/1000).toFixed(2) + " B"
-  // } else{
-  //   exportValue = exportValue.toFixed(2) + "M"
-  // }
+  totalSmall.value = dataResult[0].total_backwards;
+  if (Number(totalSmall.value) > 1000) {
+    totalSmall.value =
+      (Number(totalSmall.value) / 1000).toFixed(2) + " billion";
+  } else {
+    totalSmall.value = Number(totalSmall.value).toFixed(2) + " million";
+  }
+
+  let dataTemp2 = {
+    exp_country: dataInput.value.exportingISO,
+    imp_country: dataInput.value.importingISO,
+    exp_sector: dataInput.value.sectorName,
+    year: dataInput.value.year,
+  };
+  let url2 = serverData.value + "/va/strloaddata1.php";
+  let res2 = await axios.post(url2, JSON.stringify(dataTemp2));
+  totalLarge.value = res2.data[0].total_exports;
+  if (Number(totalLarge.value) > 1000) {
+    totalLarge.value =
+      (Number(totalLarge.value) / 1000).toFixed(2) + " billion";
+  } else {
+    totalLarge.value = Number(totalLarge.value).toFixed(2) + " million";
+  }
+
   let maxImport1 =
     showCountryName(dataResult[0], countryData) +
     "(" +
@@ -146,7 +167,7 @@ const loadData = async () => {
     (Number(dataResult[4].share) * 100).toFixed(2) +
     "%)";
 
-  let subTitleGraph = `Gross exports of ${dataInput.value.exportingName} in ${dataInput.value.sectorName} to ${dataInput.value.importingName} amount to $xxxx in ${dataInput.value.year}. Of these exports, $xxxx is imported content that comes from other economies, mainly ${maxImport1}, ${maxImport2}, ${maxImport3}, ${maxImport4} and ${maxImport5}. <br/><br/> ${dataInput.value.exportingName}'s imported content in exports to ${dataInput.value.importingName}: xxxx / ${dataInput.value.exportingName}'s gross exports to ${dataInput.value.importingName}: xxx`;
+  let subTitleGraph = `Gross exports of ${dataInput.value.exportingName} in ${dataInput.value.sectorName} to ${dataInput.value.importingName} amount to $${totalLarge.value} in ${dataInput.value.year}. Of these exports, $${totalSmall.value} is imported content that comes from other economies, mainly ${maxImport1}, ${maxImport2}, ${maxImport3}, ${maxImport4} and ${maxImport5}. <br/><br/> ${dataInput.value.exportingName}'s imported content in exports to ${dataInput.value.importingName}: $${totalSmall.value} / ${dataInput.value.exportingName}'s gross exports to ${dataInput.value.importingName}: $${totalLarge.value}`;
   let getData = [];
   getData.push({ id: "A", name: "Asia-Pacific", color: "#2381B8" });
   getData.push({ id: "B", name: "Europe", color: "#EB1E63" });

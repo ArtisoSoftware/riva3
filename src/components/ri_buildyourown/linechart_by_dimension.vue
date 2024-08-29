@@ -1534,7 +1534,7 @@ const loadIntegrationPeriodsChart = () => {
   Highcharts.chart("container2x", {
     chart: {
       type: "column",
-      height: "550px",
+      height: "500px",
     },
     title: {
       text: "",
@@ -1659,7 +1659,7 @@ const LineChartByCountry = () => {
 
   Highcharts.chart("lineChartByDimension", {
     chart: {
-      height: 550,
+      height: "500px",
     },
     title: {
       text: "",
