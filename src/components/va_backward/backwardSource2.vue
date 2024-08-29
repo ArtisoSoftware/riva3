@@ -157,7 +157,6 @@ const loadData = async () => {
   let url4 = serverData.value + "/va/getSector.php";
   let res4 = await axios.get(url4);
   let sectorData = res4.data;
-  console.log(sectorData);
 
   const promises = exportISOListFinal.value.map(async (expCountry) => {
     let dataTemp3 = {
@@ -789,32 +788,6 @@ const loadData = async () => {
       data: item.data.filter((dataItem) => dataItem.y !== 0),
     };
   });
-  console.log("agricultureData", agricultureData.value);
-  console.log("miningData", miningData.value);
-  console.log("constructionData", constructionData.value);
-  console.log("utilitiesData", utilitiesData.value);
-  console.log("lowtechData", lowtechData.value);
-  console.log("hightechData", hightechData.value);
-  console.log("tradeRepairData", tradeRepairData.value);
-  console.log("tourismData", tourismData.value);
-  console.log("transportData", transportData.value);
-  console.log("ictData", ictData.value);
-  console.log("propertyData", propertyData.value);
-  console.log("financialData", financialData.value);
-  console.log("publicwData", publicwData.value);
-  console.log("privatewData", privatewData.value);
-  console.log("drilldownData", drilldownData.value);
-
-  // console.log(countryData);
-
-  // console.log(exportISOListFinal.value);
-  // console.log(exportNameListFinal.value);
-  // console.log("region: ", region.value);
-  // console.log("exportISOList: ", exportISOList.value);
-  // console.log("exportNameList: ", exportNameList.value);
-  // console.log("dataResult: ", dataResult);
-
-  console.log("Loading");
 
   var chart2 = Highcharts.chart(
     "container4",
