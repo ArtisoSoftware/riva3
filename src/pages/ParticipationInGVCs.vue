@@ -111,7 +111,7 @@ import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
-import footerMain from "../components/footer.vue";
+import footerMain from "../components/footerA.vue";
 import partGraph1 from "../components/va_participation/va_participation_graph1.vue";
 import { useRouter, useRoute } from "vue-router";
 import { countryGroupListRiva2 } from "./countryGroupList";

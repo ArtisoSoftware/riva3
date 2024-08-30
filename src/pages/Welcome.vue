@@ -5,6 +5,7 @@
       <video id="myVideo" autoplay loop muted style="width: 100%">
         <source type="video/mp4" src="../../public/images/bg-hd.webm" />
       </video>
+
       <div class="logoESCAP">
         <img
           src="../../public/images/unescaplogo.svg"
@@ -12,6 +13,7 @@
           style="height: 90px"
         />
       </div>
+
       <div class="boxCenter">
         <div class="text-center q-pa-md">
           <img
@@ -122,8 +124,18 @@
 <script setup>
 import footerMain from "../components/footer.vue";
 import { useRouter } from "vue-router";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 const router = useRouter();
+const selectedLanguage = ref("en"); // Default language is English
+
+const languages = [
+  { label: "English", value: "en" },
+  { label: "Russian", value: "ru" },
+  { label: "Chinese", value: "zh-CN" },
+  { label: "French", value: "fr" },
+  { label: "Spanish", value: "es" },
+];
+
 const goToVA = () => {
   router.push("/gvcrelationships");
 };
@@ -154,6 +166,11 @@ onMounted(() => {
   position: absolute;
   top: 20px;
   left: 20px;
+}
+.langBar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 .boxCenter {
   width: 800px;

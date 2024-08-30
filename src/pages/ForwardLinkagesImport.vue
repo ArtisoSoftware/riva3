@@ -141,6 +141,29 @@
           <div class="text-center" style="width: 200px"></div>
         </div>
       </div>
+      <div v-if="showResult">
+        <hr />
+        <forwardImport1 :dataSend="dataSend" />
+        <hr />
+        <forwardImport2 :dataSend="dataSend" />
+      </div>
+      <div class="q-pa-lg" v-show="isShowDup">
+        <div class="sorryDiv row items-center">
+          <div class="col-4 q-pa-md text-center">
+            <q-icon
+              name="fa-solid fa-triangle-exclamation"
+              size="126px"
+              color="warning"
+            />
+          </div>
+          <div class="col">
+            <div class="text-h5">Sorry, this page isn't available</div>
+            <div>
+              The exporting economy cannot be the same as the importing economy.
+            </div>
+          </div>
+        </div>
+      </div>
       <footerMain />
     </div>
   </div>
@@ -150,9 +173,10 @@
 import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
-
-import footerMain from "../components/footer.vue";
-
+import footerMain from "../components/footerA.vue";
+import { countryGroupListRiva2 } from "./countryGroupList";
+import forwardImport1 from "src/components/va_forward/forwardImport1.vue";
+import forwardImport2 from "src/components/va_forward/forwardImport2.vue";
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 //input
@@ -164,6 +188,12 @@ const inputData = ref({
   importingName: "",
   importingISO: "",
 });
+const exportingFullISO = ref([]);
+const importingFullISO = ref([]);
+const showInputText = ref(true);
+const shareContent = ref("");
+const showResult = ref(false);
+const tinaLinkURL = ref("");
 const router = useRouter();
 const route = useRoute();
 
@@ -172,7 +202,6 @@ const exportingISO = ref(route.params.exp || "");
 const year = ref(route.params.year || "");
 const importingISO = ref(route.params.imp || "");
 
-const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
 };
@@ -185,9 +214,6 @@ const getImport = (selected) => {
   inputData.value.importingISO = selected.iso;
 };
 
-//Share
-const shareContent = ref("");
-const tinaLinkURL = ref("");
 watch(
   () => inputData.value,
   (newValue) => {
@@ -211,7 +237,7 @@ watch(
         "-" +
         inputData.value.importingISO +
         "/current-trade";
-      console.log(inputData.value);
+      checkDup();
     } else {
       showInputText.value = true;
     }
@@ -219,6 +245,39 @@ watch(
   { deep: true }
 );
 
+const isShowDup = ref(false);
+const checkDup = () => {
+  isShowDup.value = false;
+  exportingFullISO.value = countryGroupListRiva2(inputData.value.exportingISO);
+  importingFullISO.value = countryGroupListRiva2(inputData.value.importingISO);
+
+  if (
+    exportingFullISO.value.length == 1 &&
+    importingFullISO.value.length == 1
+  ) {
+    if (importingFullISO.value[0] == exportingFullISO.value[0]) {
+      isShowDup.value = true;
+      showResult.value = false;
+      return;
+    }
+  }
+
+  runGraph();
+};
+
+//run component
+const dataSend = ref({
+  exportingName: "",
+  exportingISO: "",
+  importingName: "",
+  importingISO: "",
+  year: "",
+});
+
+const runGraph = () => {
+  dataSend.value = inputData.value;
+  showResult.value = true;
+};
 // Watch route params to update inputData
 watch(route, (newRoute) => {
   if (newRoute.params.exp) {
@@ -301,5 +360,12 @@ watch(
 }
 .selectedMenu {
   color: #e2cd11;
+}
+.sorryDiv {
+  width: 700px;
+  height: 250px;
+  margin: auto;
+  border: 2px solid #16222d;
+  border-radius: 5px;
 }
 </style>

@@ -1,27 +1,30 @@
 <template>
-  <div id="container4" v-show="showData">Graph2 - {{ dataSend }}</div>
-  <div v-show="!showData" class="text-center text-h5">
-    <div class="text-black q-pt-md">
-      <b
-        >How is {{ dataInput.sourceName }}'s value-added in
-        {{ region }} economies' exports to
-        {{ dataInput.importingName }} distributed across sectors?</b
-      >
+  <div>
+    <div v-show="!showData" class="text-center text-h5">
+      <div class="text-black q-pt-md">
+        <b
+          >How are {{ region }} economies' contribution the export production in
+          {{ dataInput.importingName }} distributed across sectors?</b
+        >
+      </div>
+      <div class="q-py-xl row justify-center">
+        <div>
+          <img
+            src="../../../public/images/warning.png"
+            alt=""
+            style="height: 50px"
+          />
+        </div>
+        <div style="line-height: 50px" class="q-pl-lg" v-show="showNoData">
+          No data available
+        </div>
+        <div style="line-height: 50px" class="q-pl-lg" v-show="showSmallExport">
+          Graph unavailable due to negligible export values
+        </div>
+      </div>
     </div>
-    <div class="q-py-xl row justify-center">
-      <div>
-        <img
-          src="../../../public/images/warning.png"
-          alt=""
-          style="height: 50px"
-        />
-      </div>
-      <div style="line-height: 50px" class="q-pl-lg" v-show="showNoData">
-        No data available
-      </div>
-      <div style="line-height: 50px" class="q-pl-lg" v-show="showSmallExport">
-        Graph unavailable due to negligible export values
-      </div>
+    <div v-show="showData">
+      <div id="container4" class="col">Graph 2</div>
     </div>
   </div>
 </template>
@@ -45,8 +48,6 @@ const dataInput = ref({
   exportingName: "",
   importingISO: "",
   importingName: "",
-  sourceISO: "",
-  sourceName: "",
   year: "",
 });
 
@@ -133,10 +134,10 @@ const loadData = async () => {
   let dataTemp = {
     exp_country: exportISOList.value,
     imp_country: dataInput.value.importingISO,
-    source_country: dataInput.value.sourceISO,
     year: dataInput.value.year,
   };
-  let url = serverData.value + "/va/backwardSource1.php";
+
+  let url = serverData.value + "/va/forwardImport1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
   let dataResult = res.data;
   if (dataResult.length == 0) {
@@ -780,7 +781,6 @@ const loadData = async () => {
     }
   });
 
-  // Wait for all the promises to resolve
   await Promise.all(promises);
   drilldownData.value = drilldownData.value.map((item) => {
     return {
@@ -798,7 +798,7 @@ const loadData = async () => {
         events: {
           drilldown: function (e) {
             chart2.setTitle({
-              text: `How is ${dataInput.value.sourceName}'s value-added in ${e.point.name}'s exports to ${dataInput.value.importingName} distributed across sectors?`,
+              text: `How is ${e.point.name}'s contribution to export production in ${dataInput.value.importingName} distributed across sectors?`,
             });
             chart2.setSubtitle({
               text: "",
@@ -806,10 +806,10 @@ const loadData = async () => {
           },
           drillup: function (e) {
             chart2.setTitle({
-              text: `How is ${dataInput.value.sourceName}'s value-added in ${region.value} economies' exports to ${dataInput.value.importingName} distributed across sectors?`,
+              text: `How are ${region.value} economies' contribution to export production in ${dataInput.value.importingName} distributed across sectors?`,
             });
             chart2.setSubtitle({
-              text: "Click on a bar to see the individual sector associated with a sector group.",
+              text: "Click on a bar to see the individual sectors associated with a sector group.",
             });
             chart2.xAxis[0].setCategories(exportNameListFinal.value);
           },
@@ -821,7 +821,7 @@ const loadData = async () => {
           fontFamily: "roboto",
         },
 
-        text: `How is ${dataInput.value.sourceName}'s value-added in ${region.value} economies' exports to ${dataInput.value.importingName} distributed across sectors?`,
+        text: `How are ${region.value} economies' contribution to export production in ${dataInput.value.importingName} distributed across sectors?`,
       },
       subtitle: {
         style: {
@@ -1075,23 +1075,15 @@ watch(
     importingName: props.dataSend.importingName,
     importingISO: props.dataSend.importingISO,
     year: props.dataSend.year,
-    sourceISO: props.dataSend.sourceISO,
-    sourceName: props.dataSend.sourceName,
   }),
   (newVal, oldVal) => {
-    if (
-      newVal.exportingISO.length > 0 &&
-      newVal.importingISO.length > 0 &&
-      newVal.year.length > 0 &&
-      newVal.sourceISO.length > 0
-    ) {
+    if (newVal.exportingISO.length > 0 && newVal.importingISO.length > 0) {
       dataInput.value.exportingISO = props.dataSend.exportingISO;
       dataInput.value.exportingName = props.dataSend.exportingName;
       dataInput.value.importingISO = props.dataSend.importingISO;
       dataInput.value.importingName = props.dataSend.importingName;
       dataInput.value.year = props.dataSend.year;
-      dataInput.value.sourceISO = props.dataSend.sourceISO;
-      dataInput.value.sourceName = props.dataSend.sourceName;
+      showData.value = false;
       loadData();
     } else {
       showData.value = false;
@@ -1101,4 +1093,11 @@ watch(
 );
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+#custom-legend {
+  max-height: 200px; /* ความสูงสูงสุด */
+  overflow-y: auto; /* เปิดการเลื่อนในแนวตั้ง */
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+}
+</style>

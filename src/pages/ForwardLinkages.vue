@@ -138,6 +138,13 @@
           <div class="text-center" style="width: 200px"></div>
         </div>
       </div>
+      <!-- Show result -->
+      <div v-if="showResult">
+        <hr />
+        <forwardSector1 :dataSend="dataSend" />
+        <hr />
+        <forwardSector2 :dataSend="dataSend" />
+      </div>
       <footerMain />
     </div>
   </div>
@@ -148,7 +155,9 @@ import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
-import footerMain from "../components/footer.vue";
+import footerMain from "../components/footerA.vue";
+import forwardSector1 from "src/components/va_forward/forwardSector1.vue";
+import forwardSector2 from "src/components/va_forward/forwardSector2.vue";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -159,8 +168,11 @@ const inputData = ref({
   exportingISO: "",
   year: "",
   sectorName: "",
-  sectorID: "",
 });
+const showInputText = ref(true);
+const shareContent = ref("");
+const showResult = ref(false);
+const tinaLinkURL = ref("");
 const router = useRouter();
 const route = useRoute();
 
@@ -169,7 +181,6 @@ const exportingISO = ref(route.params.exp || "");
 const year = ref(route.params.year || "");
 const sector = ref(route.params.sector || "");
 
-const showInputText = ref(true);
 const getYear = (value) => {
   inputData.value.year = value;
 };
@@ -178,37 +189,46 @@ const getExport = (selected) => {
   inputData.value.exportingISO = selected.iso;
 };
 const getSector = (selected) => {
-  inputData.value.sectorName = selected.name;
-  inputData.value.sectorID = selected.id;
+  inputData.value.sectorName = selected;
 };
 
 //Share
-const shareContent = ref("");
-const tinaLinkURL = ref("");
+
 watch(
   () => inputData.value,
   (newValue) => {
     if (
       newValue.exportingName &&
       newValue.exportingISO &&
-      newValue.sectorName &&
-      newValue.sectorID
+      newValue.sectorName
     ) {
       showInputText.value = false;
       shareContent.value =
         "https://riva.negotiatetrade.org/#/forwardlinkages/" +
         inputData.value.exportingISO +
         "/" +
-        inputData.value.sectorID +
+        inputData.value.sectorName +
         "/" +
         inputData.value.year;
-      console.log(inputData.value);
+      runGraph();
     } else {
       showInputText.value = true;
     }
   },
   { deep: true }
 );
+
+const dataSend = ref({
+  exportingName: "",
+  exportingISO: "",
+  year: "",
+  sectorName: "",
+});
+const runGraph = () => {
+  dataSend.value = inputData.value;
+  showResult.value = true;
+  console.log("run graph");
+};
 
 // Watch route params to update inputData
 watch(route, (newRoute) => {
@@ -228,11 +248,10 @@ watch(route, (newRoute) => {
 });
 onMounted(() => {
   if (exportingISO.value) {
-    getExport({ name: "", iso: exportingISO.value });
+    getExportInput({ name: "", iso: exportingISO.value });
   }
-
   if (sector.value) {
-    getSector({ sectorName: "", sectorID: sector.value });
+    getSectorInput({ sectorName: "", sectorID: sector.value });
   }
   if (year.value) {
     getYear(year.value);

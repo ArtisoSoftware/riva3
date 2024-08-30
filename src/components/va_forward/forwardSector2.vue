@@ -3,9 +3,8 @@
     <div v-show="!showData" class="text-center text-h5">
       <div class="text-black q-pt-md">
         <b
-          >Where do {{ region }}'s imported content in exports of
-          {{ dataInput.sectorName }} to {{ dataInput.importingName }} come
-          from?</b
+          >Where do {{ dataInput.exportingName }} economies contribute the most
+          towards export production ({{ dataInput.sectorName }})?</b
         >
       </div>
       <div class="q-py-xl row justify-center">
@@ -25,7 +24,7 @@
       </div>
     </div>
     <div v-show="showData">
-      <div id="container2" class="col">xx</div>
+      <div id="container2">Graph2</div>
     </div>
   </div>
 </template>
@@ -36,25 +35,24 @@ import axios from "axios";
 import { serverSetup } from "../../pages/server.js";
 
 const { serverData } = serverSetup();
-
 const props = defineProps({
   dataSend: {
     type: Object,
     required: true,
   },
 });
+
 const dataInput = ref({
   exportingISO: "",
   exportingName: "",
-  importingISO: "",
-  importingName: "",
   year: "",
   sectorName: "",
 });
 const showData = ref(true);
 const showNoData = ref(false);
 const showSmallExport = ref(false);
-
+const totalSmall = ref("");
+const totalLarge = ref("");
 const region = ref("");
 const exportISOList = ref([]);
 const exportNameList = ref([]);
@@ -121,18 +119,14 @@ const loadData = async () => {
       })
       .filter((name) => name !== null);
   }
-  // console.log("countryData", countryData);
-  // console.log("region: ", region.value);
-  // console.log("exportISOList: ", exportISOList.value);
-  // console.log("exportNameList: ", exportNameList.value);
+
   let dataTemp = {
     exp_country: exportISOList.value,
-    imp_country: dataInput.value.importingISO,
     exp_sector: dataInput.value.sectorName,
     year: dataInput.value.year,
   };
 
-  let url = serverData.value + "/va/backwardSector1.php";
+  let url = serverData.value + "/va/forwardSector1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
   let dataResult = res.data;
   if (dataResult.length == 0) {
@@ -141,9 +135,10 @@ const loadData = async () => {
     console.log("No data avaialble");
     return;
   }
+
   dataResult.forEach((item) => {
     const country = countryData.find(
-      (country) => country.iso === item.source_country
+      (country) => country.iso === item.imp_country
     );
     if (country) {
       item.area = country.area;
@@ -152,18 +147,17 @@ const loadData = async () => {
     }
   });
 
-  exportISOList.value.forEach(async (expCountry, index) => {
+  const promises = exportISOList.value.map(async (expCountry, index) => {
     let dataTemp = {
       exp_country: expCountry,
-      imp_country: dataInput.value.importingISO,
+      imp_country: "WLD",
       exp_sector: dataInput.value.sectorName,
       year: dataInput.value.year,
     };
     let url = serverData.value + "/va/strloaddata1.php";
     let res = await axios.post(url, JSON.stringify(dataTemp));
-    // console.log(res.data);
+
     if (res.data.length > 0) {
-      // console.log("pass");
       let totalExport = Number(res.data[0].total_exports);
 
       {
@@ -186,7 +180,7 @@ const loadData = async () => {
         tempDrillDown.forEach((dataRaw) => {
           let countryNameDrill = "";
           let countryNameData = countryData.find(
-            (country) => country.iso === dataRaw.source_country
+            (country) => country.iso === dataRaw.imp_country
           );
           if (countryNameData) {
             countryNameDrill = countryNameData.economic;
@@ -225,7 +219,7 @@ const loadData = async () => {
         tempDrillDown.forEach((dataRaw) => {
           let countryNameDrill = "";
           let countryNameData = countryData.find(
-            (country) => country.iso === dataRaw.source_country
+            (country) => country.iso === dataRaw.imp_country
           );
           if (countryNameData) {
             countryNameDrill = countryNameData.economic;
@@ -264,7 +258,7 @@ const loadData = async () => {
         tempDrillDown.forEach((dataRaw) => {
           let countryNameDrill = "";
           let countryNameData = countryData.find(
-            (country) => country.iso === dataRaw.source_country
+            (country) => country.iso === dataRaw.imp_country
           );
           if (countryNameData) {
             countryNameDrill = countryNameData.economic;
@@ -303,7 +297,7 @@ const loadData = async () => {
         tempDrillDown.forEach((dataRaw) => {
           let countryNameDrill = "";
           let countryNameData = countryData.find(
-            (country) => country.iso === dataRaw.source_country
+            (country) => country.iso === dataRaw.imp_country
           );
           if (countryNameData) {
             countryNameDrill = countryNameData.economic;
@@ -342,7 +336,7 @@ const loadData = async () => {
         tempDrillDown.forEach((dataRaw) => {
           let countryNameDrill = "";
           let countryNameData = countryData.find(
-            (country) => country.iso === dataRaw.source_country
+            (country) => country.iso === dataRaw.imp_country
           );
           if (countryNameData) {
             countryNameDrill = countryNameData.economic;
@@ -361,14 +355,14 @@ const loadData = async () => {
       }
     }
   });
+  await Promise.all(promises);
+  chart2DrillDown.value = chart2DrillDown.value.map((item) => {
+    return {
+      ...item,
+      data: item.data.filter((dataItem) => dataItem.y !== 0),
+    };
+  });
 
-  // console.log("chart2AsiaPacific", chart2AsiaPacific.value);
-  // console.log("chart2Europe", chart2Europe.value);
-  // console.log("chart2NorthAmerica", chart2NorthAmerica.value);
-  // console.log("chart2LatinAmerica", chart2LatinAmerica.value);
-  // console.log("chart2RestOfTheWorld", chart2RestOfTheWorld.value);
-  // console.log("dataResult: ", dataResult);
-  // console.log("chart2DrillDown", chart2DrillDown.value);
   setTimeout(() => {
     var chart = Highcharts.chart(
       "container2",
@@ -380,7 +374,7 @@ const loadData = async () => {
           events: {
             drilldown: function (e) {
               chart.setTitle({
-                text: `Where does ${e.point.name}'s imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
+                text: `Where does ${e.point.name} contribute the most towards export production (${dataInput.value.sectorName})?`,
               });
               chart.setSubtitle({
                 text: "",
@@ -398,7 +392,7 @@ const loadData = async () => {
                 true
               ); // redraw the chart with updated xAxis categories
               chart.setTitle({
-                text: `Where do ${region.value} economies' imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
+                text: `Where do ${region.value} economies contribute the most towards export production (${dataInput.value.sectorName})?`,
               });
               chart.setSubtitle({
                 text: "Click on a bar to see the individual economies associated with a region.",
@@ -420,7 +414,7 @@ const loadData = async () => {
             fontSize: "24px",
           },
 
-          text: `Where do ${dataInput.value.exportingName} economies' imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
+          text: `Where do ${region.value} economies contribute the most towards export production (${dataInput.value.sectorName})?`,
         },
         subtitle: {
           style: {
@@ -592,29 +586,35 @@ const loadData = async () => {
       },
       (Highcharts.Tick.prototype.drillable = function () {})
     );
-  }, 10);
+  }, 1);
+};
+
+const showCountryName = (x, countryData) => {
+  let countryNameText = "";
+  if (x.imp_country == "RoW") {
+    countryNameText = "Rest of the World";
+  } else {
+    let dataFind = countryData.filter((datax) => datax.iso == x.imp_country);
+    countryNameText = dataFind[0].economic;
+  }
+  return countryNameText;
 };
 
 watch(
   () => ({
     exportingISO: props.dataSend.exportingISO,
     exportingName: props.dataSend.exportingName,
-    importingName: props.dataSend.importingName,
-    importingISO: props.dataSend.importingISO,
     year: props.dataSend.year,
     sectorName: props.dataSend.sectorName,
   }),
   (newVal, oldVal) => {
     if (
       newVal.exportingISO.length > 0 &&
-      newVal.importingISO.length > 0 &&
       newVal.year.length > 0 &&
       newVal.sectorName.length > 0
     ) {
       dataInput.value.exportingISO = props.dataSend.exportingISO;
       dataInput.value.exportingName = props.dataSend.exportingName;
-      dataInput.value.importingISO = props.dataSend.importingISO;
-      dataInput.value.importingName = props.dataSend.importingName;
       dataInput.value.year = props.dataSend.year;
       dataInput.value.sectorName = props.dataSend.sectorName;
 
@@ -627,9 +627,4 @@ watch(
 );
 </script>
 
-<style lang="scss" scoped>
-.highcharts-legend {
-  display: block !important;
-  visibility: visible !important;
-}
-</style>
+<style lang="scss" scoped></style>

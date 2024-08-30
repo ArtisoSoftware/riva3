@@ -127,7 +127,7 @@ import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
-import footerMain from "../components/footer.vue";
+import footerMain from "../components/footerA.vue";
 import strGraph1 from "../components/va_str_value_added/va_str_graph1.vue";
 import strGraph2 from "../components/va_str_value_added/va_str_graph2.vue";
 import strGraph3 from "../components/va_str_value_added/va_str_graph3.vue";

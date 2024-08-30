@@ -184,7 +184,7 @@ import VAHeader from "../components/VA_header.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect.vue";
 import SectorSelect from "../components/SectorSelect.vue";
-import footerMain from "../components/footer.vue";
+import footerMain from "../components/footerA.vue";
 import backwardSector1 from "src/components/va_backward/backwardSector1.vue";
 import backwardSector2 from "src/components/va_backward/backwardSector2.vue";
 import { countryGroupListRiva2 } from "./countryGroupList";

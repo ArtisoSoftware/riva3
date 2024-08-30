@@ -3,9 +3,8 @@
     <div v-show="!showData" class="text-center text-h5">
       <div class="text-black q-pt-md">
         <b
-          >Where does {{ dataInput.exportingName }}'s imported content in
-          exports of {{ dataInput.sectorName }} to
-          {{ dataInput.importingName }} come from?</b
+          >Where does {{ dataInput.exportingName }} contribute the most towards
+          export production ({{ dataInput.sectorName }})?</b
         >
       </div>
       <div class="q-py-xl row justify-center">
@@ -72,18 +71,16 @@ import axios from "axios";
 import { serverSetup } from "../../pages/server.js";
 
 const { serverData } = serverSetup();
-
 const props = defineProps({
   dataSend: {
     type: Object,
     required: true,
   },
 });
+
 const dataInput = ref({
   exportingISO: "",
   exportingName: "",
-  importingISO: "",
-  importingName: "",
   year: "",
   sectorName: "",
 });
@@ -97,26 +94,29 @@ const loadData = async () => {
   showData.value = true;
   showNoData.value = false;
   showSmallExport.value = false;
+  let getData = [];
   let url0 = serverData.value + "va/getEcoList.php";
   let res0 = await axios.get(url0);
   let countryData = res0.data;
+
   let dataTemp = {
     exp_country: dataInput.value.exportingISO,
-    imp_country: dataInput.value.importingISO,
     exp_sector: dataInput.value.sectorName,
     year: dataInput.value.year,
   };
 
-  let url = serverData.value + "/va/backwardSector1.php";
+  let url = serverData.value + "/va/forwardSector1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
   let dataResult = res.data;
+  dataResult.sort((a, b) => Number(b.value) - Number(a.value));
+
   if (dataResult.length == 0) {
     showNoData.value = true;
     showData.value = false;
     console.log("No data avaialble");
     return;
   }
-  totalSmall.value = dataResult[0].total_backwards;
+  totalSmall.value = dataResult[0].totalvalue;
   if (Number(totalSmall.value) > 1000) {
     totalSmall.value =
       (Number(totalSmall.value) / 1000).toFixed(2) + " billion";
@@ -126,7 +126,7 @@ const loadData = async () => {
 
   let dataTemp2 = {
     exp_country: dataInput.value.exportingISO,
-    imp_country: dataInput.value.importingISO,
+    imp_country: "WLD",
     exp_sector: dataInput.value.sectorName,
     year: dataInput.value.year,
   };
@@ -166,23 +166,42 @@ const loadData = async () => {
     (Number(dataResult[4].share) * 100).toFixed(2) +
     "%)";
 
-  let subTitleGraph = `Gross exports of ${dataInput.value.exportingName} in ${dataInput.value.sectorName} to ${dataInput.value.importingName} amount to $${totalLarge.value} in ${dataInput.value.year}. Of these exports, $${totalSmall.value} is imported content that comes from other economies, mainly ${maxImport1}, ${maxImport2}, ${maxImport3}, ${maxImport4} and ${maxImport5}. <br/><br/> ${dataInput.value.exportingName}'s imported content in exports to ${dataInput.value.importingName}: $${totalSmall.value} / ${dataInput.value.exportingName}'s gross exports to ${dataInput.value.importingName}: $${totalLarge.value}`;
-  let getData = [];
-  getData.push({ id: "A", name: "Asia-Pacific", color: "#2381B8" });
-  getData.push({ id: "B", name: "Europe", color: "#EB1E63" });
-  getData.push({ id: "C", name: "North America", color: "#F99704" });
-  getData.push({ id: "D", name: "Latin America", color: "#2D9687" });
+  let subTitleGraph = `Gross exports of ${dataInput.value.exportingName} in ${dataInput.value.sectorName} to World amount to $${totalLarge.value} in ${dataInput.value.year}. Of these exports, $${totalSmall.value} is ${dataInput.value.exportingName}'s contribution to export production in other economies, mainly ${maxImport1}, ${maxImport2}, ${maxImport3}, ${maxImport4} and ${maxImport5}. <br/><br/> ${dataInput.value.exportingName}'s contribution to export production: $${totalSmall.value} / ${dataInput.value.exportingName}'s gross exports to World: $${totalLarge.value}`;
+
+  getData.push({
+    id: "A",
+    name: "Asia-Pacific",
+    color: "#2381B8",
+  });
+
+  getData.push({
+    id: "B",
+    name: "Europe",
+    color: "#EB1E63",
+  });
+
+  getData.push({
+    id: "C",
+    name: "North America",
+    color: "#F99704",
+  });
+
+  getData.push({
+    id: "D",
+    name: "Latin America",
+    color: "#2D9687",
+  });
+
   getData.push({ id: "E", name: "Rest of the world", color: "#9C26B3" });
+
   dataResult.forEach((x) => {
     let countryNameText = "";
     let parentData = "";
-    if (x.source_country == "RoW") {
+    if (x.imp_country == "RoW") {
       countryNameText = "Rest of the World";
       parentData = "E";
     } else {
-      let dataFind = countryData.filter(
-        (datax) => datax.iso == x.source_country
-      );
+      let dataFind = countryData.filter((datax) => datax.iso == x.imp_country);
       countryNameText = dataFind[0].economic;
       if (dataFind[0].area == "Asia-Pacific") {
         parentData = "A";
@@ -203,38 +222,44 @@ const loadData = async () => {
     };
     getData.push(temp);
   });
+
   setTimeout(() => {
     Highcharts.chart("container1", {
       chart: {
         height: (9 / 12) * 100 + "%", // 16:9 ratio
         style: { fontFamily: "roboto" },
       },
-
       series: [
         {
           type: "treemap",
           layoutAlgorithm: "squarified",
+          alternateStartingDirection: true,
+          levels: [
+            {
+              level: 1,
+              // layoutAlgorithm: "sliceAndDice",
+              dataLabels: {
+                enabled: false,
+                align: "left",
+                verticalAlign: "top",
+                style: {
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                },
+              },
+            },
+          ],
+
           data: getData,
+          showInLegend: false,
+          legendType: "point",
         },
       ],
-
-      plotOptions: {
-        treemap: {
-          dataLabels: {
-            enabled: true,
-          },
-        },
-        series: {
-          dataLabels: {
-            enabled: false,
-          },
-        },
-      },
       title: {
         style: {
           fontSize: "24px",
         },
-        text: `Where does ${dataInput.value.exportingName}'s imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
+        text: `Where does ${dataInput.value.exportingName} contribute the most towards export production (${dataInput.value.sectorName})?`,
       },
       subtitle: {
         useHTML: true,
@@ -248,21 +273,72 @@ const loadData = async () => {
       },
       tooltip: {
         useHTML: true,
-        formatter: function () {
-          let sectorShow = this.key.substring(0, this.key.indexOf("("));
-          let percentShow = this.key.substring(
-            this.key.indexOf("(") + 1,
-            this.key.length - 2
+        pointFormatter: function () {
+          return (
+            "<div> <span class='text-bold'>" +
+            this.name +
+            "</span>" +
+            "<br>" +
+            "Value: $" +
+            this.value +
+            " million" +
+            "</div>"
           );
-          let tempShowText = "";
-          if (this.point.value >= 1000) {
-            tempShowText = (this.point.value / 1000).toFixed(2) + " billion";
-          } else {
-            tempShowText = this.point.value.toFixed(2) + " million";
-          }
+        },
+      },
+      exporting: {
+        allowHTML: true,
+        useHTML: true,
+        buttons: {
+          contextButton: {
+            menuItems: [
+              "downloadPNG",
+              "downloadJPEG",
+              "separator",
+              "downloadCSV",
+              "downloadXLS",
+            ],
+          },
+        },
+        width: "1920px",
+        chartOptions: {
+          chart: {
+            events: {
+              load: function () {
+                this.legend.update({
+                  width: 120,
+                  labelFormatter: function () {
+                    if (this.name == "Europe") {
+                      return '<div style="padding-bottom:5px;"><table><tr><td><div style="width: 10px;height: 10px;background-color: #eb1e63;"></div></td><td style="padding-left:10px;font-size:6px;white-space:nowrap">Europe</td></tr></table></div>';
+                    } else if (this.name == "Latin America") {
+                      return '<div style="padding-bottom:5px;"><table><tr><td><div style="width: 10px;height: 10px;background-color: #2D9687;"></div></td><td style="padding-left:10px;font-size:6px;white-space:nowrap">Latin America</td></tr></table></div>';
+                    } else if (this.name == "North America") {
+                      return '<div style="padding-bottom:5px;"><table><tr><td><div style="width: 10px;height: 10px;background-color: #F99704;"></div></td><td style="padding-left:10px;font-size:6px;white-space:nowrap">North America</td></tr></table></div>';
+                    } else if (this.name == "Asia-Pacific") {
+                      return '<div style="padding-bottom:5px;"><table><tr><td><div style="width: 10px;height: 10px;background-color: #2381B8;"></div></td><td style="padding-left:10px;font-size:6px;white-space:nowrap">Asia-Pacific</td></tr></table></div>';
+                    } else if (this.name == "Rest of the world") {
+                      return '<div style="padding-bottom:5px;"><table><tr><td><div style="width: 10px;height: 10px;background-color: #9C26B3;"></div></td><td style="padding-left:10px;font-size:6px;white-space:nowrap">Rest of the world</td></tr></table></div>';
+                    }
+                  },
+                });
+              },
+            },
+          },
 
-          return `<div class='text-weight-bold'>${sectorShow}</div><div>Value : $${tempShowText}</div>
-            <div>Share: ${percentShow}</div>`;
+          series: [
+            {
+              dataLabels: {
+                style: { fontSize: "6px" },
+              },
+            },
+          ],
+
+          title: {
+            style: { fontSize: "12px" },
+          },
+          subtitle: {
+            style: { fontSize: "8px" },
+          },
         },
       },
     });
@@ -271,10 +347,10 @@ const loadData = async () => {
 
 const showCountryName = (x, countryData) => {
   let countryNameText = "";
-  if (x.source_country == "RoW") {
+  if (x.imp_country == "RoW") {
     countryNameText = "Rest of the World";
   } else {
-    let dataFind = countryData.filter((datax) => datax.iso == x.source_country);
+    let dataFind = countryData.filter((datax) => datax.iso == x.imp_country);
     countryNameText = dataFind[0].economic;
   }
   return countryNameText;
@@ -284,22 +360,17 @@ watch(
   () => ({
     exportingISO: props.dataSend.exportingISO,
     exportingName: props.dataSend.exportingName,
-    importingName: props.dataSend.importingName,
-    importingISO: props.dataSend.importingISO,
     year: props.dataSend.year,
     sectorName: props.dataSend.sectorName,
   }),
   (newVal, oldVal) => {
     if (
       newVal.exportingISO.length > 0 &&
-      newVal.importingISO.length > 0 &&
       newVal.year.length > 0 &&
       newVal.sectorName.length > 0
     ) {
       dataInput.value.exportingISO = props.dataSend.exportingISO;
       dataInput.value.exportingName = props.dataSend.exportingName;
-      dataInput.value.importingISO = props.dataSend.importingISO;
-      dataInput.value.importingName = props.dataSend.importingName;
       dataInput.value.year = props.dataSend.year;
       dataInput.value.sectorName = props.dataSend.sectorName;
 
@@ -312,9 +383,4 @@ watch(
 );
 </script>
 
-<style lang="scss" scoped>
-.highcharts-legend {
-  display: block !important;
-  visibility: visible !important;
-}
-</style>
+<style lang="scss" scoped></style>
