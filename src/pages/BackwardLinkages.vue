@@ -191,6 +191,7 @@ import { countryGroupListRiva2 } from "./countryGroupList";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { LocalStorage } from "quasar";
 // input
 const modeCal = ref("1");
 const inputData = ref({
@@ -217,17 +218,87 @@ const sector = ref(route.params.sector || "");
 
 const getYear = (value) => {
   inputData.value.year = value;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: value,
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.year = inputData.value.year;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getExportInput = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: inputData.value.exportingISO,
+      exportingName: inputData.value.exportingName,
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.exportingISO = inputData.value.exportingISO;
+    dataOld.exportingName = inputData.value.exportingName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getImportInput = (selected) => {
   inputData.value.importingName = selected.name;
   inputData.value.importingISO = selected.iso;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: inputData.value.importingISO,
+      importingName: inputData.value.importingName,
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.importingISO = inputData.value.importingISO;
+    dataOld.importingName = inputData.value.importingName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getSectorInput = (selected) => {
   inputData.value.sectorName = selected;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: inputData.value.sectorName,
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.sector = inputData.value.sectorName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 
 //Share
@@ -320,15 +391,43 @@ watch(route, (newRoute) => {
 onMounted(() => {
   if (exportingISO.value) {
     getExportInput({ name: "", iso: exportingISO.value });
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.exportingISO) {
+        exportingISO.value = dataOld.exportingISO;
+      }
+    }
   }
   if (importingISO.value) {
     getImportInput({ name: "", iso: importingISO.value });
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.importingISO) {
+        importingISO.value = dataOld.importingISO;
+      }
+    }
   }
   if (sector.value) {
     getSectorInput({ sectorName: "", sectorID: sector.value });
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.sector) {
+        sector.value = dataOld.sector;
+      }
+    }
   }
   if (year.value) {
     getYear(year.value);
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.year) {
+        year.value = dataOld.year;
+      }
+    }
   }
 });
 // Menu

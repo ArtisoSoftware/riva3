@@ -161,6 +161,7 @@ import forwardSector2 from "src/components/va_forward/forwardSector2.vue";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { LocalStorage } from "quasar";
 //input
 const modeCal = ref("1");
 const inputData = ref({
@@ -183,13 +184,65 @@ const sector = ref(route.params.sector || "");
 
 const getYear = (value) => {
   inputData.value.year = value;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: value,
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.year = inputData.value.year;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getExport = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: inputData.value.exportingISO,
+      exportingName: inputData.value.exportingName,
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.exportingISO = inputData.value.exportingISO;
+    dataOld.exportingName = inputData.value.exportingName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getSector = (selected) => {
   inputData.value.sectorName = selected;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: inputData.value.sectorName,
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.sector = inputData.value.sectorName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 
 //Share
@@ -249,12 +302,33 @@ watch(route, (newRoute) => {
 onMounted(() => {
   if (exportingISO.value) {
     getExportInput({ name: "", iso: exportingISO.value });
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.exportingISO) {
+        exportingISO.value = dataOld.exportingISO;
+      }
+    }
   }
   if (sector.value) {
     getSectorInput({ sectorName: "", sectorID: sector.value });
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.sector) {
+        sector.value = dataOld.sector;
+      }
+    }
   }
   if (year.value) {
     getYear(year.value);
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.year) {
+        year.value = dataOld.year;
+      }
+    }
   }
 });
 

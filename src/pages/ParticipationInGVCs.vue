@@ -116,6 +116,7 @@ import partGraph1 from "../components/va_participation/va_participation_graph1.v
 import { useRouter, useRoute } from "vue-router";
 import { countryGroupListRiva2 } from "./countryGroupList";
 import { ref, watch, onMounted } from "vue";
+import { LocalStorage } from "quasar";
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
@@ -131,18 +132,88 @@ const showResult = ref(false);
 const tinaLinkURL = ref("");
 const getYear = (value) => {
   inputData.value.year = value;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: value,
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.year = inputData.value.year;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getExportEco = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: inputData.value.exportingISO,
+      exportingName: inputData.value.exportingName,
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.exportingISO = inputData.value.exportingISO;
+    dataOld.exportingName = inputData.value.exportingName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getImportEco = (selected) => {
   inputData.value.importingName = selected.name;
   inputData.value.importingISO = selected.iso;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: inputData.value.importingISO,
+      importingName: inputData.value.importingName,
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.importingISO = inputData.value.importingISO;
+    dataOld.importingName = inputData.value.importingName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 
 const getSector = (selected) => {
   inputData.value.sectorName = selected;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: inputData.value.sectorName,
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.sector = inputData.value.sectorName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const router = useRouter();
 const route = useRoute();
@@ -246,9 +317,42 @@ const sector = ref("");
 
 onMounted(() => {
   exportingISO.value = route.params.exp || "";
+  if (exportingISO.value == "") {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.exportingISO) {
+        exportingISO.value = dataOld.exportingISO;
+      }
+    }
+  }
   importingISO.value = route.params.imp || "";
+  if (importingISO.value == "") {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.importingISO) {
+        importingISO.value = dataOld.importingISO;
+      }
+    }
+  }
   year.value = route.params.year || "";
+  if (year.value == "") {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.year) {
+        year.value = dataOld.year;
+      }
+    }
+  }
+  // inputData.value.sectorName = route.params.sector || "";
   sector.value = route.params.sector || "";
+  if (sector.value == "") {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.sector) {
+        sector.value = dataOld.sector;
+      }
+    }
+  }
 });
 
 const goToStep1 = () => {

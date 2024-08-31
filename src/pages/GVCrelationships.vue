@@ -79,34 +79,6 @@
         </div>
       </div>
       <div v-if="showResult">
-        <!-- <div class="q-pa-lg row justify-center" style="font-size: 20px">
-          <div style="padding-top: 10px" class="q-pr-lg">Scoll to</div>
-          <div class="q-pr-lg">
-            <q-btn
-              label="Overview"
-              no-caps
-              outline
-              style="font-size: 20px; width: 260px"
-            />
-          </div>
-          <div class="q-pr-lg">
-            <q-btn
-              label="By exporting sector"
-              no-caps
-              outline
-              style="font-size: 20px; width: 260px"
-            />
-          </div>
-          <div>
-            <q-btn
-              label="By partner economy"
-              no-caps
-              outline
-              style="font-size: 20px; width: 260px"
-            />
-          </div>
-        </div>
-        <hr /> -->
         <div>
           <GvcOverview :dataSend="dataSend" />
         </div>
@@ -137,6 +109,7 @@ import top5Country from "../components/va_gvc/top5partner.vue";
 
 import { ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { LocalStorage } from "quasar";
 const inputData = ref({
   exportingName: "",
   exportingISO: "",
@@ -161,12 +134,47 @@ const getYear = (value) => {
   if (inputData.value.exportingISO != "") {
     dataSend.value = inputData.value;
   }
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: "",
+      exportingName: "",
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: value,
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.year = inputData.value.year;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 const getExport = (selected) => {
   inputData.value.exportingName = selected.name;
   inputData.value.exportingISO = selected.iso;
   dataSend.value = inputData.value;
   showResult.value = true;
+  let dataOld = LocalStorage.getItem("inputVA");
+  if (dataOld == null) {
+    let tempInput = {
+      exportingISO: inputData.value.exportingISO,
+      exportingName: inputData.value.exportingName,
+      importingISO: "",
+      importingName: "",
+      sourceISO: "",
+      sourceName: "",
+      year: "",
+      sector: "",
+    };
+    LocalStorage.set("inputVA", tempInput);
+  } else {
+    dataOld.exportingISO = inputData.value.exportingISO;
+    dataOld.exportingName = inputData.value.exportingName;
+    LocalStorage.set("inputVA", dataOld);
+  }
 };
 
 const goToStep2 = () => {
@@ -226,9 +234,23 @@ watch(route, (newRoute) => {
 onMounted(() => {
   if (exportingISO.value) {
     getExport({ name: "", iso: exportingISO.value });
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.exportingISO) {
+        exportingISO.value = dataOld.exportingISO;
+      }
+    }
   }
   if (year.value) {
     getYear(year.value);
+  } else {
+    let dataOld = LocalStorage.getItem("inputVA");
+    if (dataOld != null) {
+      if (dataOld.year) {
+        year.value = dataOld.year;
+      }
+    }
   }
   // Refresh the page on first load to ensure meta tag change
   sessionStorage.removeItem("reloaded2");
