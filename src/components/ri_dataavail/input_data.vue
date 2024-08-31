@@ -446,6 +446,7 @@ const input = ref({
   partner: [],
   reporting: [],
   economy: [],
+  type: "Economy group",
 });
 
 const emit = defineEmits(["reset-start-btn", "start-btn"]);
@@ -458,7 +459,8 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   await loadCountry();
-  if (props.dataSend.length != 0) {
+
+  if (props.dataSend && props.dataSend.length != 0) {
     loadInput();
   }
 });
@@ -502,6 +504,12 @@ const getFlagUrl = (iso) => {
 };
 
 const loadCountry = async () => {
+  if (props.dataSend.compareType) {
+    input.value.compareType = props.dataSend.compareType;
+  } else {
+    input.value.compareType = "specific"; // หรือค่า default ที่คุณต้องการ
+  }
+
   if (input.value.compareType == "group") {
     let tableGroup = "";
     countryOptions.value = [];
@@ -555,6 +563,7 @@ const loadCountry = async () => {
         tablePartner = "ri_data_spec_all_partner_con";
       }
     }
+
     let url = serverData.value + "ri/data_load_country.php";
     let dataReporter = {
       table: tableReporter,
@@ -571,6 +580,7 @@ const loadCountry = async () => {
       };
       countryOptionsReporter.value.push(tempData);
     });
+
     let resPartner = await axios.post(url, JSON.stringify(dataPartner));
     resPartner.data.forEach((element) => {
       let tempData = {
@@ -610,16 +620,20 @@ const showSelectedEconomyList = () => {
 
 const showSelectedPartnerList = () => {
   resetStartBtn();
+
   countryPartnerList.value = [];
   let countryPartyTemp = [];
   let iso = input.value.partner.map((x) => x.value);
+
   iso.forEach((isoData) => {
     let tempList = countryGroupListRiva2(isoData);
     countryPartyTemp = countryPartyTemp.concat(tempList);
   });
   let test = [...new Set(countryPartyTemp)];
+
   test.forEach((x) => {
     let temp = countryOptionsPartner.value.filter((y) => y.value == x);
+
     if (temp.length > 0) {
       let inputCountry = {
         label: temp[0].label,
@@ -661,22 +675,14 @@ const resetStartBtn = () => {
 
 const loadInput = () => {
   input.value.integration = props.dataSend.input.type.toLowerCase();
-  if (props.dataSend.type == "Economy group") {
+  if (props.dataSend.compareType == "group") {
     input.value.economy = props.dataSend.input.partner;
     showSelectedEconomyList();
   } else if (props.dataSend.type == "Specific") {
     input.value.compareType = "specific";
     input.value.partner = props.dataSend.input.partner;
-    let temp = [];
-    props.dataSend.input.reporting.forEach((x) => {
-      let tempx = {
-        value: x.value,
-        label: x.label,
-      };
-      temp.push(tempx);
-    });
+    input.value.reporting = props.dataSend.input.reporting;
 
-    input.value.reporting = temp;
     showSelectedPartnerList();
     showSelectedReportList();
   } else if (props.dataSend.type == "SpecificAllData") {

@@ -458,14 +458,15 @@ const showSelectedReportList = () => {
 const checkDataAvailability = () => {
   if (countryReportList.value.length > 0 && countryFullList.value.length > 0) {
     let id = uuidv4();
+    let input2 = JSON.parse(JSON.stringify(input.value));
     let saveData = {
-      input: input.value,
+      input: input2,
       database: "DigiSRII",
       type: "Specific",
       disaggregation: "Pair",
       key: id,
     };
-
+    saveData.input.dataBase = "digi";
     LocalStorage.clear();
     LocalStorage.set("dataAvail", saveData);
     emit("show-dataavail-chart", {

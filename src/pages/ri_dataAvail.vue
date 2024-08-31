@@ -66,7 +66,6 @@ onBeforeMount(() => {
   if (keyLocal != null) {
     if (keyId == keyLocal.key) {
       dataGet.value = LocalStorage.getItem("dataAvail");
-      console.log(dataGet.value);
     }
   }
 });

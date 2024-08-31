@@ -254,13 +254,18 @@ const showSelectedPartnerList = () => {
 const checkDataAvailability = () => {
   if (countryFullList.value.length >= 2) {
     let id = uuidv4();
+    let input2 = JSON.parse(JSON.stringify(input.value));
     let saveData = {
-      input: input.value,
-      database: "DigiSRII",
-      type: "Economy group",
-      disaggregation: "Pair",
+      input: input2,
+      database: "digi",
+      compareType: "group",
+      disaggregation: "pair",
       key: id,
     };
+
+    saveData.input.compareType = "group";
+    saveData.input.disaggregation = "pair";
+    saveData.input.dataBase = "digi";
     LocalStorage.clear();
     LocalStorage.set("dataAvail", saveData);
     emit("get-input", {
