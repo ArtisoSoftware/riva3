@@ -280,7 +280,6 @@ const dataSend = ref({
 const runGraph = () => {
   dataSend.value = inputData.value;
   showResult.value = true;
-  console.log("run graph");
 };
 
 // Watch route params to update inputData

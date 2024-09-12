@@ -375,8 +375,10 @@ const showDetailForward = async (eco, item) => {
     year: Number(year.value),
     country: item.shortName,
   };
+
   let url = serverData.value + "va/gvcloaddata3a.php";
   let res = await axios.post(url, JSON.stringify(tempSend));
+
   let result = res.data
     .filter((x) => x.var == "Forward linkages")
     .sort((a, b) => Number(b.value) - Number(a.value));

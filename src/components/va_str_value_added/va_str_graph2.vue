@@ -81,7 +81,7 @@ const loadData = async () => {
       Number(
         Number(
           res.data.filter((x) => x.variable == "gross_trade_balance")[0].value
-        )
+        ) * 100
       ).toFixed(2)
     );
     getData.value.blue = Number(
@@ -89,7 +89,7 @@ const loadData = async () => {
         Number(
           res.data.filter((x) => x.variable == "value_added_trade_balance")[0]
             .value
-        )
+        ) * 100
       ).toFixed(2)
     );
   } else {

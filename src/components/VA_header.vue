@@ -20,7 +20,9 @@
       </div>
       <div class="row text-white q-pa-md" style="font-size: 16px">
         <div>Download data</div>
-        <div class="q-px-lg">Country briefs</div>
+        <div class="q-px-lg cursor-pointer" @click="goToCountryBrief">
+          Country briefs
+        </div>
         <div>
           <span @click="goToNote" class="cursor-pointer">Technical notes</span>
         </div>
@@ -223,7 +225,9 @@ const router = useRouter();
 const goToHome = () => {
   router.push("/");
 };
-
+const goToCountryBrief = () => {
+  router.push("/countrybrief");
+};
 const demoDia = ref(false);
 const goToDemo = () => {
   demoDia.value = true;

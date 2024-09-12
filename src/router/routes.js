@@ -33,6 +33,14 @@ const routes = [
     path: "/forwardlinkagesimport/:exp?/:imp?/:year?",
     component: () => import("pages/ForwardLinkagesImport.vue"),
   },
+  {
+    path: "/countrybrief",
+    component: () => import("pages/Countrybrief.vue"),
+  },
+  {
+    path: "/countrydata",
+    component: () => import("pages/CountrybriefData.vue"),
+  },
   // RI Page
   {
     path: "/rioverview",

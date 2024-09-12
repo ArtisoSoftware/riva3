@@ -264,6 +264,7 @@ const loadData = async () => {
   let forwardData = res.data.filter((x) => x.var == "Forward linkages");
   forwardData.sort((a, b) => Number(a.value) - Number(b.value));
   forwardData.forEach((item) => {
+    console.log(item.exp_sector);
     let shortName = sectorList.value.filter((x) => x.name == item.exp_sector);
 
     let temp = {
