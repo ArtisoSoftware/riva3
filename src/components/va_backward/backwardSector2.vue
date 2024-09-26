@@ -397,6 +397,14 @@ const loadData = async () => {
                 },
                 true
               ); // redraw the chart with updated xAxis categories
+              chart.yAxis[0].update({
+                title: {
+                  text: `% of gross exports to ${dataInput.value.importingName}`,
+                },
+                labels: {
+                  format: "{value}%", // ใช้ % สำหรับแสดงผล
+                },
+              });
               chart.setTitle({
                 text: `Where do ${region.value} economies' imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
               });
@@ -420,7 +428,7 @@ const loadData = async () => {
             fontSize: "24px",
           },
 
-          text: `Where do ${dataInput.value.exportingName} economies' imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
+          text: `Where do ${region.value} economies' imported content in exports of ${dataInput.value.sectorName} to ${dataInput.value.importingName} come from?`,
         },
         subtitle: {
           style: {

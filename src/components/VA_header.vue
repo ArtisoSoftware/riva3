@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="row text-white q-pa-md" style="font-size: 16px">
-        <div>Download data</div>
+        <div class="cursor-pointer" @click="goToDownload">Download data</div>
         <div class="q-px-lg cursor-pointer" @click="goToCountryBrief">
           Country briefs
         </div>
@@ -231,6 +231,9 @@ const goToCountryBrief = () => {
 const demoDia = ref(false);
 const goToDemo = () => {
   demoDia.value = true;
+};
+const goToDownload = () => {
+  router.push("/download");
 };
 
 const vdoURL = ref(serverData.value + "demo/demo.webm");

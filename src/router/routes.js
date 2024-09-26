@@ -34,6 +34,10 @@ const routes = [
     component: () => import("pages/ForwardLinkagesImport.vue"),
   },
   {
+    path: "/download",
+    component: () => import("pages/Download.vue"),
+  },
+  {
     path: "/countrybrief",
     component: () => import("pages/Countrybrief.vue"),
   },

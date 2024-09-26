@@ -363,6 +363,10 @@ const loadData = async () => {
     };
   });
 
+  // console.log(chart2AsiaPacific.value);
+
+  let xLabel = chart2AsiaPacific.value.map((x) => x.name);
+
   setTimeout(() => {
     var chart = Highcharts.chart(
       "container2",
@@ -383,7 +387,7 @@ const loadData = async () => {
             drillup: function (e) {
               chart.xAxis[0].update(
                 {
-                  categories: exportNameList.value,
+                  categories: xLabel,
                   labels: {
                     rotation: -90,
                   },
@@ -391,6 +395,11 @@ const loadData = async () => {
                 },
                 true
               ); // redraw the chart with updated xAxis categories
+              chart.yAxis[0].update({
+                title: {
+                  text: "% of gross exports to world", // รีเซ็ตแกน y
+                },
+              });
               chart.setTitle({
                 text: `Where do ${region.value} economies contribute the most towards export production (${dataInput.value.sectorName})?`,
               });
@@ -426,7 +435,7 @@ const loadData = async () => {
         yAxis: {
           min: 0,
           title: {
-            text: `% of gross exports to ${dataInput.value.importingName}`,
+            text: `% of gross exports to world`,
           },
           stackLabels: {
             enabled: false,

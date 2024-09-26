@@ -812,6 +812,14 @@ const loadData = async () => {
               text: "Click on a bar to see the individual sector associated with a sector group.",
             });
             chart2.xAxis[0].setCategories(exportNameListFinal.value);
+            chart2.yAxis[0].update({
+              title: {
+                text: `% of gross exports to ${dataInput.value.importingName}`,
+              },
+              labels: {
+                format: "{value}%", // Ensure the Y-axis label format is correct
+              },
+            });
           },
         },
       },

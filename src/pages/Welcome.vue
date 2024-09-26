@@ -124,22 +124,29 @@
 <script setup>
 import footerMain from "../components/footer.vue";
 import { useRouter } from "vue-router";
+import { getCurrentInstance } from "vue";
 import { onMounted, ref } from "vue";
 const router = useRouter();
-const selectedLanguage = ref("en"); // Default language is English
-
-const languages = [
-  { label: "English", value: "en" },
-  { label: "Russian", value: "ru" },
-  { label: "Chinese", value: "zh-CN" },
-  { label: "French", value: "fr" },
-  { label: "Spanish", value: "es" },
-];
+const { proxy } = getCurrentInstance();
 
 const goToVA = () => {
+  // ส่ง Event ไปยัง Google Analytics
+  proxy.$gtag.event("value_chain_analyzer_click", {
+    // พารามิเตอร์เพิ่มเติม (ถ้าจำเป็น)
+    button_name: "Value Chain Analyzer",
+    page_title: "Welcome Page",
+    page_path: "/welcome",
+  });
   router.push("/gvcrelationships");
 };
 const goToRI = () => {
+  // ส่ง Event ไปยัง Google Analytics
+  proxy.$gtag.event("regional_integration_analyzer_click", {
+    button_name: "Regional Integration Analyzer",
+    page_title: "Welcome Page",
+    page_path: "/welcome",
+  });
+
   router.push("/rioverview");
 };
 onMounted(() => {

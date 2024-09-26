@@ -789,6 +789,7 @@ const loadData = async () => {
     };
   });
 
+  let ecoX = agricultureData.value.map((x) => x.name);
   var chart2 = Highcharts.chart(
     "container4",
     {
@@ -805,6 +806,13 @@ const loadData = async () => {
             });
           },
           drillup: function (e) {
+            chart2.xAxis[0].setCategories(exportNameListFinal.value, false); // Set categories without redrawing immediately
+            chart2.redraw(); // Redraw after setting categories
+            chart2.yAxis[0].update({
+              title: {
+                text: `% of gross exports to ${dataInput.value.importingName}`,
+              },
+            });
             chart2.setTitle({
               text: `How are ${region.value} economies' contribution to export production in ${dataInput.value.importingName} distributed across sectors?`,
             });

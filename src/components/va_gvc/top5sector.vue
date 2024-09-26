@@ -32,7 +32,7 @@
       >
         <div class="col text-center">
           <div class="txtGreen text-right">
-            <b>Largest backward linked partners</b>
+            <b>Largest backward linked sectors</b>
           </div>
           <div
             class="q-mt-md"

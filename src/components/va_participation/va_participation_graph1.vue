@@ -93,6 +93,7 @@ const loadData = async () => {
   };
   let url = serverData.value + "/va/strloaddata3.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
+  console.log(res.data);
 
   if (res.data == null) {
     console.log("No data available");
@@ -173,6 +174,8 @@ const loadData = async () => {
     }
   });
 
+  // console.log(countryListName);
+  // console.log(redOutput.value);
   setTimeout(() => {
     Highcharts.chart("container3", {
       chart: {
