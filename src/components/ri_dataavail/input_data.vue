@@ -507,7 +507,8 @@ const loadCountry = async () => {
   if (props.dataSend.compareType) {
     input.value.compareType = props.dataSend.compareType;
   } else {
-    input.value.compareType = "specific"; // หรือค่า default ที่คุณต้องการ
+    // console.log(input.value.compareType);
+    // input.value.compareType = "group"; // หรือค่า default ที่คุณต้องการ
   }
 
   if (input.value.compareType == "group") {

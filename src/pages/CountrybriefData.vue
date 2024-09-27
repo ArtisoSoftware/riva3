@@ -10,6 +10,7 @@
       "
     >
       <div ref="content">
+        <!-- หน้าแรก -->
         <div class="printPage text-white">
           <div
             style="background: #04284d; width: 100%; height: 140px"
@@ -285,6 +286,7 @@
           </div>
         </div>
         <div class="break"></div>
+        <!-- หน้าสอง -->
         <div class="printPage text-black">
           <div
             class="q-py-sm text-bold bg-bar"
@@ -535,9 +537,259 @@
               </div>
             </div>
           </div>
+          <div class="q-mt-xl">
+            <div class="row">
+              <div class="col q-pl-xl">
+                <div align="left">
+                  <span style="font-size: 18px" class="text-bold text-black">
+                    Forward linkages
+                    <span
+                      class="relative-position"
+                      style="top: -10px; font-size: 12px"
+                      >7</span
+                    >
+                    (by exporting sector)
+                    <span
+                      class="relative-position"
+                      style="top: -10px; font-size: 12px"
+                      >8</span
+                    >
+                    <span style="font-size: 15px"></span>
+                  </span>
+                </div>
+                <div align="left">
+                  <span class="text-bold" style="font-size: 18px"
+                    >{{ dataSend.economyName }}'s contribution to further export
+                    production, by sector (% of {{ dataSend.economyName }}'s
+                    gross exports):</span
+                  >
+                </div>
+                <div>
+                  <ul>
+                    <li v-for="(item, index) in contentG5_1" :key="index">
+                      {{ item }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="q-mt-md" align="left">
+                  <span class="text-bold" style="font-size: 18px"
+                    >{{ fullRegionISO }} contribution to further export
+                    production, by sector (% of {{ fullRegionISO }} gross
+                    exports):</span
+                  >
+                </div>
+                <div>
+                  <ul>
+                    <li v-for="(item, index) in contentG5_2" :key="index">
+                      {{ item }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-7">
+                <div align="center">
+                  <span style="font-size: 18px" class="text-bold"
+                    >Forward linkages, by exporting sector</span
+                  >
+                </div>
+                <div align="right" class="q-pr-xl">
+                  <i style="font-size: 12px">(% of gross exports)</i>
+                </div>
+                <div class="q-pl-md">
+                  <div id="container11"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="break"></div>
+        <div class="printPage text-black">
+          <div class="q-mt-xl q-px-xl">
+            <div>
+              <span class="text-bold text-h6">Notes:</span>
+            </div>
+            <div style="font-size: 14px">
+              <div>
+                <ul>
+                  <li style="list-style: decimal">
+                    Domestic production consumed by the importer: Share of
+                    domestic value-added in gross exports that is consumed in
+                    the importing economy.
+                  </li>
+                  <li style="list-style: decimal">
+                    Domestic production used in the importer's exports: Share of
+                    domestic value-added in gross exports used by importing
+                    economy to produce exports. Higher shares are indicative of
+                    deeper GVC integration.
+                  </li>
+                  <li style="list-style: decimal">
+                    Domestic production that returns via the importer's exports:
+                    Share of domestic value-added in gross exports that returns
+                    home via imports and is consumed domestically.
+                  </li>
+                  <li style="list-style: decimal">
+                    Double counted exports: Share of intermediate trade flows in
+                    gross exports that are recorded multiple times from repeated
+                    border crossings. Higher shares are indicative of deeper GVC
+                    integration.
+                  </li>
+                  <li style="list-style: decimal">
+                    Foreign production consumed by the importer: Share of
+                    foreign value added in gross exports. Higher shares are
+                    indicative of deeper GVC integration.
+                  </li>
+                  <li style="list-style: decimal">
+                    Backward linkages: Share of foreign value added in gross
+                    exports.
+                  </li>
+                  <li style="list-style: decimal">
+                    Forward linkages: Share of domestic value-added in gross
+                    exports used by importing economy to produce exports.
+                  </li>
+                  <li style="list-style: decimal">
+                    Sectors are grouped based on ADB ERDI classification. For
+                    more details please refer to
+                    <u>RIVA techinical notes.</u>
+                  </li>
+                  <li style="list-style: decimal">
+                    Regional classification of Asia-Pacific economies follows
+                    ESCAP sub-regions while regional classification for other
+                    economies is based on United Nations Statistical Division
+                    (UNSD) methodology. For more details please refer to
+                    <u>RIVA techinical notes.</u>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <span class="text-bold text-h6">Abbreviations and acronyms:</span>
+            </div>
+            <div style="font-size: 14px">
+              GVC: global value chain
+              <br />
+              <div>
+                {{
+                  fullRegionISO != "Pacific"
+                    ? fullRegionISO + ": " + fullRegion
+                    : ""
+                }}
+              </div>
+              <span
+                >ADB ERDI: Asian Development Bank Development Indicators and
+                Policy Research Division</span
+              >
+              <div>MRIO: Multi-regional input output</div>
+            </div>
+            <div class="q-mt-md">
+              <span class="text-bold text-h6">Source:</span>
+            </div>
+            <div style="font-size: 14px">
+              <span>
+                RIVA, available at
+                <u>https://riva.negotiatetrade.org</u>
+              </span>
+            </div>
+            <div class="q-mt-md">
+              <span class="text-bold font-14">Disclaimer:</span>
+            </div>
+            <div style="font-size: 12px">
+              <span
+                >ESCAP gratefully acknowledges the use of ADB-MRIO database as
+                underlying data to estimate GVC indicators in RIVA.</span
+              >
+            </div>
+            <div style="font-size: 12px">
+              <span>
+                The designations employed and the presentation of the material
+                in RIVA do not imply the expression of any opinion whatsoever on
+                the part of the Secretariat of the United Nations concerning the
+                legal status of any country, territory, city or area or of its
+                authorities, or concerning the delimitation of its frontiers or
+                boundaries. Opinions, figures and estimates set forth in this
+                publication should not necessarily be considered as reflecting
+                the views or carrying the endorsement of the United Nations.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <q-dialog v-model="isShowShare" persistent>
+      <q-card class="shareDia q-pa-md">
+        <div class="row justify-between">
+          <div>Share</div>
+          <div class="cursor-pointer" @click="isShowShare = false">
+            <q-icon name="fa-solid fa-xmark" size="20px" />
+          </div>
+        </div>
+        <div class="row justify-between q-px-lg q-py-lg">
+          <div>
+            <ShareNetwork
+              network="facebook"
+              :url="urlLink"
+              title="RIVA - A Revolutionary Platform"
+              description="Country brief from RIVA "
+              quote="RIVA: Revolutionizing International Trade"
+              hashtag="#RIVA"
+            >
+              <img
+                src="../../public/images/facebookShare.svg"
+                alt="Facebook Share"
+                style="height: 120px"
+                class="cursor-pointer"
+              />
+            </ShareNetwork>
+            <div class="text-center">Facebook</div>
+          </div>
+          <div>
+            <ShareNetwork
+              network="twitter"
+              :url="urlLink"
+              title="RIVA - A Revolutionary Platform"
+              description="Country brief from RIVA "
+              hashtag="#RIVA"
+            >
+              <img
+                src="../../public/images/xShare.svg"
+                alt="Twitter Share"
+                style="height: 120px"
+                class="cursor-pointer"
+              />
+            </ShareNetwork>
+            <div class="text-center">Twitter</div>
+          </div>
+          <div>
+            <ShareNetwork
+              network="linkedin"
+              :url="urlLink"
+              title="RIVA - A Revolutionary Platform"
+              description="Country brief from RIVA "
+              source="https://riva.negotiatetrade.org"
+            >
+              <img
+                src="../../public/images/inShare.svg"
+                alt="LinkedIn Share"
+                style="height: 120px"
+                class="cursor-pointer"
+              />
+            </ShareNetwork>
+            <div class="text-center">LinkedIn</div>
+          </div>
+        </div>
+        <div class="q-px-lg">
+          <div class="boxGrey q-px-md row">
+            <div class="col ellipsis">{{ urlLink }}</div>
+            <div
+              style="width: 40px; color: #1996d4; font-weight: 600"
+              class="text-right cursor-pointer"
+              @click="copyLink()"
+            >
+              COPY
+            </div>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -545,15 +797,24 @@
 import { ref, watch, onMounted, onBeforeMount, nextTick } from "vue";
 import { LocalStorage } from "quasar";
 import axios from "axios";
+import { useRoute } from "vue-router";
 import { serverSetup } from "./server.js";
 import { countryName } from "./countryName.js";
 import { countryGroupListRiva2 } from "./countryGroupList";
+import html2pdf from "jspdf-html2canvas";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
+
+//Set up variable
 const { serverData } = serverSetup();
 const dataSend = ref({
   economicISO: "",
   economicName: "",
   year: "",
 });
+const isShowShare = ref(false);
+const urlLink = ref("");
+const route = useRoute();
 const showError = ref(false);
 const btnShow = ref(true);
 const fullRegion = ref("");
@@ -637,6 +898,17 @@ const contentG3_2 = ref([]);
 const contentG4_1 = ref([]);
 const contentG4_2 = ref([]);
 
+const contentG5_1 = ref([]);
+const contentG5_2 = ref([]);
+
+const g6AsiaPacific = ref([]);
+const g6Europe = ref([]);
+const g6NorthAmerica = ref([]);
+const g6Latin = ref([]);
+const g6Rest = ref([]);
+const g6CountryList = ref([]);
+
+//ลำดับตัวเลข
 const getOrdinalSuffix = (n) => {
   const suffixes = ["th", "st", "nd", "rd"];
   const value = n % 100;
@@ -665,7 +937,10 @@ const loadData = async () => {
   // console.log("fullRegionISO: ", fullRegionISO.value);
   // console.log("fullRegion: ", fullRegion.value);
   // console.log("ecoList", ecoList);
-  //graph1 in section1
+
+  //*************** */
+  //graph1 in Value-added structure of gross exports to the world by exporter
+  //Pie chart of Region - page 1
   {
     let dataTemp2 = {
       exp_country: fullRegionISO.value,
@@ -676,7 +951,6 @@ const loadData = async () => {
 
     let url2 = serverData.value + "/va/strloaddata1.php";
     let res2 = await axios.post(url2, JSON.stringify(dataTemp2));
-    // console.log(res2.data);
 
     {
       let dataFilter = res2.data.filter((x) => x.var == "Backward_linkages");
@@ -737,7 +1011,9 @@ const loadData = async () => {
     await nextTick();
     chart1();
   }
-  //Chart 2 in Section1ff
+  //*************** */
+  //graph2 in Value-added structure of gross exports to the world by exporter
+  //Pie chart of economic - page 1
   {
     let dataTemp3 = {
       exp_country: dataSend.value.economyISO,
@@ -808,7 +1084,9 @@ const loadData = async () => {
     chart2();
   }
 
-  //graph3 in section1
+  //*************** */
+  //graph3 in Value-added structure of gross exports to the world by exporter
+  //Pie chart of All economics - page 1
   {
     let dataTemp3 = {
       exp_country: "WLD",
@@ -819,7 +1097,6 @@ const loadData = async () => {
 
     let url3 = serverData.value + "/va/strloaddata1.php";
     let res3 = await axios.post(url3, JSON.stringify(dataTemp3));
-    // console.log(res2.data);
 
     {
       let dataFilter = res3.data.filter((x) => x.var == "Backward_linkages");
@@ -881,8 +1158,9 @@ const loadData = async () => {
     chart3();
   }
 
+  //************* */
+  //หาว่าข้อมูลปีที่เก่าที่สุดของประเทศนี้
   {
-    //หาว่าข้อมูลปีที่เก่าที่สุดของประเทศนี้
     let url4 = serverData.value + "va/getYear.php";
     let res4 = await axios.get(url4);
     let yearList = res4.data.sort((a, b) => Number(a.year) - Number(b.year));
@@ -903,9 +1181,11 @@ const loadData = async () => {
         yearLow.value = yearData.year;
       }
     }
-    // console.log("yearLow", yearLow.value);
   }
 
+  //***************** */
+  //graph4 in economic's gross and value-added trade balance with the world
+  //Value-added trade balance & Gross trade balance - page 1
   {
     let modeShow = 1;
     if (dataSend.value.year == yearLow.value) {
@@ -1040,7 +1320,8 @@ const loadData = async () => {
     chart4();
   }
 
-  //Left area in section3
+  //**************** */
+  //graph5 in top 5 GVC partners - page 1
   {
     contentSection3Left.value = "";
     backwardSection3Left.value = [];
@@ -1103,7 +1384,8 @@ const loadData = async () => {
     chart5();
   }
 
-  //right area in section3
+  //*************** */
+  //graph6 in top 5 GVC-linked exporting sectors - page 1
   {
     contentSection3Right.value = "";
     backwardSection3Right.value = [];
@@ -1181,7 +1463,7 @@ const loadData = async () => {
     chart6();
   }
 
-  //Graph1 in page 2
+  //Graph7 in GVC related exports  - page 2
   {
     let dataTemp = {
       exp_country: dataSend.value.economyISO,
@@ -1327,7 +1609,7 @@ const loadData = async () => {
     chart7();
   }
 
-  //Graph2 in page2
+  //Graph8 in Backward linkages, by source region - page 2
   {
     let url0 = serverData.value + "va/getEcoList.php";
     let res0 = await axios.get(url0);
@@ -1542,7 +1824,8 @@ const loadData = async () => {
     chart8();
   }
 
-  //Graph3 in page2
+  //Graph9 in Backward linkages, by exporting sector - page 2
+  //********* wait source economy */
   {
     contentG3_1.value = [
       `High and medium tech (4.8%)`,
@@ -1560,27 +1843,312 @@ const loadData = async () => {
     ];
   }
 
-  //Graph4 in page 3
+  //Graph10 in Forward linkages, by importing region - page 3
+  //**** codeing here */
   {
+    let url0 = serverData.value + "va/getEcoList.php";
+    let res0 = await axios.get(url0);
+    let countryData = res0.data;
+    let url4 = serverData.value + "va/getEcoList.php";
+    let res4 = await axios.get(url4);
+    let regionCountryList = res4.data
+      .filter((x) => x.region == fullRegion.value)
+      .map((y) => y.iso);
+    regionCountryList.unshift(fullRegionISO.value);
+
+    //หา gross exports
+    let totalG2 = [];
+    for (const item of regionCountryList) {
+      let dataTemp6 = {
+        exp_country: item,
+        imp_country: "WLD",
+        exp_sector: "All sectors",
+        year: dataSend.value.year,
+      };
+      let url6 = serverData.value + "/va/strloaddata1.php";
+      let res6 = await axios.post(url6, JSON.stringify(dataTemp6));
+      if (res6.data.length > 0) {
+        totalG2.push(Number(res6.data[0].total_exports));
+      }
+    }
+    let dataTemp = {
+      exp_country: regionCountryList,
+      exp_sector: "All sectors",
+      year: dataSend.value.year,
+    };
+
+    let url = serverData.value + "/va/forwardSector1.php";
+    let res = await axios.post(url, JSON.stringify(dataTemp));
+    let result = res.data;
+
+    const isoToAreaMap = {};
+    countryData.forEach((country) => {
+      isoToAreaMap[country.iso] = country.area;
+    });
+
+    result.forEach((item) => {
+      const area = isoToAreaMap[item.imp_country];
+      item.area = area || "Unknown";
+    });
+    g6AsiaPacific.value = [];
+    g6Europe.value = [];
+    g6NorthAmerica.value = [];
+    g6Latin.value = [];
+    g6Rest.value = [];
+
+    regionCountryList.forEach((eco, index) => {
+      {
+        //Asia-Pacific
+        let c1 = result.filter(
+          (itemx) => itemx.exp_country == eco && itemx.area == "Asia-Pacific"
+        );
+        let totalC1 = c1.reduce((sum, item) => {
+          // Convert totalvalue to a number using parseFloat
+          const totalValueNum = parseFloat(item.value);
+          return sum + totalValueNum;
+        }, 0);
+        let temp = {
+          iso: eco,
+          value: Number(totalC1.toFixed(2)),
+          y: Number(Number((totalC1 / totalG2[index]) * 100).toFixed(1)),
+        };
+        g6AsiaPacific.value.push(temp);
+      }
+      {
+        //Europe
+        let c1 = result.filter(
+          (itemx) => itemx.exp_country == eco && itemx.area == "Europe"
+        );
+        let totalC1 = c1.reduce((sum, item) => {
+          // Convert totalvalue to a number using parseFloat
+          const totalValueNum = parseFloat(item.value);
+          return sum + totalValueNum;
+        }, 0);
+        let temp = {
+          iso: eco,
+          value: Number(totalC1.toFixed(2)),
+          y: Number(Number((totalC1 / totalG2[index]) * 100).toFixed(1)),
+        };
+        g6Europe.value.push(temp);
+      }
+
+      {
+        //North America
+        let c1 = result.filter(
+          (itemx) => itemx.exp_country == eco && itemx.area == "North America"
+        );
+        let totalC1 = c1.reduce((sum, item) => {
+          // Convert totalvalue to a number using parseFloat
+          const totalValueNum = parseFloat(item.value);
+          return sum + totalValueNum;
+        }, 0);
+        let temp = {
+          iso: eco,
+          value: Number(totalC1.toFixed(2)),
+          y: Number(Number((totalC1 / totalG2[index]) * 100).toFixed(1)),
+        };
+        g6NorthAmerica.value.push(temp);
+      }
+
+      {
+        //Latin
+        let c1 = result.filter(
+          (itemx) => itemx.exp_country == eco && itemx.area == "Latin America"
+        );
+        let totalC1 = c1.reduce((sum, item) => {
+          // Convert totalvalue to a number using parseFloat
+          const totalValueNum = parseFloat(item.value);
+          return sum + totalValueNum;
+        }, 0);
+        let temp = {
+          iso: eco,
+          value: Number(totalC1.toFixed(2)),
+          y: Number(Number((totalC1 / totalG2[index]) * 100).toFixed(1)),
+        };
+        g6Latin.value.push(temp);
+      }
+
+      {
+        //Rest of the world
+        let c1 = result.filter(
+          (itemx) => itemx.exp_country == eco && itemx.area == "Unknown"
+        );
+        let totalC1 = c1.reduce((sum, item) => {
+          // Convert totalvalue to a number using parseFloat
+          const totalValueNum = parseFloat(item.value);
+          return sum + totalValueNum;
+        }, 0);
+        let temp = {
+          iso: eco,
+          value: Number(totalC1.toFixed(2)),
+          y: Number(Number((totalC1 / totalG2[index]) * 100).toFixed(1)),
+        };
+        g6Rest.value.push(temp);
+      }
+    });
+
+    let g41_1 = 0;
+    let g41_2 = 0;
+    let g41_3 = 0;
+    let g41_4 = 0;
+    let g41_5 = 0;
+    let g41_6 = 0;
+    let g41_1a = 0;
+    let g41_2a = 0;
+    let g41_3a = 0;
+    let g41_4a = 0;
+    let g41_5a = 0;
+    let g41_6a = 0;
+
+    {
+      g6AsiaPacific.value = g6AsiaPacific.value.map((g6Item) => {
+        let country = countryData.find((country) => country.iso == g6Item.iso);
+        if (country == undefined) {
+          return {
+            ...g6Item,
+            name: fullRegion.value,
+          };
+        } else {
+          return {
+            ...g6Item,
+            name: country.economic,
+          };
+        }
+      });
+
+      g6Europe.value = g6Europe.value.map((g6Item) => {
+        let country = countryData.find((country) => country.iso == g6Item.iso);
+        if (country == undefined) {
+          return {
+            ...g6Item,
+            name: fullRegion.value,
+          };
+        } else {
+          return {
+            ...g6Item,
+            name: country.economic,
+          };
+        }
+      });
+
+      g6NorthAmerica.value = g6NorthAmerica.value.map((g6Item) => {
+        let country = countryData.find((country) => country.iso == g6Item.iso);
+        if (country == undefined) {
+          return {
+            ...g6Item,
+            name: fullRegion.value,
+          };
+        } else {
+          return {
+            ...g6Item,
+            name: country.economic,
+          };
+        }
+      });
+
+      g6Latin.value = g6Latin.value.map((g6Item) => {
+        let country = countryData.find((country) => country.iso == g6Item.iso);
+        if (country == undefined) {
+          return {
+            ...g6Item,
+            name: fullRegion.value,
+          };
+        } else {
+          return {
+            ...g6Item,
+            name: country.economic,
+          };
+        }
+      });
+
+      g6Rest.value = g6Rest.value.map((g6Item) => {
+        let country = countryData.find((country) => country.iso == g6Item.iso);
+        if (country == undefined) {
+          return {
+            ...g6Item,
+            name: fullRegion.value,
+          };
+        } else {
+          return {
+            ...g6Item,
+            name: country.economic,
+          };
+        }
+      });
+    }
+    await nextTick();
+    g6CountryList.value = g6AsiaPacific.value.map((xx) => xx.name);
+    console.log(g6AsiaPacific.value);
+    {
+      g41_1a = g6AsiaPacific.value[0].y;
+      g41_2a = g6Europe.value[0].y;
+      g41_3a = g6NorthAmerica.value[0].y;
+      g41_4a = g6Latin.value[0].y;
+      g41_5a = g6Rest.value[0].y;
+      g41_6a = g41_1a + g41_2a + g41_3a + g41_4a + g41_5a;
+
+      let indexEco = g6AsiaPacific.value.findIndex(
+        (c9) => c9.iso == dataSend.value.economyISO
+      );
+
+      g41_1 = g6AsiaPacific.value[indexEco].y;
+      g41_2 = g6Europe.value[indexEco].y;
+      g41_3 = g6NorthAmerica.value[indexEco].y;
+      g41_4 = g6Latin.value[indexEco].y;
+      g41_5 = g6Rest.value[indexEco].y;
+      g41_6 = g41_1 + g41_2 + g41_3 + g41_4 + g41_5;
+
+      // let temp = g6AsiaPacific.value.map((xx) => xx.y);
+      // console.log(temp);
+    }
+
+    console.log(g6CountryList.value);
+    console.log(g6AsiaPacific.value);
+    console.log(g6Europe.value);
+    console.log(g6NorthAmerica.value);
+    console.log(g6Latin.value);
+    console.log(g6Rest.value);
+
     contentG4_1.value = [
-      `Asia-Pacific (xx%)`,
-      `Europe (xx%)`,
-      `North America (xx%)`,
-      `Latin America (xx%)`,
-      `Rest of the world (xx%)`,
-      `Total (xx%)`,
+      `Asia-Pacific (${g41_1}%)`,
+      `Europe (${g41_2}%)`,
+      `North America (${g41_3}%)`,
+      `Latin America (${g41_4}%)`,
+      `Rest of the world (${g41_5}%)`,
+      `Total (${g41_6.toFixed(1)}%)`,
     ];
     contentG4_2.value = [
-      `Asia-Pacific (xx%)`,
-      `Europe (xx%)`,
-      `North America (xx%)`,
-      `Latin America (xx%)`,
-      `Rest of the world (xx%)`,
+      `Asia-Pacific (${g41_1a}%)`,
+      `Europe (${g41_2a}%)`,
+      `North America (${g41_3a}%)`,
+      `Latin America (${g41_4a}%)`,
+      `Rest of the world (${g41_5a}%)`,
+      `Total (${g41_6a.toFixed(1)}%)`,
+    ];
+
+    chart10();
+  }
+
+  //Graph11 in Forward linkages, by exporting sector - page 3
+  //******** wait source economy */
+  {
+    contentG5_1.value = [
+      `Mining (xx%)`,
+      `High and medium tech (xx%)`,
+      `Trade and repair service (xx%)`,
+      `Transport service (xx%)`,
+      `Total (xx%)`,
+    ];
+    contentG5_2.value = [
+      `Mining (xx%)`,
+      `High and medium tech (xx%)`,
+      `Trade and repair service (xx%)`,
+      `Transport service (xx%)`,
       `Total (xx%)`,
     ];
   }
 };
-
+//Chart1
 const chart1 = () => {
   Highcharts.chart("container2", {
     chart: {
@@ -1683,7 +2251,7 @@ const chart1 = () => {
     },
   });
 };
-
+//Chart2
 const chart2 = () => {
   Highcharts.chart("container1", {
     chart: {
@@ -1786,7 +2354,7 @@ const chart2 = () => {
     },
   });
 };
-
+//Chart3
 const chart3 = () => {
   Highcharts.chart("container3", {
     chart: {
@@ -1889,7 +2457,7 @@ const chart3 = () => {
     },
   });
 };
-
+//Chart4
 const chart4 = () => {
   Highcharts.chart("container4", {
     chart: {
@@ -1945,7 +2513,7 @@ const chart4 = () => {
     },
   });
 };
-
+//Chart5
 const chart5 = () => {
   let setCategories = ["", "", "", "", ""];
   let maxData =
@@ -2064,7 +2632,7 @@ const chart5 = () => {
     },
   });
 };
-
+//Chart6
 const chart6 = () => {
   let setCategories = ["", "", "", "", ""];
   let maxData =
@@ -2195,7 +2763,7 @@ const chart6 = () => {
     },
   });
 };
-
+//Chart7
 const chart7 = () => {
   Highcharts.chart("container7", {
     chart: {
@@ -2294,7 +2862,7 @@ const chart7 = () => {
     ],
   });
 };
-
+//Chart8
 const chart8 = () => {
   Highcharts.chart("container8", {
     chart: {
@@ -2388,20 +2956,176 @@ const chart8 = () => {
   });
 };
 
+//Chart10
+const chart10 = () => {
+  Highcharts.chart("container10", {
+    chart: {
+      type: "column",
+      height: 450,
+      width: 650,
+    },
+    title: {
+      text: "",
+    },
+    xAxis: {
+      categories: g6CountryList.value,
+      labels: {
+        enabled: true,
+        rotation: -45,
+      },
+    },
+    yAxis: {
+      title: {
+        text: "",
+      },
+      labels: {
+        formatter() {
+          return `${this.value}%`;
+        },
+      },
+    },
+    plotOptions: {
+      column: {
+        stacking: "normal",
+        dataLabels: {
+          enabled: false,
+        },
+      },
+    },
+    legend: {
+      enabled: true,
+      useHTML: true,
+      align: "center",
+      layout: "horizontal",
+      alignColumns: false,
+      width: 630,
+      labelFormatter() {
+        return `<div class='q-pr-sm q-pb-sm'>${this.name}</div>  `;
+      },
+    },
+    series: [
+      {
+        name: "Asia-Pacific",
+        data: g6AsiaPacific.value,
+        color: "#4080B3",
+      },
+      {
+        name: "Europe",
+        data: g6Europe.value,
+        color: "#D83964",
+      },
+      {
+        name: "North America",
+        data: g6NorthAmerica.value,
+        color: "#EB9B38",
+      },
+      {
+        name: "Latin America",
+        data: g6Latin.value,
+        color: "#4E9487",
+      },
+      {
+        name: "Rest of the world",
+        data: g6Rest.value,
+        color: "#9034AD",
+      },
+    ],
+    credits: {
+      enabled: false,
+    },
+    exporting: {
+      enabled: false,
+    },
+  });
+};
+//Print Btn
+const printBtn = () => {
+  window.print();
+};
+//Download Btn
+const downloadPDF = async () => {
+  btnShow.value = false;
+  await nextTick();
+  let pages = document.getElementsByClassName("printPage");
+
+  html2pdf(pages, {
+    html2canvas: {
+      scrollX: 0,
+      scrollY: -window.scrollY,
+    },
+    jsPDF: {
+      format: "a4",
+    },
+
+    imageType: "image/jpeg",
+    output: "./pdf/generate.pdf",
+  }).then(() => {
+    btnShow.value = true;
+  });
+};
+
 onBeforeMount(() => {
-  let dataInput = LocalStorage.getItem("countryBrief");
-  if (dataInput == null) {
-    showError.value = true;
-  } else {
-    dataSend.value = dataInput;
+  if (route.params.ecoISO) {
+    console.log("params");
+    let temp = {
+      economyISO: route.params.ecoISO,
+      economyName: route.params.ecoName,
+      year: route.params.year,
+    };
+    dataSend.value = temp;
     loadData();
-    // console.log("dataSend: ", dataSend.value);
+  } else {
+    let dataInput = LocalStorage.getItem("countryBrief");
+    if (dataInput == null) {
+      showError.value = true;
+    } else {
+      dataSend.value = dataInput;
+      loadData();
+      // console.log("dataSend: ", dataSend.value);
+    }
   }
 });
 </script>
 
 <style lang="scss" scoped>
+.shareDia {
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+}
 .bg-bar {
   background-image: linear-gradient(to right, #6e6b6b, #a5a1a1);
+}
+.break {
+  break-after: page;
+}
+
+.boxGrey {
+  background-color: #d9d9d9;
+  height: 40px;
+  line-height: 40px;
+}
+.set-p-right {
+  padding-right: 0px;
+}
+.printPage {
+  padding-top: 10px;
+}
+@media print {
+  body {
+    background-color: #fff;
+  }
+
+  .set-p-right {
+    padding-right: 20px;
+  }
+
+  #printSection {
+    display: none;
+  }
+
+  @page {
+    margin: 0mm;
+  }
 }
 </style>

@@ -89,8 +89,12 @@
           </div>
           <ul>
             <li>
-              How is foreign value-added distributed across Australia's
-              exporting sectors?
+              How is foreign value-added distributed across
+              {{
+                inputData.exportingName == ""
+                  ? "economy"
+                  : inputData.exportingName
+              }}'s exporting sectors?
             </li>
             <li>How does this compare across economies in the same region?</li>
           </ul>

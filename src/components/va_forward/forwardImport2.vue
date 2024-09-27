@@ -195,6 +195,7 @@ const loadData = async () => {
         dataDeteil.push(tempDetail);
       });
       let tempInput2 = {
+        name: "Agriculutre",
         data: dataDeteil,
         id: countryName + "+Agriculutre",
         type: "pie",
@@ -1043,6 +1044,7 @@ const loadData = async () => {
           } else {
             textShow = this.value.toFixed(2) + " million";
           }
+
           if (this.category >= 0) {
             return (
               "<div> <span class='text-bold'>" +
@@ -1061,6 +1063,8 @@ const loadData = async () => {
               "<div> <span class='text-bold'>" +
               this.name +
               "</span>" +
+              "<br>" +
+              this.series.name +
               "<br>" +
               " Value: $" +
               textShow +

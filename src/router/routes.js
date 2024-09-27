@@ -42,7 +42,7 @@ const routes = [
     component: () => import("pages/Countrybrief.vue"),
   },
   {
-    path: "/countrydata",
+    path: "/countrydata/:ecoISO?/:ecoName?/:year?",
     component: () => import("pages/CountrybriefData.vue"),
   },
   // RI Page

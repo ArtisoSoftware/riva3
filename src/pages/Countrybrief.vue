@@ -29,7 +29,7 @@
           <div class="vl"></div>
         </div>
         <div class="col">
-          <div class="text-center text-h6 q-py-sm">countrybrief</div>
+          <div class="text-center text-h6 q-py-sm">Country briefs</div>
           <div style="width: 350px; margin: auto">
             <EcoSelect
               label="Economy"
@@ -61,9 +61,12 @@ import VAHeader from "../components/VA_header.vue";
 import footerMain from "../components/footerA.vue";
 import yearSelect from "../components/YearSelect.vue";
 import EcoSelect from "../components/EcoSelect2.vue";
+import { serverSetup } from "./server.js";
 import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { LocalStorage } from "quasar";
+import { LocalStorage, Notify } from "quasar";
+import axios from "axios";
+const { serverData } = serverSetup();
 
 const router = useRouter();
 const tinaLinkURL = ref("");
@@ -100,14 +103,29 @@ const goToStep5 = () => {
   router.push("/forwardlinkages");
 };
 
-const runGen = () => {
+const runGen = async () => {
   let data = {
     economyISO: inputData.value.exportingISO,
     economyName: inputData.value.exportingName,
     year: inputData.value.year,
   };
-  LocalStorage.set("countryBrief", data);
-  window.open("http://localhost:9000/#/countrydata");
+  let dataTemp = {
+    exp_country: inputData.value.exportingISO,
+    year: inputData.value.year,
+  };
+  let url = serverData.value + "va/gvcloaddata1.php";
+  let res = await axios.post(url, JSON.stringify(dataTemp));
+  if (res.data.length > 0) {
+    LocalStorage.set("countryBrief", data);
+    window.open("http://192.168.1.145:9000/#/countrydata");
+  } else {
+    Notify.create({
+      message: "No data available.",
+      color: "negative",
+      icon: "fa-solid fa-circle-exclamation",
+      position: "top",
+    });
+  }
 };
 
 watch(

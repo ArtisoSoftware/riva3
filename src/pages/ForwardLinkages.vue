@@ -77,8 +77,13 @@
           </div>
           <ul>
             <li>
-              Where does Australia contribute the most towards export
-              production?
+              Where does
+              {{
+                inputData.exportingName == ""
+                  ? "economy"
+                  : inputData.exportingName
+              }}
+              contribute the most towards export production?
             </li>
             <li>How does this compare across economies in the same region?</li>
           </ul>

@@ -88,8 +88,12 @@
           </div>
           <ul>
             <li>
-              Where does Argentina's imported content used in its exports come
-              from?
+              Where does
+              {{
+                inputData.exportingName == ""
+                  ? "economy"
+                  : inputData.exportingName
+              }}'s imported content used in its exports come from?
             </li>
             <li>How does this compare across economies in the same region?</li>
           </ul>

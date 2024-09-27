@@ -81,7 +81,13 @@
           </div>
           <ul>
             <li>
-              Which sectors in Argentina are most reliant on export production?
+              Which sectors in
+              {{
+                inputData.exportingName == ""
+                  ? "economy"
+                  : inputData.exportingName
+              }}
+              are most reliant on export production?
             </li>
             <li>How does this compare across economies in the same region?</li>
           </ul>
