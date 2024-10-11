@@ -74,11 +74,10 @@ import lineChartDimension from "../components/ri_intragroup/linechart_by_dimensi
 import dimensionTab from "../components/ri_intragroup/datatab_dimension.vue";
 import mainLinechart from "../components/ri_intragroup/linechart_by_country.vue";
 import economyCircle from "../components/ri_intragroup/ri_economuy_circle.vue";
-import { serverSetup, yearInputShow } from "./server";
+import { serverSetup } from "./server";
 import axios from "axios";
 
 const { serverData } = serverSetup();
-const { yearInput } = yearInputShow();
 
 const countryFullList = ref([]);
 const input = ref({

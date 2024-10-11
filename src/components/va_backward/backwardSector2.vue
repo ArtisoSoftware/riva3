@@ -141,16 +141,22 @@ const loadData = async () => {
     console.log("No data avaialble");
     return;
   }
+
   dataResult.forEach((item) => {
     const country = countryData.find(
       (country) => country.iso === item.source_country
     );
-    if (country) {
-      item.area = country.area;
+    if (country != undefined || item.source_country == "RoW") {
+      if (country) {
+        item.area = country.area;
+      } else {
+        item.area = "Rest of the world"; // กรณีไม่พบข้อมูลที่ตรงกัน
+      }
     } else {
-      item.area = "Rest of the world"; // กรณีไม่พบข้อมูลที่ตรงกัน
+      item.area = "remove";
     }
   });
+  dataResult = dataResult.filter((x99) => x99.area != "remove");
 
   exportISOList.value.forEach(async (expCountry, index) => {
     let dataTemp = {

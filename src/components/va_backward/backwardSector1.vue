@@ -139,7 +139,6 @@ const loadData = async () => {
   } else {
     totalLarge.value = Number(totalLarge.value).toFixed(2) + " million";
   }
-
   let maxImport1 =
     showCountryName(dataResult[0], countryData) +
     "(" +
@@ -176,6 +175,7 @@ const loadData = async () => {
   dataResult.forEach((x) => {
     let countryNameText = "";
     let parentData = "";
+    let dataTempx = [];
     if (x.source_country == "RoW") {
       countryNameText = "Rest of the World";
       parentData = "E";
@@ -183,25 +183,32 @@ const loadData = async () => {
       let dataFind = countryData.filter(
         (datax) => datax.iso == x.source_country
       );
-      countryNameText = dataFind[0].economic;
-      if (dataFind[0].area == "Asia-Pacific") {
-        parentData = "A";
-      } else if (dataFind[0].area == "Europe") {
-        parentData = "B";
-      } else if (dataFind[0].area == "North America") {
-        parentData = "C";
-      } else if (dataFind[0].area == "Latin America") {
-        parentData = "D";
+      dataTempx = dataFind;
+      if (dataFind.length > 0) {
+        countryNameText = dataFind[0].economic;
+
+        if (dataFind[0].area == "Asia-Pacific") {
+          parentData = "A";
+        } else if (dataFind[0].area == "Europe") {
+          parentData = "B";
+        } else if (dataFind[0].area == "North America") {
+          parentData = "C";
+        } else if (dataFind[0].area == "Latin America") {
+          parentData = "D";
+        }
       }
     }
-    let share = (Number(x.share) * 100).toFixed(2);
-    let temp = {
-      name: countryNameText + "(" + share + "%)",
-      parent: parentData,
-      value: Number(Number(x.value).toFixed(2)),
-      percent: Number(share),
-    };
-    getData.push(temp);
+
+    if (dataTempx.length > 0) {
+      let share = (Number(x.share) * 100).toFixed(2);
+      let temp = {
+        name: countryNameText + "(" + share + "%)",
+        parent: parentData,
+        value: Number(Number(x.value).toFixed(2)),
+        percent: Number(share),
+      };
+      getData.push(temp);
+    }
   });
   setTimeout(() => {
     Highcharts.chart("container1", {

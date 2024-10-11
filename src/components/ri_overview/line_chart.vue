@@ -6,8 +6,11 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { yearInputShow } from "../../pages/server.js";
+// import { yearInputShow } from "../../pages/server.js";
+import { serverSetup } from "../../pages/server.js";
+import axios from "axios";
 
+const { serverData } = serverSetup();
 const props = defineProps({
   ci: {
     type: Array,
@@ -26,8 +29,8 @@ const props = defineProps({
     required: true,
   },
 });
-const { yearInput } = yearInputShow();
-
+// const { yearInput } = yearInputShow();
+const yearInput = ref({ min: 2010, max: 2020 });
 const title = ref("");
 
 const yearStart = ref("");
@@ -123,6 +126,10 @@ const regenChart = () => {
 const debouncedRegenChart = debounce(regenChart, 200);
 
 onMounted(async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = Number(result.data[0].yearStart);
+  yearInput.value.max = Number(result.data[0].yearEnd);
   yearStart.value = yearInput.value.min;
   yearEnd.value = yearInput.value.max;
 });

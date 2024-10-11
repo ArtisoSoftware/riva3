@@ -283,7 +283,8 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { serverSetup, yearInputShow } from "../../pages/server";
+// import { serverSetup, yearInputShow } from "../../pages/server";
+import { serverSetup } from "../../pages/server";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
 import countryAllWorld from "../../assets/countryAll.json";
@@ -292,7 +293,8 @@ import { v4 as uuidv4 } from "uuid";
 import { LocalStorage, Notify } from "quasar";
 
 const { serverData } = serverSetup();
-const { yearInput } = yearInputShow();
+const yearInput = ref({ min: 2010, max: 2020 });
+// const { yearInput } = yearInputShow();
 const route = useRoute();
 const router = useRouter();
 
@@ -342,6 +344,10 @@ const emit = defineEmits([
 ]);
 
 onMounted(async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = Number(result.data[0].yearStart);
+  yearInput.value.max = Number(result.data[0].yearEnd);
   await loadData();
   await loadCountry();
   await loadPeriod();
@@ -515,6 +521,7 @@ const changeInputTypeSustainable = () => {
   countryFullList.value = [];
   countryReportList.value = [];
   loadData();
+  loadCountry();
   resetStartBtn();
   checkDataAvailability();
 };
@@ -526,7 +533,9 @@ const changeInputTypeConventional = () => {
   input.value.reporting = [];
   countryFullList.value = [];
   countryReportList.value = [];
+
   loadData();
+  loadCountry();
   resetStartBtn();
   checkDataAvailability();
 };
@@ -708,7 +717,7 @@ const loadCountry = async () => {
     tableReport = "ri_eco_build_reporter_sus";
     tablePartner = "ri_eco_build_partner_sus";
   } else {
-    tableReport = "ri_eco_build_report_con";
+    tableReport = "ri_eco_build_reporter_con";
     tablePartner = "ri_eco_build_partner_con";
   }
 
@@ -717,6 +726,7 @@ const loadCountry = async () => {
     table: tableReport,
   };
   let res1 = await axios.post(url, JSON.stringify(dataReport));
+
   res1.data.forEach((element) => {
     let tempData = {
       label: element.country,

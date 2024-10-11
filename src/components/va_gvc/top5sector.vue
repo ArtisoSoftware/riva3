@@ -264,7 +264,6 @@ const loadData = async () => {
   let forwardData = res.data.filter((x) => x.var == "Forward linkages");
   forwardData.sort((a, b) => Number(a.value) - Number(b.value));
   forwardData.forEach((item) => {
-    console.log(item.exp_sector);
     let shortName = sectorList.value.filter((x) => x.name == item.exp_sector);
 
     let temp = {
@@ -284,7 +283,6 @@ const showDetailBack = async (eco, item) => {
     year: Number(year.value),
     sector: item.fullName,
   };
-  console.log(tempSend);
   let url = serverData.value + "va/gvcloaddata2a.php";
   let res = await axios.post(url, JSON.stringify(tempSend));
 

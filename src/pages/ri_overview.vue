@@ -159,17 +159,18 @@ import lineChart from "../components/ri_overview/line_chart.vue";
 import dimChart from "../components/ri_overview/dim_chart.vue";
 import footerMain from "../components/footer2.vue";
 
-import { ref, onMounted } from "vue";
-import { serverSetup, yearInputShow, tileData } from "./server";
+import { ref, onMounted, onBeforeMount } from "vue";
+// import { serverSetup, yearInputShow, tileData } from "./server";
+import { serverSetup, tileData } from "./server";
 import { countryGroupListRiva2 } from "./countryGroupList.js";
 import tileMap from "../components/ri_overview/TileMap.vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
 const { serverData } = serverSetup();
-const { yearInput } = yearInputShow();
+// const { yearInput } = yearInputShow();
 const { tilemapData } = tileData();
-
+const yearInput = ref({ min: 2010, max: 2020 });
 const router = useRouter();
 const yearStart = ref(0);
 const yearEnd = ref(0);
@@ -281,6 +282,7 @@ const loadDimCal = async () => {
     partnerMap: partner.value,
     reportMap: input.value,
   };
+
   let url6 = serverData.value + "ri/overview_intra_index_by_dimension.php";
   let res6 = await axios.post(url6, JSON.stringify(data6));
   let dimRaw = res6.data;
@@ -307,8 +309,8 @@ const loadDimCal = async () => {
       dimFinalSI.value.push(dataTemp);
     }
   }
-
   dimYearSI.value = [];
+
   for (let dimCount = 1; dimCount <= 7; dimCount++) {
     let dimTemp1 = dimFinalSI.value.filter(
       (x) => x.year <= yearHL.value && x.dimension == dimCount
@@ -565,6 +567,18 @@ const goTOCountryBrief = () => {
   router.push("/ricountrybrief");
 };
 
+onBeforeMount(async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = result.data[0].yearStart;
+  yearInput.value.max = result.data[0].yearEnd;
+  yearStart.value = Number(yearInput.value.min);
+  yearEnd.value = Number(yearInput.value.max);
+
+  yearHL.value = Math.floor((yearStart.value + yearEnd.value) / 2);
+  yearHH.value = Math.ceil((yearStart.value + yearEnd.value) / 2);
+});
+
 onMounted(() => {
   // Refresh the page on first load to ensure meta tag change
   sessionStorage.removeItem("reloaded2");
@@ -572,11 +586,6 @@ onMounted(() => {
     sessionStorage.setItem("reloaded", "true");
     location.reload();
   }
-
-  yearStart.value = yearInput.value.min;
-  yearEnd.value = yearInput.value.max;
-  yearHL.value = Math.floor((yearStart.value + yearEnd.value) / 2);
-  yearHH.value = Math.ceil((yearStart.value + yearEnd.value) / 2);
 });
 </script>
 

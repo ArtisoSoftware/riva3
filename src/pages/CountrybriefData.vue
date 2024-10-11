@@ -908,6 +908,40 @@ const g6Latin = ref([]);
 const g6Rest = ref([]);
 const g6CountryList = ref([]);
 
+const agricultureData9 = ref([]);
+const miningData9 = ref([]);
+const constructionData9 = ref([]);
+const utilitiesData9 = ref([]);
+const lowtechData9 = ref([]);
+const hightechData9 = ref([]);
+const tradeRepairData9 = ref([]);
+const tourismData9 = ref([]);
+const transportData9 = ref([]);
+const ictData9 = ref([]);
+const propertyData9 = ref([]);
+const financialData9 = ref([]);
+const publicwData9 = ref([]);
+const privatewData9 = ref([]);
+const exportISOListFinal9 = ref([]);
+const exportNameListFinal9 = ref([]);
+
+const agricultureData11 = ref([]);
+const miningData11 = ref([]);
+const constructionData11 = ref([]);
+const utilitiesData11 = ref([]);
+const lowtechData11 = ref([]);
+const hightechData11 = ref([]);
+const tradeRepairData11 = ref([]);
+const tourismData11 = ref([]);
+const transportData11 = ref([]);
+const ictData11 = ref([]);
+const propertyData11 = ref([]);
+const financialData11 = ref([]);
+const publicwData11 = ref([]);
+const privatewData11 = ref([]);
+const exportISOListFinal11 = ref([]);
+const exportNameListFinal11 = ref([]);
+
 //ลำดับตัวเลข
 const getOrdinalSuffix = (n) => {
   const suffixes = ["th", "st", "nd", "rd"];
@@ -1636,11 +1670,16 @@ const loadData = async () => {
       const country = countryData.find(
         (country) => country.iso === item.source_country
       );
-      if (country) {
-        item.area = country.area;
+      if (country != undefined || item.source_country == "RoW") {
+        if (country) {
+          item.area = country.area;
+        } else {
+          item.area = "Rest of the world"; // กรณีไม่พบข้อมูลที่ตรงกัน
+        }
       } else {
-        item.area = "Rest of the world"; // กรณีไม่พบข้อมูลที่ตรงกัน
+        item.area = "remove";
       }
+      rawResult = rawResult.filter((x99) => x99.area != "remove");
     });
 
     let asiaData = rawResult.filter((x) => x.area == "Asia-Pacific");
@@ -1827,24 +1866,488 @@ const loadData = async () => {
   //Graph9 in Backward linkages, by exporting sector - page 2
   //********* wait source economy */
   {
+    agricultureData9.value = [];
+    miningData9.value = [];
+    constructionData9.value = [];
+    utilitiesData9.value = [];
+    lowtechData9.value = [];
+    hightechData9.value = [];
+    tradeRepairData9.value = [];
+    tourismData9.value = [];
+    transportData9.value = [];
+    ictData9.value = [];
+    propertyData9.value = [];
+    financialData9.value = [];
+    publicwData9.value = [];
+    privatewData9.value = [];
+    let url0 = serverData.value + "va/getEcoList.php";
+    let res0 = await axios.get(url0);
+    let countryData = res0.data;
+
+    let url4 = serverData.value + "va/getEcoList.php";
+    let res4 = await axios.get(url4);
+    let regionCountryList = res4.data
+      .filter((x) => x.region == fullRegion.value)
+      .map((y) => y.iso);
+    regionCountryList.unshift(fullRegionISO.value);
+
+    let dataTemp = {
+      exp_country: regionCountryList,
+      imp_country: "WLD",
+      source_country: "CHN",
+      year: dataSend.value.year,
+    };
+    let url = serverData.value + "/va/backwardSource1.php";
+    let res = await axios.post(url, JSON.stringify(dataTemp));
+    let dataResult = res.data;
+    //ทำการ update exportISOList ที่มี จริง
+    exportISOListFinal9.value = dataResult.map((x) => x.exp_country);
+    exportISOListFinal9.value = [...new Set(exportISOListFinal9.value)];
+    regionCountryList = regionCountryList.filter(function (country) {
+      return exportISOListFinal9.value.includes(country);
+    });
+    exportISOListFinal9.value = regionCountryList;
+
+    exportNameListFinal9.value = [];
+    exportISOListFinal9.value.forEach((x, index) => {
+      if (index == 0) {
+        exportNameListFinal9.value.push(x);
+      } else {
+        let temp = countryData.filter((y) => y.iso == x);
+        exportNameListFinal9.value.push(temp[0].economic);
+      }
+    });
+    let url5 = serverData.value + "/va/getSector.php";
+    let res5 = await axios.get(url5);
+    let sectorData = res5.data;
+
+    const promises = exportISOListFinal9.value.map(
+      async (expCountry, index) => {
+        let dataTemp3 = {
+          exp_country: expCountry,
+          imp_country: "WLD",
+          exp_sector: "All sectors",
+          year: dataSend.value.year,
+        };
+        let url3 = serverData.value + "/va/strloaddata1.php";
+        let res3 = await axios.post(url3, JSON.stringify(dataTemp3));
+        let totalExport = res3.data[0].total_exports;
+        let dataRaw = dataResult.filter((x) => x.exp_country == expCountry);
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Agriculture")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          agricultureData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Mining")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          miningData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Construction")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          constructionData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Utilities")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          utilitiesData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Manufacturing Low tech")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          lowtechData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) =>
+                item.sectiongroup === "Manufacturing High and medium tech"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          hightechData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services Trade and repair")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          tradeRepairData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services Tourism")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          tourismData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services Transport")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          transportData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services ICT")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          ictData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) => item.sectiongroup === "Services Property and business"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          propertyData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services-Financial")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          financialData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) => item.sectiongroup === "Services Public and welfare"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          publicwData9.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) => item.sectiongroup === "Services Private household"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal9.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          privatewData9.value.push(tempInput);
+        }
+      }
+    );
+
+    await Promise.all(promises);
+
+    let indexData = exportISOListFinal9.value.indexOf(
+      dataSend.value.economyISO
+    );
+
+    let cEcoData = {
+      Agriculuture: agricultureData9.value[indexData].y,
+      Mining: miningData9.value[indexData].y,
+      Construction: constructionData9.value[indexData].y,
+      Utilities: utilitiesData9.value[indexData].y,
+      "Low tech": lowtechData9.value[indexData].y,
+      "High and medium tech": hightechData9.value[indexData].y,
+      "Trade and repair": tradeRepairData9.value[indexData].y,
+      Tourism: tourismData9.value[indexData].y,
+      Transport: transportData9.value[indexData].y,
+      ICT: ictData9.value[indexData].y,
+      "Property and business": propertyData9.value[indexData].y,
+      Financial: financialData9.value[indexData].y,
+      "Public and welfare": publicwData9.value[indexData].y,
+      "Private household": privatewData9.value[indexData].y,
+    };
+    var entries2 = Object.entries(cEcoData);
+    // เรียงลำดับอาเรย์ตามค่าจากมากไปน้อย
+    entries2.sort(function (a, b) {
+      return b[1] - a[1];
+    });
+
+    var sum2 = entries2.reduce(function (accumulator, currentValue) {
+      return accumulator + currentValue[1];
+    }, 0);
+
     contentG3_1.value = [
-      `High and medium tech (4.8%)`,
-      `High and medium tech (4.8%)`,
-      `High and medium tech (4.8%)`,
-      `High and medium tech (4.8%)`,
-      `High and medium tech (4.8%)`,
+      `${entries2[0][0]} (${entries2[0][1]}%)`,
+      `${entries2[1][0]} (${entries2[1][1]}%)`,
+      `${entries2[2][0]} (${entries2[2][1]}%)`,
+      `${entries2[3][0]} (${entries2[3][1]}%)`,
+      `${entries2[4][0]} (${entries2[4][1]}%)`,
+      `Total (${sum2.toFixed(2)}%)`,
     ];
+
+    let cGroupData = {
+      Agriculuture: agricultureData9.value[0].y,
+      Mining: miningData9.value[0].y,
+      Construction: constructionData9.value[0].y,
+      Utilities: utilitiesData9.value[0].y,
+      "Low tech": lowtechData9.value[0].y,
+      "High and medium tech": hightechData9.value[0].y,
+      "Trade and repair": tradeRepairData9.value[0].y,
+      Tourism: tourismData9.value[0].y,
+      Transport: transportData9.value[0].y,
+      ICT: ictData9.value[0].y,
+      "Property and business": propertyData9.value[0].y,
+      Financial: financialData9.value[0].y,
+      "Public and welfare": publicwData9.value[0].y,
+      "Private household": privatewData9.value[0].y,
+    };
+    // แปลง cGroupData เป็นอาเรย์ของคู่ [คีย์, ค่า]
+    var entries = Object.entries(cGroupData);
+
+    // เรียงลำดับอาเรย์ตามค่าจากมากไปน้อย
+    entries.sort(function (a, b) {
+      return b[1] - a[1];
+    });
+    var sum = entries.reduce(function (accumulator, currentValue) {
+      return accumulator + currentValue[1];
+    }, 0);
+    // แสดงผลลัพธ์ที่เรียงแล้ว
     contentG3_2.value = [
-      `Low tech (3.81%)`,
-      `Low tech (3.81%)`,
-      `Low tech (3.81%)`,
-      `Low tech (3.81%)`,
-      `Low tech (3.81%)`,
+      `${entries[0][0]} (${entries[0][1]}%)`,
+      `${entries[1][0]} (${entries[1][1]}%)`,
+      `${entries[2][0]} (${entries[2][1]}%)`,
+      `${entries[3][0]} (${entries[3][1]}%)`,
+      `${entries[4][0]} (${entries[4][1]}%)`,
+      `Total (${sum.toFixed(2)}%)`,
     ];
+    await nextTick();
+    chart9();
   }
 
   //Graph10 in Forward linkages, by importing region - page 3
-  //**** codeing here */
   {
     let url0 = serverData.value + "va/getEcoList.php";
     let res0 = await axios.get(url0);
@@ -2078,7 +2581,7 @@ const loadData = async () => {
     }
     await nextTick();
     g6CountryList.value = g6AsiaPacific.value.map((xx) => xx.name);
-    console.log(g6AsiaPacific.value);
+
     {
       g41_1a = g6AsiaPacific.value[0].y;
       g41_2a = g6Europe.value[0].y;
@@ -2102,12 +2605,12 @@ const loadData = async () => {
       // console.log(temp);
     }
 
-    console.log(g6CountryList.value);
-    console.log(g6AsiaPacific.value);
-    console.log(g6Europe.value);
-    console.log(g6NorthAmerica.value);
-    console.log(g6Latin.value);
-    console.log(g6Rest.value);
+    // console.log(g6CountryList.value);
+    // console.log(g6AsiaPacific.value);
+    // console.log(g6Europe.value);
+    // console.log(g6NorthAmerica.value);
+    // console.log(g6Latin.value);
+    // console.log(g6Rest.value);
 
     contentG4_1.value = [
       `Asia-Pacific (${g41_1}%)`,
@@ -2128,24 +2631,482 @@ const loadData = async () => {
 
     chart10();
   }
-
   //Graph11 in Forward linkages, by exporting sector - page 3
   //******** wait source economy */
   {
+    agricultureData11.value = [];
+    miningData11.value = [];
+    constructionData11.value = [];
+    utilitiesData11.value = [];
+    lowtechData11.value = [];
+    hightechData11.value = [];
+    tradeRepairData11.value = [];
+    tourismData11.value = [];
+    transportData11.value = [];
+    ictData11.value = [];
+    propertyData11.value = [];
+    financialData11.value = [];
+    publicwData11.value = [];
+    privatewData11.value = [];
+
+    let url0 = serverData.value + "va/getEcoList.php";
+    let res0 = await axios.get(url0);
+    let countryData = res0.data;
+
+    let url4 = serverData.value + "va/getEcoList.php";
+    let res4 = await axios.get(url4);
+    let regionCountryList = res4.data
+      .filter((x) => x.region == fullRegion.value)
+      .map((y) => y.iso);
+    regionCountryList.unshift(fullRegionISO.value);
+    let dataTemp = {
+      exp_country: regionCountryList,
+      imp_country: "WLD",
+      year: dataSend.value.year,
+    };
+    let url = serverData.value + "va/forwardImport1.php";
+    let res = await axios.post(url, JSON.stringify(dataTemp));
+    let dataResult = res.data;
+    //ทำการ update exportISOList ที่มี จริง
+    exportISOListFinal11.value = dataResult.map((x) => x.exp_country);
+    exportISOListFinal11.value = [...new Set(exportISOListFinal11.value)];
+    regionCountryList = regionCountryList.filter(function (country) {
+      return exportISOListFinal11.value.includes(country);
+    });
+    exportISOListFinal11.value = regionCountryList;
+
+    exportNameListFinal11.value = [];
+    exportISOListFinal11.value.forEach((x, index) => {
+      if (index == 0) {
+        exportNameListFinal11.value.push(x);
+      } else {
+        let temp = countryData.filter((y) => y.iso == x);
+        exportNameListFinal11.value.push(temp[0].economic);
+      }
+    });
+
+    let url5 = serverData.value + "/va/getSector.php";
+    let res5 = await axios.get(url5);
+    let sectorData = res5.data;
+    const promises = exportISOListFinal11.value.map(
+      async (expCountry, index) => {
+        let dataTemp3 = {
+          exp_country: expCountry,
+          imp_country: "WLD",
+          exp_sector: "All sectors",
+          year: dataSend.value.year,
+        };
+        let url3 = serverData.value + "/va/strloaddata1.php";
+        let res3 = await axios.post(url3, JSON.stringify(dataTemp3));
+        let totalExport = res3.data[0].total_exports;
+        let dataRaw = dataResult.filter((x) => x.exp_country == expCountry);
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Agriculture")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          agricultureData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Mining")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          miningData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Construction")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          constructionData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Utilities")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          utilitiesData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Manufacturing Low tech")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          lowtechData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) =>
+                item.sectiongroup === "Manufacturing High and medium tech"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          hightechData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services Trade and repair")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          tradeRepairData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services Tourism")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          tourismData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services Transport")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          transportData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services ICT")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          ictData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) => item.sectiongroup === "Services Property and business"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          propertyData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter((item) => item.sectiongroup === "Services-Financial")
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          financialData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) => item.sectiongroup === "Services Public and welfare"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          publicwData11.value.push(tempInput);
+        }
+
+        {
+          let sectionDetail = sectorData
+            .filter(
+              (item) => item.sectiongroup === "Services Private household"
+            )
+            .map((item) => item.name);
+          let filteredData = dataRaw.filter((item) =>
+            sectionDetail.includes(item.exp_sector)
+          );
+          let totalValue = filteredData.reduce(
+            (sum, item) => sum + parseFloat(item.value),
+            0
+          );
+          let yData = Number(
+            ((Number(totalValue) / Number(totalExport)) * 100).toFixed(2)
+          );
+
+          let tempInput = {
+            name: exportNameListFinal11.value[index],
+            value: Number(Number(totalValue).toFixed(2)),
+            y: yData,
+          };
+          privatewData11.value.push(tempInput);
+        }
+      }
+    );
+
+    await Promise.all(promises);
+    let indexData = exportISOListFinal11.value.indexOf(
+      dataSend.value.economyISO
+    );
+    let cEcoData = {
+      Agriculuture: agricultureData11.value[indexData].y,
+      Mining: miningData11.value[indexData].y,
+      Construction: constructionData11.value[indexData].y,
+      Utilities: utilitiesData11.value[indexData].y,
+      "Low tech": lowtechData11.value[indexData].y,
+      "High and medium tech": hightechData11.value[indexData].y,
+      "Trade and repair": tradeRepairData11.value[indexData].y,
+      Tourism: tourismData11.value[indexData].y,
+      Transport: transportData11.value[indexData].y,
+      ICT: ictData11.value[indexData].y,
+      "Property and business": propertyData11.value[indexData].y,
+      Financial: financialData11.value[indexData].y,
+      "Public and welfare": publicwData11.value[indexData].y,
+      "Private household": privatewData11.value[indexData].y,
+    };
+    var entries2 = Object.entries(cEcoData);
+    // เรียงลำดับอาเรย์ตามค่าจากมากไปน้อย
+    entries2.sort(function (a, b) {
+      return b[1] - a[1];
+    });
+    var sum2 = entries2.reduce(function (accumulator, currentValue) {
+      return accumulator + currentValue[1];
+    }, 0);
+
     contentG5_1.value = [
-      `Mining (xx%)`,
-      `High and medium tech (xx%)`,
-      `Trade and repair service (xx%)`,
-      `Transport service (xx%)`,
-      `Total (xx%)`,
+      `${entries2[0][0]} (${entries2[0][1]}%)`,
+      `${entries2[1][0]} (${entries2[1][1]}%)`,
+      `${entries2[2][0]} (${entries2[2][1]}%)`,
+      `${entries2[3][0]} (${entries2[3][1]}%)`,
+      `${entries2[4][0]} (${entries2[4][1]}%)`,
+      `Total (${sum2.toFixed(2)}%)`,
     ];
+
+    let cGroupData = {
+      Agriculuture: agricultureData11.value[0].y,
+      Mining: miningData11.value[0].y,
+      Construction: constructionData11.value[0].y,
+      Utilities: utilitiesData11.value[0].y,
+      "Low tech": lowtechData11.value[0].y,
+      "High and medium tech": hightechData11.value[0].y,
+      "Trade and repair": tradeRepairData11.value[0].y,
+      Tourism: tourismData11.value[0].y,
+      Transport: transportData11.value[0].y,
+      ICT: ictData11.value[0].y,
+      "Property and business": propertyData11.value[0].y,
+      Financial: financialData11.value[0].y,
+      "Public and welfare": publicwData11.value[0].y,
+      "Private household": privatewData11.value[0].y,
+    };
+    // แปลง cGroupData เป็นอาเรย์ของคู่ [คีย์, ค่า]
+    var entries = Object.entries(cGroupData);
+
+    // เรียงลำดับอาเรย์ตามค่าจากมากไปน้อย
+    entries.sort(function (a, b) {
+      return b[1] - a[1];
+    });
+    var sum = entries.reduce(function (accumulator, currentValue) {
+      return accumulator + currentValue[1];
+    }, 0);
     contentG5_2.value = [
-      `Mining (xx%)`,
-      `High and medium tech (xx%)`,
-      `Trade and repair service (xx%)`,
-      `Transport service (xx%)`,
-      `Total (xx%)`,
+      `${entries[0][0]} (${entries[0][1]}%)`,
+      `${entries[1][0]} (${entries[1][1]}%)`,
+      `${entries[2][0]} (${entries[2][1]}%)`,
+      `${entries[3][0]} (${entries[3][1]}%)`,
+      `${entries[4][0]} (${entries[4][1]}%)`,
+      `Total (${sum.toFixed(2)}%)`,
     ];
+    await nextTick();
+    chart11();
   }
 };
 //Chart1
@@ -2956,6 +3917,122 @@ const chart8 = () => {
   });
 };
 
+const chart9 = () => {
+  Highcharts.chart("container9", {
+    chart: {
+      type: "column",
+      height: 450,
+      width: 650,
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [
+      {
+        name: "Agriculture",
+        data: agricultureData9.value,
+        color: "#2F978B",
+      },
+      {
+        name: "Mining",
+        data: miningData9.value,
+        color: "#9A25B1",
+      },
+      {
+        name: "Construction",
+        data: constructionData9.value,
+        color: "#8D243B",
+      },
+      {
+        name: "Utilities",
+        data: utilitiesData9.value,
+        color: "#FA9908",
+      },
+      {
+        name: "Low tech",
+        data: lowtechData9.value,
+        color: "#F34336",
+      },
+      {
+        name: "High and medium tech",
+        data: hightechData9.value,
+        color: "#C3165B",
+      },
+      {
+        name: "Trade and repair service",
+        data: tradeRepairData9.value,
+        color: "#5E6DC1",
+      },
+      {
+        name: "Tourism services",
+        data: tourismData9.value,
+        color: "#3F50B8",
+      },
+      {
+        name: "Transport services",
+        data: transportData9.value,
+        color: "#3949AB",
+      },
+      {
+        name: "ICT services",
+        data: ictData9.value,
+        color: "#1565C0",
+      },
+      {
+        name: "Property services",
+        data: propertyData9.value,
+        color: "#19227D",
+      },
+      {
+        name: "Financial services",
+        data: financialData9.value,
+        color: "#43A7F5",
+      },
+      {
+        name: "Public and welfare services",
+        data: publicwData9.value,
+        color: "#2088E7",
+      },
+      {
+        name: "Private household services",
+        data: privatewData9.value,
+        color: "#1564C0",
+      },
+    ],
+    plotOptions: {
+      column: {
+        stacking: "normal",
+        dataLabels: {
+          enabled: false,
+        },
+      },
+    },
+    xAxis: {
+      labels: {
+        rotation: -45,
+      },
+      type: "category",
+      categories: exportNameListFinal9.value,
+    },
+    yAxis: {
+      title: {
+        text: "",
+      },
+      labels: {
+        formatter() {
+          return `${this.value}%`;
+        },
+      },
+    },
+    exporting: {
+      enabled: false,
+    },
+  });
+};
+
 //Chart10
 const chart10 = () => {
   Highcharts.chart("container10", {
@@ -3038,6 +4115,122 @@ const chart10 = () => {
     },
   });
 };
+//Chart11
+const chart11 = () => {
+  Highcharts.chart("container11", {
+    chart: {
+      type: "column",
+      height: 450,
+      width: 650,
+    },
+    title: {
+      text: "",
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [
+      {
+        name: "Agriculture",
+        data: agricultureData11.value,
+        color: "#2F978B",
+      },
+      {
+        name: "Mining",
+        data: miningData11.value,
+        color: "#9A25B1",
+      },
+      {
+        name: "Construction",
+        data: constructionData11.value,
+        color: "#8D243B",
+      },
+      {
+        name: "Utilities",
+        data: utilitiesData11.value,
+        color: "#FA9908",
+      },
+      {
+        name: "Low tech",
+        data: lowtechData11.value,
+        color: "#F34336",
+      },
+      {
+        name: "High and medium tech",
+        data: hightechData11.value,
+        color: "#C3165B",
+      },
+      {
+        name: "Trade and repair service",
+        data: tradeRepairData11.value,
+        color: "#5E6DC1",
+      },
+      {
+        name: "Tourism services",
+        data: tourismData11.value,
+        color: "#3F50B8",
+      },
+      {
+        name: "Transport services",
+        data: transportData11.value,
+        color: "#3949AB",
+      },
+      {
+        name: "ICT services",
+        data: ictData11.value,
+        color: "#1565C0",
+      },
+      {
+        name: "Property services",
+        data: propertyData11.value,
+        color: "#19227D",
+      },
+      {
+        name: "Financial services",
+        data: financialData11.value,
+        color: "#43A7F5",
+      },
+      {
+        name: "Public and welfare services",
+        data: publicwData11.value,
+        color: "#2088E7",
+      },
+      {
+        name: "Private household services",
+        data: privatewData11.value,
+        color: "#1564C0",
+      },
+    ],
+    plotOptions: {
+      column: {
+        stacking: "normal",
+        dataLabels: {
+          enabled: false,
+        },
+      },
+    },
+    xAxis: {
+      labels: {
+        rotation: -45,
+      },
+      type: "category",
+      categories: exportNameListFinal11.value,
+    },
+    yAxis: {
+      title: {
+        text: "",
+      },
+      labels: {
+        formatter() {
+          return `${this.value}%`;
+        },
+      },
+    },
+    exporting: {
+      enabled: false,
+    },
+  });
+};
 //Print Btn
 const printBtn = () => {
   window.print();
@@ -3066,7 +4259,6 @@ const downloadPDF = async () => {
 
 onBeforeMount(() => {
   if (route.params.ecoISO) {
-    console.log("params");
     let temp = {
       economyISO: route.params.ecoISO,
       economyName: route.params.ecoName,
@@ -3080,6 +4272,7 @@ onBeforeMount(() => {
       showError.value = true;
     } else {
       dataSend.value = dataInput;
+
       loadData();
       // console.log("dataSend: ", dataSend.value);
     }

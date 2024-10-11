@@ -137,7 +137,8 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { serverSetup, yearInputShow } from "../../pages/server.js";
+// import { serverSetup, yearInputShow } from "../../pages/server.js";
+import { serverSetup } from "../../pages/server.js";
 import { countryGroupListRiva2 } from "../../pages/countryGroupList";
 import countryAllWorld from "../../assets/countryAll.json";
 import axios from "axios";
@@ -145,10 +146,11 @@ import { useRoute, useRouter } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
 import { LocalStorage, Notify } from "quasar";
 
-const { yearInput } = yearInputShow();
+// const { yearInput } = yearInputShow();
 const { serverData } = serverSetup();
 const route = useRoute();
 const router = useRouter();
+const yearInput = ref({ min: 2010, max: 2020 });
 const input = ref({
   partner: [],
   year: {
@@ -178,7 +180,11 @@ const warnDialog = ref({
   economic: [],
 });
 
-onMounted(() => {
+onMounted(async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = Number(result.data[0].yearStart);
+  yearInput.value.max = Number(result.data[0].yearEnd);
   periodSetup.value.min = yearInput.value.min;
   periodSetup.value.max = yearInput.value.max;
   loadCountry();

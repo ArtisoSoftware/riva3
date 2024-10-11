@@ -129,6 +129,11 @@ const loadData = async () => {
   let url = serverData.value + "/va/forwardSector1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
   let dataResult = res.data;
+  dataResult = dataResult.filter(
+    (data) =>
+      data.imp_country === "RoW" ||
+      countryData.some((country) => country.iso === data.imp_country)
+  );
   if (dataResult.length == 0) {
     showNoData.value = true;
     showData.value = false;

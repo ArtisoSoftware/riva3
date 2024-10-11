@@ -216,7 +216,8 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { serverSetup, yearInputShow } from "../../pages/server";
+// import { serverSetup, yearInputShow } from "../../pages/server";
+import { serverSetup } from "../../pages/server";
 import countryAllWorld from "../../assets/countryAll.json";
 import { countryGroupListRiva2 } from "../../pages/countryGroupList";
 import axios from "axios";
@@ -224,7 +225,8 @@ import { useRoute, useRouter } from "vue-router";
 import { LocalStorage, Notify } from "quasar";
 import { v4 as uuidv4 } from "uuid";
 const { serverData } = serverSetup();
-const { yearInput } = yearInputShow();
+// const { yearInput } = yearInputShow();
+const yearInput = ref({ min: 2010, max: 2020 });
 const route = useRoute();
 const router = useRouter();
 
@@ -274,6 +276,10 @@ const emit = defineEmits([
 ]);
 
 onMounted(async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = Number(result.data[0].yearStart);
+  yearInput.value.max = Number(result.data[0].yearEnd);
   if (props.dataSendInput != undefined) {
     input.value = props.dataSendInput.input;
     setInput.value = props.dataSendInput.setInput;

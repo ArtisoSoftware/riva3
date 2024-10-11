@@ -69,9 +69,11 @@
 
 <script setup>
 import { ref, watch, onMounted } from "vue";
-import { yearInputShow } from "../../pages/server.js";
+// import { yearInputShow } from "../../pages/server.js";
 import dimLineLeft from "./dim_lineleft.vue";
 import dimLineRight from "./dim_lineright.vue";
+import { serverSetup } from "../../pages/server.js";
+import axios from "axios";
 const props = defineProps({
   data: {
     type: Array,
@@ -98,8 +100,9 @@ const props = defineProps({
     required: true,
   },
 });
-const { yearInput } = yearInputShow();
-
+// const { yearInput } = yearInputShow();
+const { serverData } = serverSetup();
+const yearInput = ref({ min: 2010, max: 2020 });
 const ampChart = ref(200);
 const con2010_14 = ref([]);
 const con2015_19 = ref([]);
@@ -138,13 +141,18 @@ watch(
   { deep: true, immediate: true }
 );
 
-onMounted(() => {
+onMounted(async () => {
   yearLabel();
 });
 
-const yearLabel = () => {
-  let yearStart = yearInput.value.min;
-  let yearEnd = yearInput.value.max;
+const yearLabel = async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = result.data[0].yearStart;
+  yearInput.value.max = result.data[0].yearEnd;
+
+  let yearStart = Number(yearInput.value.min);
+  let yearEnd = Number(yearInput.value.max);
   let yearHL = Math.floor((yearStart + yearEnd) / 2);
   let yearHH = Math.ceil((yearStart + yearEnd) / 2);
   year1.value = yearStart + "-" + yearHL.toString().substr(2);

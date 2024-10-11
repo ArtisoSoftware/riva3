@@ -393,7 +393,8 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { serverSetup, yearInputShow } from "./server";
+// import { serverSetup, yearInputShow } from "./server";
+import { serverSetup } from "./server";
 import { useRoute } from "vue-router";
 import countryAllWorld from "../assets/country_allcompare.json";
 import { countryGroupListRiva2 } from "./countryGroupList";
@@ -404,7 +405,7 @@ import axios from "axios";
 import html2pdf from "jspdf-html2canvas";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-const { yearInput } = yearInputShow();
+// const { yearInput } = yearInputShow();
 const { serverData } = serverSetup();
 
 const route = useRoute();
@@ -496,6 +497,7 @@ const subSentence3CI = ref("");
 const yearHL = ref("");
 const yearHH = ref("");
 const btnShow = ref(true);
+const yearInput = ref({ min: 2010, max: 2020 });
 
 const printBtn = () => {
   window.print();
@@ -537,7 +539,11 @@ const copyLink = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
+  let url = serverData.value + "ri/getYear.php";
+  let result = await axios.get(url);
+  yearInput.value.min = Number(result.data[0].yearStart);
+  yearInput.value.max = Number(result.data[0].yearEnd);
   Loading.show();
   urlLink.value =
     "https://riva.negotiatetrade.org/#/ricountrybrief2/" + reporterISO.value;
