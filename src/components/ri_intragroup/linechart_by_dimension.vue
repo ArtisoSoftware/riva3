@@ -518,12 +518,13 @@ const loadEcoIntegration = async () => {
 
 const loadDataFromDatabase = async () => {
   let data = {
-    inputData: input.value,
+    input: input.value,
     countryFullList: countryFullList.value,
     countryMap: countryFullList.value.map((x) => x.iso),
   };
   let url = serverData.value + "ri/intra_data_avail_by_dimension.php";
   let res = await axios.post(url, JSON.stringify(data));
+
   let dataChart = [];
 
   for (let k = 0; k < dimensionAll.value.length; k++) {
@@ -691,12 +692,14 @@ const plotChartDataAvail = () => {
 
 const weightLoadData = async () => {
   let data = {
-    inputData: input.value,
+    input: input.value,
     countryFullList: countryFullList.value,
     countryMap: countryFullList.value.map((x) => x.iso),
   };
+
   let url = serverData.value + "ri/intra_data_avail_by_dimension.php";
   let res = await axios.post(url, JSON.stringify(data));
+
   let dataChart = [];
   for (let k = 0; k < dimensionAll.value.length; k++) {
     let temp = {
@@ -1185,6 +1188,9 @@ const integrationProgressMergeData = () => {
 };
 
 const loadIntegrationPeriodsChart = () => {
+  if (integrationProgressPlotChartCat.value[0] == "") {
+    integrationProgressPlotChartCat.value[0] = "Your group";
+  }
   let yAxisTitle = input.value.type + " integration";
   Highcharts.chart("container2x", {
     chart: {
@@ -1251,7 +1257,7 @@ const loadIntegrationPeriodsChart = () => {
 
         return (
           "<div class='font-16'><b>" +
-          this.x +
+          integrationProgressPlotChartCat.value[this.x] +
           "</b></div><div>" +
           yAxisTitle +
           " index " +

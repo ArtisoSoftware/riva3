@@ -415,10 +415,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { serverSetup } from "../../pages/server.js";
-import { LocalStorage } from "quasar";
+import { LocalStorage, useQuasar } from "quasar";
 
 import axios from "axios";
 const { serverData } = serverSetup();
+const $q = useQuasar();
 const props = defineProps({
   dataGet: {
     type: Object,
@@ -605,6 +606,7 @@ const weight = ref({
 });
 
 onMounted(() => {
+  $q.loading.show();
   input.value = props.dataGet.input;
   countryFullList.value = props.dataGet.countryFullList;
   loadEcoIntegration();
@@ -1037,6 +1039,12 @@ const menu2RefreshChart = () => {
 };
 const menu2PlotChart = () => {
   let gName = yourGroupName.value;
+  let gShowLabel = [...menu2ChartEco.value];
+
+  if (gShowLabel[0] == "Group average") {
+    gShowLabel[0] = "Your group";
+  }
+
   let yAxisTitle = input.value.type + " integration";
   Highcharts.chart("container2", {
     chart: {
@@ -1099,9 +1107,10 @@ const menu2PlotChart = () => {
         let upDownPercent = Number(
           (Number(upDownSize) / this.points[0].y) * 100
         ).toFixed(2);
+
         return (
           "<div class='font-16'><b>" +
-          this.x +
+          gShowLabel[this.x] +
           "</b></div><div>" +
           yAxisTitle +
           " index " +
@@ -1218,6 +1227,7 @@ const loadEcoIntegration = async () => {
 
   integrationProgressPrepareData();
   mergeEcoIntegration();
+  $q.loading.hide();
 };
 
 const mergeEcoIntegration = () => {

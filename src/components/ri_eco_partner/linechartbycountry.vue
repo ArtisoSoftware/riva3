@@ -1094,7 +1094,7 @@ const plotChartDataAvail = () => {
 
 const loadEcoIntegration = async () => {
   let data2 = {
-    inputData: input.value,
+    input: input.value,
     countryPartnerList: data.value,
     countryReportList: report.value,
     reportMap: report.value.map((x) => x.iso),
@@ -1102,6 +1102,7 @@ const loadEcoIntegration = async () => {
   };
   let url = serverData.value + "ri/econ_intra_eco_integration_by_country.php";
   let res = await axios.post(url, JSON.stringify(data2));
+
   ecoIntegrationChart.value = res.data;
   ecoIntegrationChart.value.sort((a, b) =>
     Number(b.name) > Number(a.name) ? -1 : 1
@@ -1351,6 +1352,11 @@ const menu2PrepareChart = () => {
 
 const menu2PlotChart = () => {
   let gName = yourGroupName.value;
+  let gShowLabel = [...menu2ChartEco.value];
+
+  if (gShowLabel[0] == "Group average") {
+    gShowLabel[0] = "Your group";
+  }
   let yAxisTitle = input.value.type + " Integration";
   Highcharts.chart("container2", {
     chart: {
@@ -1416,7 +1422,7 @@ const menu2PlotChart = () => {
         ).toFixed(2);
         return (
           "<div class='font-16'><b>" +
-          this.x +
+          gShowLabel[this.x] +
           "</b></div><div>" +
           yAxisTitle +
           " index " +

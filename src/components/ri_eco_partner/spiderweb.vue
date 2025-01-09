@@ -469,7 +469,7 @@ const setBarChart = async () => {
   let url2 = serverData.value + "ri/econ_spider_indicator.php";
   let res2 = await axios.post(url2, JSON.stringify(dataTemp));
   let fullDataIndicator = res2.data;
-  // console.log(res2.data);
+
   let tempChart = [];
   for (
     let i = 0;

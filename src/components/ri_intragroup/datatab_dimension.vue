@@ -295,6 +295,7 @@ import tableTab from "../ri_tableintab.vue";
 const { serverData } = serverSetup();
 import axios from "axios";
 import { LocalStorage } from "quasar";
+import { useQuasar } from "quasar";
 
 const props = defineProps({
   dataGet: {
@@ -302,7 +303,7 @@ const props = defineProps({
     require: true,
   },
 });
-
+const $q = useQuasar();
 const emit = defineEmits(["go-to-eco"]);
 const tab = ref("economy");
 
@@ -462,6 +463,7 @@ const loadAllChart = async () => {
   await setDataChart();
   await setWeightChart();
   await setEconomyChart();
+
   changeTab();
 };
 

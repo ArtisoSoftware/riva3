@@ -117,7 +117,7 @@ const runGen = async () => {
   let res = await axios.post(url, JSON.stringify(dataTemp));
   if (res.data.length > 0) {
     LocalStorage.set("countryBrief", data);
-    window.open("http://192.168.1.145:9000/#/countrydata");
+    window.open("http://localhost:9000/#/countrydata");
   } else {
     Notify.create({
       message: "No data available.",

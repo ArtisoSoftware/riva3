@@ -1894,12 +1894,13 @@ const loadData = async () => {
     let dataTemp = {
       exp_country: regionCountryList,
       imp_country: "WLD",
-      source_country: "CHN",
+      source_country: "WLD",
       year: dataSend.value.year,
     };
     let url = serverData.value + "/va/backwardSource1.php";
     let res = await axios.post(url, JSON.stringify(dataTemp));
     let dataResult = res.data;
+    console.log(dataResult);
     //ทำการ update exportISOList ที่มี จริง
     exportISOListFinal9.value = dataResult.map((x) => x.exp_country);
     exportISOListFinal9.value = [...new Set(exportISOListFinal9.value)];

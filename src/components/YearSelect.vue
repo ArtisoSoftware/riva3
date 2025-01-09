@@ -22,7 +22,6 @@ import { serverSetup } from "../pages/server.js";
 const { serverData } = serverSetup();
 const props = defineProps({
   initialValue: {
-    type: String,
     required: false,
     default: "",
   },
@@ -36,7 +35,8 @@ const loadYear = async () => {
   res.data.forEach((x) => {
     yearList.value.push(x.year);
   });
-  yearList.value.sort((a, b) => a.year - b.year);
+  yearList.value.sort((a, b) => Number(a) - Number(b));
+  console.log(yearList.value);
   if (props.initialValue) {
     yearSelect.value = props.initialValue;
     updateYear(props.initialValue);

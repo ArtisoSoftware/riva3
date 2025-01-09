@@ -1,0 +1,193 @@
+Date : 2025-01-09 18:30:02
+Directory : c:\Work\2024\riva3_website
+Total : 136 files,  62279 codes, 796 comments, 2477 blanks, all 65552 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| Vue                |         82 |     42,115 |        631 |      2,291 |     45,037 |
+| JSON               |          6 |     16,608 |          0 |         65 |     16,673 |
+| JavaScript         |         13 |      2,975 |        143 |         74 |      3,192 |
+| XML                |         29 |        402 |          1 |         27 |        430 |
+| HTML               |          1 |         71 |          7 |          4 |         82 |
+| SCSS               |          2 |         42 |         11 |          8 |         61 |
+| JSON with Comments |          1 |         39 |          0 |          0 |         39 |
+| Markdown           |          1 |         21 |          0 |          6 |         27 |
+| TypeScript         |          1 |          6 |          3 |          2 |         11 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                      |        136 |     62,279 |        796 |      2,477 |     65,552 |
+| . (Files)                                                                              |          8 |      8,320 |        112 |         56 |      8,488 |
+| public                                                                                 |         29 |      3,187 |          1 |         49 |      3,237 |
+| public\images                                                                          |         28 |        387 |          1 |         27 |        415 |
+| public\json                                                                            |          1 |      2,800 |          0 |         22 |      2,822 |
+| src                                                                                    |         99 |     50,772 |        683 |      2,372 |     53,827 |
+| src (Files)                                                                            |          1 |          8 |          0 |          2 |         10 |
+| src\assets                                                                             |          4 |      5,733 |          0 |         41 |      5,774 |
+| src\boot                                                                               |          3 |         22 |         12 |         10 |         44 |
+| src\components                                                                         |         58 |     29,234 |        356 |      1,524 |     31,114 |
+| src\components (Files)                                                                 |         15 |      2,714 |         39 |        111 |      2,864 |
+| src\components\ri_buildyourown                                                         |          6 |      6,097 |         83 |        337 |      6,517 |
+| src\components\ri_dataavail                                                            |          4 |      1,520 |         28 |        100 |      1,648 |
+| src\components\ri_eco_partner                                                          |          7 |      5,561 |         74 |        303 |      5,938 |
+| src\components\ri_intragroup                                                           |          5 |      4,885 |         53 |        268 |      5,206 |
+| src\components\ri_overview                                                             |          6 |        784 |         10 |         53 |        847 |
+| src\components\va_backward                                                             |          4 |      2,523 |         23 |        105 |      2,651 |
+| src\components\va_forward                                                              |          4 |      2,579 |          5 |        119 |      2,703 |
+| src\components\va_gvc                                                                  |          3 |      1,149 |          1 |         52 |      1,202 |
+| src\components\va_participation                                                        |          1 |        366 |         20 |         20 |        406 |
+| src\components\va_str_value_added                                                      |          3 |      1,056 |         20 |         56 |      1,132 |
+| src\css                                                                                |          2 |         42 |         11 |          8 |         61 |
+| src\layouts                                                                            |          1 |         96 |          0 |         11 |        107 |
+| src\pages                                                                              |         25 |     15,489 |        276 |        757 |     16,522 |
+| src\router                                                                             |          2 |        122 |         15 |         10 |        147 |
+| src\stores                                                                             |          3 |         26 |         13 |          9 |         48 |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                               | language           | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Work\2024\riva3_website\README.md                                                   | Markdown           |         21 |          0 |          6 |         27 |
+| c:\Work\2024\riva3_website\index.html                                                  | HTML               |         71 |          7 |          4 |         82 |
+| c:\Work\2024\riva3_website\jsconfig.json                                               | JSON with Comments |         39 |          0 |          0 |         39 |
+| c:\Work\2024\riva3_website\package-lock.json                                           | JSON               |      8,052 |          0 |          1 |      8,053 |
+| c:\Work\2024\riva3_website\package.json                                                | JSON               |         38 |          0 |          1 |         39 |
+| c:\Work\2024\riva3_website\postcss.config.cjs                                          | JavaScript         |         16 |          9 |          3 |         28 |
+| c:\Work\2024\riva3_website\public\images\adb.svg                                       | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\build-g.svg                                   | XML                |         11 |          0 |          1 |         12 |
+| c:\Work\2024\riva3_website\public\images\dimension01.svg                               | XML                |         17 |          0 |          1 |         18 |
+| c:\Work\2024\riva3_website\public\images\dimension02.svg                               | XML                |         19 |          0 |          1 |         20 |
+| c:\Work\2024\riva3_website\public\images\dimension03.svg                               | XML                |         14 |          0 |          1 |         15 |
+| c:\Work\2024\riva3_website\public\images\dimension04.svg                               | XML                |          6 |          0 |          1 |          7 |
+| c:\Work\2024\riva3_website\public\images\dimension05.svg                               | XML                |         13 |          0 |          1 |         14 |
+| c:\Work\2024\riva3_website\public\images\dimension06.svg                               | XML                |         15 |          0 |          1 |         16 |
+| c:\Work\2024\riva3_website\public\images\dimension07.svg                               | XML                |         15 |          0 |          1 |         16 |
+| c:\Work\2024\riva3_website\public\images\dimicon.svg                                   | XML                |         80 |          0 |          1 |         81 |
+| c:\Work\2024\riva3_website\public\images\eco-g.svg                                     | XML                |          8 |          0 |          1 |          9 |
+| c:\Work\2024\riva3_website\public\images\facebook.svg                                  | XML                |          3 |          0 |          1 |          4 |
+| c:\Work\2024\riva3_website\public\images\facebookShare.svg                             | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\fealac.svg                                    | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\footerRIVA.svg                                | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\icon00.svg                                    | XML                |          3 |          0 |          1 |          4 |
+| c:\Work\2024\riva3_website\public\images\icon01.svg                                    | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\icon02.svg                                    | XML                |          8 |          0 |          1 |          9 |
+| c:\Work\2024\riva3_website\public\images\icon03.svg                                    | XML                |         11 |          0 |          1 |         12 |
+| c:\Work\2024\riva3_website\public\images\in.svg                                        | XML                |          3 |          0 |          1 |          4 |
+| c:\Work\2024\riva3_website\public\images\inShare.svg                                   | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\intra-g.svg                                   | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\right-arrow.svg                               | XML                |         42 |          1 |          1 |         44 |
+| c:\Work\2024\riva3_website\public\images\strflowchart.svg                              | XML                |         33 |          0 |          1 |         34 |
+| c:\Work\2024\riva3_website\public\images\structure.svg                                 | XML                |          1 |          0 |          0 |          1 |
+| c:\Work\2024\riva3_website\public\images\unescaplogo.svg                               | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\images\x.svg                                         | XML                |          4 |          0 |          1 |          5 |
+| c:\Work\2024\riva3_website\public\images\xShare.svg                                    | XML                |          9 |          0 |          1 |         10 |
+| c:\Work\2024\riva3_website\public\json\tiledmap.json                                   | JSON               |      2,800 |          0 |         22 |      2,822 |
+| c:\Work\2024\riva3_website\quasar.config.js                                            | JavaScript         |         64 |         96 |         39 |        199 |
+| c:\Work\2024\riva3_website\src\App.vue                                                 | Vue                |          8 |          0 |          2 |         10 |
+| c:\Work\2024\riva3_website\src\assets\countryAll.json                                  | JSON               |      1,006 |          0 |          1 |      1,007 |
+| c:\Work\2024\riva3_website\src\assets\country_allcompare.json                          | JSON               |      1,912 |          0 |         18 |      1,930 |
+| c:\Work\2024\riva3_website\src\assets\quasar-logo-vertical.svg                         | XML                |         15 |          0 |          0 |         15 |
+| c:\Work\2024\riva3_website\src\assets\tiledmap.json                                    | JSON               |      2,800 |          0 |         22 |      2,822 |
+| c:\Work\2024\riva3_website\src\boot\axios.js                                           | JavaScript         |          8 |         11 |          6 |         25 |
+| c:\Work\2024\riva3_website\src\boot\socialSharing.js                                   | JavaScript         |          5 |          0 |          2 |          7 |
+| c:\Work\2024\riva3_website\src\boot\vue-gtag.js                                        | JavaScript         |          9 |          1 |          2 |         12 |
+| c:\Work\2024\riva3_website\src\components\EcoSelect.vue                                | Vue                |        134 |          0 |          9 |        143 |
+| c:\Work\2024\riva3_website\src\components\EcoSelect2.vue                               | Vue                |        134 |          0 |          9 |        143 |
+| c:\Work\2024\riva3_website\src\components\RI_disaggregation.vue                        | Vue                |         69 |          0 |          7 |         76 |
+| c:\Work\2024\riva3_website\src\components\RI_header.vue                                | Vue                |        380 |          2 |          6 |        388 |
+| c:\Work\2024\riva3_website\src\components\SectorSelect.vue                             | Vue                |         80 |          0 |          7 |         87 |
+| c:\Work\2024\riva3_website\src\components\VA_header.vue                                | Vue                |        278 |          4 |         11 |        293 |
+| c:\Work\2024\riva3_website\src\components\YearSelect.vue                               | Vue                |         70 |          0 |          5 |         75 |
+| c:\Work\2024\riva3_website\src\components\footer.vue                                   | Vue                |        468 |         13 |          7 |        488 |
+| c:\Work\2024\riva3_website\src\components\footer2.vue                                  | Vue                |        226 |          5 |          7 |        238 |
+| c:\Work\2024\riva3_website\src\components\footerA.vue                                  | Vue                |        224 |          4 |          7 |        235 |
+| c:\Work\2024\riva3_website\src\components\ri_buildyourown\datatab_dimension.vue        | Vue                |      1,194 |         21 |         51 |      1,266 |
+| c:\Work\2024\riva3_website\src\components\ri_buildyourown\input_section.vue            | Vue                |        760 |         12 |         65 |        837 |
+| c:\Work\2024\riva3_website\src\components\ri_buildyourown\linechart_by_dimension.vue   | Vue                |      1,731 |         22 |        108 |      1,861 |
+| c:\Work\2024\riva3_website\src\components\ri_buildyourown\main_linechart.vue           | Vue                |      1,660 |         14 |         77 |      1,751 |
+| c:\Work\2024\riva3_website\src\components\ri_buildyourown\ri_fourbar.vue               | Vue                |         70 |          4 |          6 |         80 |
+| c:\Work\2024\riva3_website\src\components\ri_buildyourown\spiderweb.vue                | Vue                |        682 |         10 |         30 |        722 |
+| c:\Work\2024\riva3_website\src\components\ri_dataavail\dimension_tabledata.vue         | Vue                |        263 |         10 |         17 |        290 |
+| c:\Work\2024\riva3_website\src\components\ri_dataavail\indicator_tabledata.vue         | Vue                |        306 |          6 |         22 |        334 |
+| c:\Work\2024\riva3_website\src\components\ri_dataavail\input_data.vue                  | Vue                |        723 |          4 |         47 |        774 |
+| c:\Work\2024\riva3_website\src\components\ri_dataavail\pair_tabledata.vue              | Vue                |        228 |          8 |         14 |        250 |
+| c:\Work\2024\riva3_website\src\components\ri_dimension_icon.vue                        | Vue                |         70 |          5 |          9 |         84 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\datatab_dimension.vue         | Vue                |      1,240 |         18 |         59 |      1,317 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\input_section.vue             | Vue                |        624 |          9 |         43 |        676 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\linechart_by_dimension.vue    | Vue                |      1,274 |         16 |         80 |      1,370 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\linechartbycountry.vue        | Vue                |      1,642 |         15 |         71 |      1,728 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\ri_data_avail_circle.vue      | Vue                |         70 |          4 |          7 |         81 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\ri_fourbar.vue                | Vue                |         70 |          4 |          6 |         80 |
+| c:\Work\2024\riva3_website\src\components\ri_eco_partner\spiderweb.vue                 | Vue                |        641 |          8 |         37 |        686 |
+| c:\Work\2024\riva3_website\src\components\ri_economy_circle.vue                        | Vue                |         71 |          2 |          6 |         79 |
+| c:\Work\2024\riva3_website\src\components\ri_fourbar.vue                               | Vue                |         21 |          2 |          4 |         27 |
+| c:\Work\2024\riva3_website\src\components\ri_intragroup\datatab_dimension.vue          | Vue                |      1,236 |         12 |         53 |      1,301 |
+| c:\Work\2024\riva3_website\src\components\ri_intragroup\input_section.vue              | Vue                |        439 |          3 |         31 |        473 |
+| c:\Work\2024\riva3_website\src\components\ri_intragroup\linechart_by_country.vue       | Vue                |      1,484 |         20 |         84 |      1,588 |
+| c:\Work\2024\riva3_website\src\components\ri_intragroup\linechart_by_dimension.vue     | Vue                |      1,299 |         14 |         75 |      1,388 |
+| c:\Work\2024\riva3_website\src\components\ri_intragroup\ri_economuy_circle.vue         | Vue                |        427 |          4 |         25 |        456 |
+| c:\Work\2024\riva3_website\src\components\ri_overview\TileMap.vue                      | Vue                |        224 |          0 |         14 |        238 |
+| c:\Work\2024\riva3_website\src\components\ri_overview\dim_chart.vue                    | Vue                |        174 |          3 |         11 |        188 |
+| c:\Work\2024\riva3_website\src\components\ri_overview\dim_lineleft.vue                 | Vue                |         74 |          0 |          4 |         78 |
+| c:\Work\2024\riva3_website\src\components\ri_overview\dim_lineright.vue                | Vue                |         74 |          0 |          4 |         78 |
+| c:\Work\2024\riva3_website\src\components\ri_overview\line_chart.vue                   | Vue                |        137 |          7 |         11 |        155 |
+| c:\Work\2024\riva3_website\src\components\ri_overview\select_reporter.vue              | Vue                |        101 |          0 |          9 |        110 |
+| c:\Work\2024\riva3_website\src\components\ri_select_desired_level.vue                  | Vue                |         72 |          1 |         11 |         84 |
+| c:\Work\2024\riva3_website\src\components\ri_tableintab.vue                            | Vue                |        417 |          1 |          6 |        424 |
+| c:\Work\2024\riva3_website\src\components\va_backward\backwardSector1.vue              | Vue                |        311 |          0 |         17 |        328 |
+| c:\Work\2024\riva3_website\src\components\va_backward\backwardSector2.vue              | Vue                |        606 |         14 |         30 |        650 |
+| c:\Work\2024\riva3_website\src\components\va_backward\backwardSource1.vue              | Vue                |        534 |          6 |         20 |        560 |
+| c:\Work\2024\riva3_website\src\components\va_backward\backwardSource2.vue              | Vue                |      1,072 |          3 |         38 |      1,113 |
+| c:\Work\2024\riva3_website\src\components\va_forward\forwardImport1.vue                | Vue                |        529 |          0 |         18 |        547 |
+| c:\Work\2024\riva3_website\src\components\va_forward\forwardImport2.vue                | Vue                |      1,074 |          2 |         40 |      1,116 |
+| c:\Work\2024\riva3_website\src\components\va_forward\forwardSector1.vue                | Vue                |        367 |          1 |         27 |        395 |
+| c:\Work\2024\riva3_website\src\components\va_forward\forwardSector2.vue                | Vue                |        609 |          2 |         34 |        645 |
+| c:\Work\2024\riva3_website\src\components\va_gvc\overview.vue                          | Vue                |        167 |          0 |          7 |        174 |
+| c:\Work\2024\riva3_website\src\components\va_gvc\top5partner.vue                       | Vue                |        481 |          1 |         26 |        508 |
+| c:\Work\2024\riva3_website\src\components\va_gvc\top5sector.vue                        | Vue                |        501 |          0 |         19 |        520 |
+| c:\Work\2024\riva3_website\src\components\va_participation\va_participation_graph1.vue | Vue                |        366 |         20 |         20 |        406 |
+| c:\Work\2024\riva3_website\src\components\va_str_value_added\va_str_graph1.vue         | Vue                |        453 |          1 |         23 |        477 |
+| c:\Work\2024\riva3_website\src\components\va_str_value_added\va_str_graph2.vue         | Vue                |        235 |          1 |         12 |        248 |
+| c:\Work\2024\riva3_website\src\components\va_str_value_added\va_str_graph3.vue         | Vue                |        368 |         18 |         21 |        407 |
+| c:\Work\2024\riva3_website\src\css\app.scss                                            | SCSS               |         33 |          1 |          1 |         35 |
+| c:\Work\2024\riva3_website\src\css\quasar.variables.scss                               | SCSS               |          9 |         10 |          7 |         26 |
+| c:\Work\2024\riva3_website\src\layouts\MainLayout.vue                                  | Vue                |         96 |          0 |         11 |        107 |
+| c:\Work\2024\riva3_website\src\pages\BackwardLinkages.vue                              | Vue                |        474 |         15 |         14 |        503 |
+| c:\Work\2024\riva3_website\src\pages\BackwardLinkagesSource.vue                        | Vue                |        481 |         13 |         19 |        513 |
+| c:\Work\2024\riva3_website\src\pages\Countrybrief.vue                                  | Vue                |        156 |          1 |          9 |        166 |
+| c:\Work\2024\riva3_website\src\pages\CountrybriefData.vue                              | Vue                |      4,007 |         95 |        224 |      4,326 |
+| c:\Work\2024\riva3_website\src\pages\Download.vue                                      | Vue                |        797 |         20 |         28 |        845 |
+| c:\Work\2024\riva3_website\src\pages\ErrorNotFound.vue                                 | Vue                |         26 |          0 |          4 |         30 |
+| c:\Work\2024\riva3_website\src\pages\ForwardLinkages.vue                               | Vue                |        370 |         10 |         15 |        395 |
+| c:\Work\2024\riva3_website\src\pages\ForwardLinkagesImport.vue                         | Vue                |        428 |          9 |         16 |        453 |
+| c:\Work\2024\riva3_website\src\pages\GVCrelationships.vue                              | Vue                |        264 |          7 |         15 |        286 |
+| c:\Work\2024\riva3_website\src\pages\IndexPage.vue                                     | Vue                |         14 |          0 |          2 |         16 |
+| c:\Work\2024\riva3_website\src\pages\ParticipationInGVCs.vue                           | Vue                |        378 |         11 |         13 |        402 |
+| c:\Work\2024\riva3_website\src\pages\StructureOfValueAdded.vue                         | Vue                |        396 |         13 |         14 |        423 |
+| c:\Work\2024\riva3_website\src\pages\Welcome.vue                                       | Vue                |        204 |         10 |         10 |        224 |
+| c:\Work\2024\riva3_website\src\pages\countryGroupList.js                               | JavaScript         |      1,354 |          0 |          1 |      1,355 |
+| c:\Work\2024\riva3_website\src\pages\countryName.js                                    | JavaScript         |          4 |          0 |          1 |          5 |
+| c:\Work\2024\riva3_website\src\pages\ri_buildYourOwn.vue                               | Vue                |        225 |          2 |         26 |        253 |
+| c:\Work\2024\riva3_website\src\pages\ri_countrybrief.vue                               | Vue                |        153 |          0 |          8 |        161 |
+| c:\Work\2024\riva3_website\src\pages\ri_countrybrief2.vue                              | Vue                |      3,112 |         51 |        222 |      3,385 |
+| c:\Work\2024\riva3_website\src\pages\ri_dataAvail.vue                                  | Vue                |         90 |          0 |          7 |         97 |
+| c:\Work\2024\riva3_website\src\pages\ri_download.vue                                   | Vue                |        200 |          4 |          8 |        212 |
+| c:\Work\2024\riva3_website\src\pages\ri_ecopartner.vue                                 | Vue                |        261 |          1 |         22 |        284 |
+| c:\Work\2024\riva3_website\src\pages\ri_intraGroup.vue                                 | Vue                |        162 |          4 |         18 |        184 |
+| c:\Work\2024\riva3_website\src\pages\ri_overview.vue                                   | Vue                |        562 |          9 |         54 |        625 |
+| c:\Work\2024\riva3_website\src\pages\ri_reloadpage.vue                                 | Vue                |         17 |          0 |          6 |         23 |
+| c:\Work\2024\riva3_website\src\pages\server.js                                         | JavaScript         |      1,354 |          1 |          1 |      1,356 |
+| c:\Work\2024\riva3_website\src\router\index.js                                         | JavaScript         |         14 |         11 |          6 |         31 |
+| c:\Work\2024\riva3_website\src\router\routes.js                                        | JavaScript         |        108 |          4 |          4 |        116 |
+| c:\Work\2024\riva3_website\src\stores\example-store.js                                 | JavaScript         |         14 |          0 |          2 |         16 |
+| c:\Work\2024\riva3_website\src\stores\index.js                                         | JavaScript         |          6 |         10 |          5 |         21 |
+| c:\Work\2024\riva3_website\src\stores\store-flag.d.ts                                  | TypeScript         |          6 |          3 |          2 |         11 |
+| c:\Work\2024\riva3_website\vite.config.js                                              | JavaScript         |         19 |          0 |          2 |         21 |
+| Total                                                                                  |                    |     62,279 |        796 |      2,477 |     65,552 |
++----------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

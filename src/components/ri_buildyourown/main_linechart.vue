@@ -1437,6 +1437,11 @@ const menu2FindGroupAvg = () => {
 };
 
 const menu2PlotChart = () => {
+  let gShowLabel = [...menu2ChartEco.value];
+
+  if (gShowLabel[0] == "Group average") {
+    gShowLabel[0] = "Your group";
+  }
   let yAxisTitle = input.value.type + " integration";
   Highcharts.chart("container2", {
     chart: {
@@ -1502,7 +1507,7 @@ const menu2PlotChart = () => {
         ).toFixed(2);
         return (
           "<div class='font-16'><b>" +
-          this.x +
+          gShowLabel[this.x] +
           "</b></div><div>" +
           yAxisTitle +
           " index " +

@@ -7,6 +7,7 @@
       <div class="row">
         <div class="col-6 q-pa-md">
           <line-chart
+            v-if="isDataReady"
             :data="input"
             :ecoName="ecoName"
             :si="lineSI"
@@ -159,15 +160,21 @@ import lineChart from "../components/ri_overview/line_chart.vue";
 import dimChart from "../components/ri_overview/dim_chart.vue";
 import footerMain from "../components/footer2.vue";
 
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeMount, computed } from "vue";
 // import { serverSetup, yearInputShow, tileData } from "./server";
 import { serverSetup, tileData } from "./server";
 import { countryGroupListRiva2 } from "./countryGroupList.js";
 import tileMap from "../components/ri_overview/TileMap.vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
+const $q = useQuasar();
 const { serverData } = serverSetup();
+
+const isDataReady = computed(
+  () => lineSI.value.length > 0 && lineCI.value.length > 0
+);
 // const { yearInput } = yearInputShow();
 const { tilemapData } = tileData();
 const yearInput = ref({ min: 2010, max: 2020 });
@@ -256,6 +263,7 @@ const partner = ref([
   "KOR",
   "JPN",
 ]);
+
 const countryInput = (inputData) => {
   input.value = inputData.countryOutput;
   ecoName.value = inputData.ecoName;
@@ -269,6 +277,7 @@ const countryInput = (inputData) => {
 //start Dim chart
 
 const loadDimCal = async () => {
+  $q.loading.show();
   let input2 = {
     year: {
       min: yearInput.value.min,
@@ -521,6 +530,7 @@ const loadLineChart = async () => {
   lineCI.value = lineCI.value.map((x) =>
     Number((x / dimRaw7C.length).toFixed(2))
   );
+  $q.loading.hide();
 };
 
 //End line chart
@@ -605,5 +615,10 @@ onMounted(() => {
 .btn {
   width: 240px;
   height: 40px;
+}
+.loading {
+  text-align: center;
+  font-size: 20px;
+  padding: 50px;
 }
 </style>

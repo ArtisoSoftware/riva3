@@ -11,7 +11,7 @@
           input-style="color:white"
           v-model="selected"
           :options="countryOptions"
-          @input="changeInput()"
+          @update:model-value="changeInput()"
           dark
         />
       </div>
@@ -71,6 +71,12 @@ const selected = ref("");
 const countryOptions = ref([]);
 const dimensionAll = ref([]);
 const yourGroupName = ref("Your group");
+
+const changeInput = async () => {
+  await editName();
+  loadChartLeft();
+  loadChartRight();
+};
 
 const leftChart = ref({
   title: "",
