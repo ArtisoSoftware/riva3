@@ -952,8 +952,8 @@ const sentence3TopCI = async () => {
     year: {
       min: 2010,
       max: yearMax.value,
-      type: "Conventional",
     },
+    type: "Conventional",
   };
   let data3 = {
     inputData: input,
@@ -962,6 +962,7 @@ const sentence3TopCI = async () => {
     partnerMap: countryPartnerFullList.value,
     reportMap: countryReportFullList.value,
   };
+
   let url3 = serverData.value + "ri/econ_intra_index_by_dimension_1.php";
   let res3 = await axios.post(url3, JSON.stringify(data3));
   let url3x = serverData.value + "ri/econ_intra_index_by_dimension_2.php";
@@ -1021,7 +1022,7 @@ const mainSentenceCI = async () => {
     name: "OK",
     partner: countryPartner,
     reporting: countryReportFullList.value,
-    year: yearMax.firstYearValue,
+    year: yearMax.value,
     type: "Conventional",
   };
   let url4 = serverData.value + "ri/econ_fivebar_onlyyourgroup_eco.php";
@@ -1481,7 +1482,7 @@ const byCountryCI = async () => {
     reportMap: countryReportFullList.value,
     partnerMap: partnerInput,
 
-    inputData: {
+    input: {
       year: {
         min: 2010,
         max: yearMax.value,
@@ -1492,6 +1493,7 @@ const byCountryCI = async () => {
 
   let url7 = serverData.value + "ri/econ_intra_eco_integration_by_country.php";
   let res7 = await axios.post(url7, JSON.stringify(dataSend));
+
   let dimRaw7 = res7.data;
   let cENEA = countryGroupListRiva2("ene_asia");
   let cSEA = countryGroupListRiva2("se_asia");
@@ -2863,7 +2865,7 @@ const byCountrySI = async () => {
     reportMap: countryReportFullList.value,
     partnerMap: partnerInput,
 
-    inputData: {
+    input: {
       year: {
         min: 2010,
         max: yearMax.value,

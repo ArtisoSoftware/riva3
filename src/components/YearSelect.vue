@@ -36,7 +36,6 @@ const loadYear = async () => {
     yearList.value.push(x.year);
   });
   yearList.value.sort((a, b) => Number(a) - Number(b));
-  console.log(yearList.value);
   if (props.initialValue) {
     yearSelect.value = props.initialValue;
     updateYear(props.initialValue);

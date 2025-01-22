@@ -65,8 +65,10 @@ const loadData = async () => {
     year: dataInput.value.year,
   };
 
+  console.log(dataTemp);
   let url = serverData.value + "/va/strloaddata2.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
+  console.log(res.data);
   if (res.data.length == 0) {
     console.log("No data available");
     showData.value = false;

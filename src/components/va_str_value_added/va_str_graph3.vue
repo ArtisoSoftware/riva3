@@ -212,7 +212,7 @@ const loadData = async () => {
       },
       tooltip: {
         useHTML: true,
-        headerFormat: "<b>{point.x}</b><br/>",
+        headerFormat: "<b>{point.category}</b><br/>",
 
         // pointFormat: "<div>{series.name}</div><div>Share: {point.y}%</div><div>Value: " + this + "</div>",
 

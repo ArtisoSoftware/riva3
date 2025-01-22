@@ -39,7 +39,7 @@
           </div>
           <div class="row justify-center" style="padding-top: 10px">
             <EcoSelect
-              label="importing economy"
+              label="Importing economy"
               @update:selected="getImportEco"
               :initialValue="importingISO"
             />
