@@ -25,7 +25,7 @@
       </div>
     </div>
     <div v-show="showData">
-      <div id="container2" class="col">xx</div>
+      <div id="container2" class="col">Loading...</div>
     </div>
   </div>
 </template>
@@ -131,7 +131,6 @@ const loadData = async () => {
     exp_sector: dataInput.value.sectorName,
     year: dataInput.value.year,
   };
-
   let url = serverData.value + "/va/backwardSector1.php";
   let res = await axios.post(url, JSON.stringify(dataTemp));
   let dataResult = res.data;
@@ -158,7 +157,8 @@ const loadData = async () => {
   });
   dataResult = dataResult.filter((x99) => x99.area != "remove");
 
-  exportISOList.value.forEach(async (expCountry, index) => {
+  // exportISOList.value.forEach(async (expCountry, index) => {
+  const promises = exportISOList.value.map(async (expCountry, index) => {
     let dataTemp = {
       exp_country: expCountry,
       imp_country: dataInput.value.importingISO,
@@ -167,7 +167,6 @@ const loadData = async () => {
     };
     let url = serverData.value + "/va/strloaddata1.php";
     let res = await axios.post(url, JSON.stringify(dataTemp));
-    // console.log(res.data);
     if (res.data.length > 0) {
       // console.log("pass");
       let totalExport = Number(res.data[0].total_exports);
@@ -368,13 +367,14 @@ const loadData = async () => {
     }
   });
 
-  // console.log("chart2AsiaPacific", chart2AsiaPacific.value);
-  // console.log("chart2Europe", chart2Europe.value);
-  // console.log("chart2NorthAmerica", chart2NorthAmerica.value);
-  // console.log("chart2LatinAmerica", chart2LatinAmerica.value);
-  // console.log("chart2RestOfTheWorld", chart2RestOfTheWorld.value);
-  // console.log("dataResult: ", dataResult);
-  // console.log("chart2DrillDown", chart2DrillDown.value);
+  await Promise.all(promises);
+
+  chart2AsiaPacific.value.sort((a, b) => (a.name > b.name ? 1 : -1));
+  chart2Europe.value.sort((a, b) => (a.name > b.name ? 1 : -1));
+  chart2NorthAmerica.value.sort((a, b) => (a.name > b.name ? 1 : -1));
+  chart2LatinAmerica.value.sort((a, b) => (a.name > b.name ? 1 : -1));
+  chart2RestOfTheWorld.value.sort((a, b) => (a.name > b.name ? 1 : -1));
+
   setTimeout(() => {
     var chart = Highcharts.chart(
       "container2",
@@ -404,6 +404,7 @@ const loadData = async () => {
                 true
               ); // redraw the chart with updated xAxis categories
               chart.yAxis[0].update({
+                min: 0,
                 title: {
                   text: `% of gross exports to ${dataInput.value.importingName}`,
                 },
@@ -448,17 +449,20 @@ const loadData = async () => {
           title: {
             text: `% of gross exports to ${dataInput.value.importingName}`,
           },
-          stackLabels: {
-            enabled: false,
-            style: {
-              fontWeight: "bold",
-              color:
-                // theme
-                (Highcharts.defaultOptions.title.style &&
-                  Highcharts.defaultOptions.title.style.color) ||
-                "gray",
-            },
+          labels: {
+            format: "{value}%", // ใช้ % สำหรับแสดงผล
           },
+          // stackLabels: {
+          //   enabled: false,
+          //   style: {
+          //     fontWeight: "bold",
+          //     color:
+          //       // theme
+          //       (Highcharts.defaultOptions.title.style &&
+          //         Highcharts.defaultOptions.title.style.color) ||
+          //       "gray",
+          //   },
+          // },
         },
         legend: {
           useHTML: true,
@@ -606,7 +610,7 @@ const loadData = async () => {
       },
       (Highcharts.Tick.prototype.drillable = function () {})
     );
-  }, 10);
+  }, 1);
 };
 
 watch(
